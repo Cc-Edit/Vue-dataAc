@@ -138,7 +138,7 @@ function ac_util_isDef (v) { return v !== undefined; }
  * @param Day 存储时长，maxDays
  * @param options 配置信息
  * */
-function ac_util_setStorage (name, value, Day, options) {
+function ac_util_setStorage (options, name, value, Day) {
   if (options.useStorage) {
     window.localStorage.setItem(name, value);
   } else {
@@ -154,7 +154,7 @@ function ac_util_setStorage (name, value, Day, options) {
  * @param name * 存储key
  * @param options 配置信息
  * */
-function ac_util_getStorage (name, options) {
+function ac_util_getStorage (options, name) {
   if (!name){ return null; }
   if (options.useStorage) {
     return window.localStorage.getItem(name);
@@ -297,10 +297,10 @@ var VueDataAc = function VueDataAc (options) {
   ac_util_checkOptions(newOptions);
   this._options = newOptions;
 
-  this._uuid = ac_util_getStorage(this._options.userSha, this._options);
+  this._uuid = ac_util_getStorage(this._options, this._options.userSha, this._options);
   if(ac_util_isNullOrEmpty(this._uuid)){
     this._uuid = ac_util_getUuid();
-    ac_util_setStorage(this._options.userSha, this._uuid, this._options);
+    ac_util_setStorage(this._options, this._options.userSha, this._uuid);
   }
 
   this._acData = [];
