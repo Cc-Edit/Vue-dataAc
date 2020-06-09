@@ -1,11 +1,12 @@
 // import { ac_util_isNullOrEmpty, isDef } from './util/index'
+import VueDataAc from "./index";
+
 /**
  * 暴露插件接口
  * */
-export function install (Vue) {
+export function install (Vue, options, VueDataAc) {
   if (install.installed) return
   install.installed = true
-  Vue.prototype.$vueDataAc = this;
   Vue.mixin({
     watch:{
       $route(to, from) {
@@ -32,5 +33,5 @@ export function install (Vue) {
     }
   })
 
-
+  Vue.prototype.$vueDataAc = new VueDataAc(options);
 }

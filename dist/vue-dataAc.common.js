@@ -6,13 +6,13 @@
 'use strict';
 
 // import { ac_util_isNullOrEmpty, isDef } from './util/index'
+
 /**
  * 暴露插件接口
  * */
-function install (Vue) {
+function install (Vue, options, VueDataAc) {
   if (install.installed) { return }
   install.installed = true;
-  Vue.prototype.$vueDataAc = this;
   Vue.mixin({
     watch:{
       $route: function $route(to, from) {
@@ -39,7 +39,7 @@ function install (Vue) {
     }
   });
 
-
+  Vue.prototype.$vueDataAc = new VueDataAc(options);
 }
 
 /**
@@ -297,10 +297,10 @@ var VueDataAc = function VueDataAc (options) {
   ac_util_checkOptions(newOptions);
   this._options = newOptions;
 
-  this._uuid = ac_util_getStorage(this._options.userSha);
+  this._uuid = ac_util_getStorage(this._options.userSha, this._options);
   if(ac_util_isNullOrEmpty(this._uuid)){
     this._uuid = ac_util_getUuid();
-    ac_util_setStorage(this._options.userSha, this._uuid);
+    ac_util_setStorage(this._options.userSha, this._uuid, this._options);
   }
 
   this._acData = [];
@@ -416,7 +416,7 @@ VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (){
 
 };
 
-VueDataAc.install = install;
+VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
 VueDataAc.version = '2.0.0';
 
 /**

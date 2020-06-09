@@ -32,7 +32,7 @@ export function ac_util_isDef (v) { return v !== undefined; }
  * @param Day 存储时长，maxDays
  * @param options 配置信息
  * */
-export function ac_util_setStorage (name, value, Day, options) {
+export function ac_util_setStorage (options, name, value, Day) {
   if (options.useStorage) {
     window.localStorage.setItem(name, value);
   } else {
@@ -48,7 +48,7 @@ export function ac_util_setStorage (name, value, Day, options) {
  * @param name * 存储key
  * @param options 配置信息
  * */
-export function ac_util_getStorage (name, options) {
+export function ac_util_getStorage (options, name) {
   if (!name)return null;
   if (options.useStorage) {
     return window.localStorage.getItem(name);
@@ -67,11 +67,11 @@ export function ac_util_getStorage (name, options) {
  * @param name * 存储key
  * @param options 配置信息
  * */
-export function ac_util_delStorage (name, options) {
+export function ac_util_delStorage (options, name) {
   if (options.useStorage) {
     window.localStorage.removeItem(name);
   } else {
-    ac_util_setStorage(name, '', -1);
+    ac_util_setStorage(options, name, '', -1);
   }
 }
 

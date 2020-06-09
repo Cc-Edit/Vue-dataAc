@@ -18,10 +18,10 @@ export default class VueDataAc {
     ac_util_checkOptions(newOptions);
     this._options = newOptions;
 
-    this._uuid = ac_util_getStorage(this._options.userSha);
+    this._uuid = ac_util_getStorage(this._options, this._options.userSha, this._options);
     if(ac_util_isNullOrEmpty(this._uuid)){
       this._uuid = ac_util_getUuid();
-      ac_util_setStorage(this._options.userSha, this._uuid);
+      ac_util_setStorage(this._options, this._options.userSha, this._uuid);
     }
 
     this._acData = [];
@@ -138,7 +138,7 @@ export default class VueDataAc {
   }
 }
 
-VueDataAc.install = install
+VueDataAc.install = (Vue, options) => install(Vue, options, VueDataAc);
 VueDataAc.version = '__VERSION__'
 
 /**
