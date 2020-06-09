@@ -1,0 +1,21 @@
+{
+  "name": "vue-dataac",
+  "version": "2.0.0",
+  "description": "Vue-dataAc 重构 dataAcquisition 以支持Vue",
+  "author": "adminV",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "node build/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adminV/Vue-dataAc.git"
+  },
+  "dependencies": {
+    "rollup": "^2.15.0"
+  }
+}
