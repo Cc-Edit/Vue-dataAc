@@ -15,7 +15,13 @@
     "type": "git",
     "url": "git+https://github.com/adminV/Vue-dataAc.git"
   },
-  "dependencies": {
-    "rollup": "^2.15.0"
+  "devDependencies": {
+    "rollup": "^2.15.0",
+    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-flow-no-whitespace": "^1.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "terser": "^4.7.0"
   }
 }
