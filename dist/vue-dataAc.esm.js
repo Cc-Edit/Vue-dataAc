@@ -210,7 +210,6 @@ function ac_util_mergeOption (userOpt, baseOpt){
     key = keys[i];
     newOpt[key] = ac_util_isDef(userOpt[key]) ? userOpt[key] : baseOpt[key];
   }
-
   return newOpt;
 }
 
