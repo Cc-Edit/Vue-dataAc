@@ -155,8 +155,8 @@ export default class VueDataAc {
     document.addEventListener("click",  (e) => {
       let event = window.event || e;
       let target = event.srcElement ? event.srcElement : event.target;
-      let className = e.className;
-      let {classTag} = this._options;
+      let className = target.className;
+      let { classTag } = this._options;
       //主动埋点未命中
       if(!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0){
         return;
@@ -164,9 +164,9 @@ export default class VueDataAc {
       let attrs = ac_util_getAllAttr(target);
 
       this._setAcData(this._options.storeClick, {
-        eId: e.id,
-        className: e.className,
-        val: (e.value || e.innerText).substr(0, 20),
+        eId: target.id,
+        className: target.className,
+        val: (target.value || target.innerText).substr(0, 20),
         attrs
       })
     });
