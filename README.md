@@ -3,7 +3,7 @@
 
 ## TODO:
 
-- [x] 异常监听  
+- [x] 异常监控  
     - [x] 代码异常  
     - [x] 资源加载异常  
     - [x] promise异常  
@@ -33,6 +33,9 @@
     - [x] openSourceErr 资源加载异常采集  
     - [x] openPromiseErr promise异常采集  
     - [x] openCodeErr 是否开启代码异常采集 
+    - [x] openVueErr 是否开启Vue异常监控 
+    - [x] openSourceErr 是否开启资源加载异常采集 
+    - [x] openPromiseErr 是否开启promise异常采集 
     - [ ] openComponent 组件性能采集     
     - [ ] openInput 是否开启输入数据采集     
     - [ ] openClick 是否开启点击数据采集     
