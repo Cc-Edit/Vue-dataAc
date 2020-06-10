@@ -10,9 +10,9 @@
     - [x] Vue异常  
     
 - [ ] 用户行为监控  
-    - [ ] 点击事件  
+    - [x] 点击事件  
     - [ ] 输入事件  
-    - [ ] 自定义事件  
+    - [x] 自定义事件  
     - [x] 页面访问事件    
     
 - [x] 数据上报  
@@ -36,14 +36,15 @@
     - [x] openVueErr 是否开启Vue异常监控 
     - [x] openSourceErr 是否开启资源加载异常采集 
     - [x] openPromiseErr 是否开启promise异常采集 
+    - [x] openClick 是否开启点击数据采集   
     - [ ] openComponent 组件性能采集     
     - [ ] openInput 是否开启输入数据采集     
-    - [ ] openClick 是否开启点击数据采集     
     - [ ] openXhrData 是否采集接口异常时的参数params     
     - [ ] openXhrHock 是否开启xhr异常采集     
     - [ ] openPerformance 是否开启页面性能采集     
     
 - [x] npm自动发布  
+- [x] 后端日志关联机制  
 - [ ] demo  
 
     
