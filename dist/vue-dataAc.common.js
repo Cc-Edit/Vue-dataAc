@@ -478,7 +478,7 @@ VueDataAc.prototype._initClickAc = function _initClickAc (){
   document.addEventListener("click",function (e) {
     var event = window.event || e;
     var target = event.srcElement ? event.srcElement : event.target;
-    var className = e.className;
+    var className = target.className;
     var ref = this$1._options;
       var classTag = ref.classTag;
     //主动埋点未命中
@@ -488,9 +488,9 @@ VueDataAc.prototype._initClickAc = function _initClickAc (){
     var attrs = ac_util_getAllAttr(target);
 
     this$1._setAcData(this$1._options.storeClick, {
-      eId: e.id,
-      className: e.className,
-      val: (e.value || e.innerText).substr(0, 20),
+      eId: target.id,
+      className: target.className,
+      val: (target.value || target.innerText).substr(0, 20),
       attrs: attrs
     });
   });
