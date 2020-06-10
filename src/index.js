@@ -87,6 +87,9 @@ export default class VueDataAc {
    *  初始化代码异常监控
    * */
   _initCodeErrAc(){
+    /**
+     * 全局异常
+     * */
     window.onerror = (msg, url, line, col, err) => {
       //屏蔽跨域脚本异常， 建议跨域脚本增加 crossorigin
       if (ac_util_isNullOrEmpty(url) && msg === "Script error.") {
@@ -124,7 +127,52 @@ export default class VueDataAc {
         this._setAcData(this._options.storeCodeErr, codeErrData)
       }, 0)
     }
+
   }
+  /**
+   *  初始化资源加载异常监听
+   * */
+  _initSourceErrAc(){
+    window.addEventListener('error', (event) => {
+      const eventType = [].toString.call(event, event);
+      if (eventType === "[object Event]") {
+        let theTag = event.target || event.srcElement || event.originalTarget || {};
+        let { tagName, outerHTML = '', href, src, currentSrc, localName } = theTag;
+        tagName = tagName|| localName;
+
+        let resourceUri = href || src;
+
+        if (tagName === "IMG" && !ac_util_isNullOrEmpty(theTag.onerror)) {
+          //存在行内的 error事件  终止执行
+          return false;
+        }
+
+        //优化请求内容，对大标签内容进行截取
+        if(outerHTML && outerHTML.length > 200){
+          outerHTML = outerHTML.slice(0, 200)
+        }
+
+        this._setAcData(this._options.storeSourceErr, {
+          tagName,
+          outerHTML,
+          resourceUri,
+          currentSrc
+        })
+      }
+    });
+  }
+
+  /**
+   *  初始化 Promise 异常监听
+   *  在使用Promise的时候，如果没有声明catch代码块
+   *  Promise的异常会被抛出
+   * */
+  _initPromiseErrAc(){
+    window.addEventListener('unhandledrejection', (event) => {
+
+    });
+  }
+
   /**
    *  初始化输入事件监听
    * */
@@ -250,6 +298,19 @@ export default class VueDataAc {
           line,
           col,
           err
+        };
+        break;
+      case this._options.storeSourceErr:
+        let { tagName, outerHTML, resourceUri, currentSrc} = data;
+        _Ac['acData'] = {
+          type: this._options.storeSourceErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          fileName: currentSrc,
+          resourceUri,
+          tagName,
+          outerHTML,
         };
         break;
       case this._options.storeCustom:

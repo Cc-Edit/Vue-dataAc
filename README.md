@@ -71,12 +71,30 @@
         "acData" : {
              "type"    : "ACCERR",     		        //上报数据类型：代码异常
              "path"    : "www.domain.com/w/w/w/",   //事件发生页面的url
-             "sTme"    : "2017-06-21 13:31:31",	    //事件发生时间
+             "sTme"    : "1591760073422",	        //事件发生时间
              "msg"     : "script error",            //异常摘要
              "line"    : "301",  		            //代码行数
              "col"     : "13",  		            //代码列下标
              "err"     : "error message",           //错误信息
-             "ua"      : "ios/chrome 44.44"         //浏览器版本
+             "ua"      : "ios/chrome 44.44"         //浏览器信息
+         }
+}
+```
+
+### 3. 资源加载异常
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                 //用户标识
+        "acData" : {
+             "type"        : "ACSCERR",     		        //上报数据类型：资源加载异常
+             "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
+             "sTme"        : "1591760073422",	            //事件发生时间
+             "fileName"    : "test.js",                     //文件名
+             "resourceUri" : "http://isjs.cn/js/test.js",   //资源地址
+             "tagName"     : "script",  		            //标签类型
+             "outerHTML"   : "<script ...>",                //标签内容
+             "ua"          : "ios/chrome 44.44"             //浏览器信息
          }
 }
 ```

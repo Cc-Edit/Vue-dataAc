@@ -6,28 +6,33 @@ export const BASEOPTIONS = {
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
-  storeInput   : "ACINPUT",   //输入采集标识
-  storePage    : "ACPAGE",    //页面采集标识
-  storeClick   : "ACCLIK",    //点击事件采集标识
-  storeReqErr  : "ACRERR",    //请求异常采集标识
-  storeTiming  : "ACTIME",    //页面时间采集标识
-  storeCodeErr : "ACCERR",    //代码异常采集标识
-  storeCustom  : "ACCUSTOM",  //自定义事件采集标识 (2.0新增）
+  storeInput     : "ACINPUT",    //输入采集标识
+  storePage      : "ACPAGE",     //页面采集标识
+  storeClick     : "ACCLIK",     //点击事件采集标识
+  storeReqErr    : "ACRERR",     //请求异常采集标识
+  storeTiming    : "ACTIME",     //页面时间采集标识
+  storeCodeErr   : "ACCERR",     //代码异常采集标识
+  storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
+  storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）
+  storePrmseErr  : "ACPRERR",    //promise抛出异常 (2.0新增）
 
   /**
    *  全局开关，用来修改采集内容
    * */
   userSha      : 'vue_ac_userSha',   //用户标识存储key，有冲突可修改
-  useImgSend   : true,        //默认使用图片上报数据, false为xhr请求接口上报
-  useStorage   : true,        //默认使用storage,
-  maxDays      : 365,         //如果使用cookie，此项生效，配置cookie生效时间，默认一年
-  openInput    : true,        //是否开启输入数据采集
-  openCodeErr  : true,        //是否开启代码异常采集
-  openClick    : true,        //是否开启点击数据采集
-  openXhrData  : true,        //是否采集接口异常时的参数params
-  openXhrHock  : true,        //是否开启xhr异常采集
+  useImgSend      : true,     //默认使用图片上报数据, false为xhr请求接口上报
+  useStorage      : true,     //默认使用storage,
+  maxDays         : 365,      //如果使用cookie，此项生效，配置cookie生效时间，默认一年
+  openInput       : true,     //是否开启输入数据采集
+  openCodeErr     : true,     //是否开启代码异常采集
+  openClick       : true,     //是否开启点击数据采集
+  openXhrData     : true,     //是否采集接口异常时的参数params
+  openXhrHock     : true,     //是否开启xhr异常采集
   openPerformance : true,     //是否开启页面性能采集
-  openPage     : true,        //是否开启页面访问信息采集 (2.0新增）
+  openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
+  openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
+  openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
+  openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
 
   /**
    * 输入行为采集相关配置，通过以下配置修改要监控的输入框,
