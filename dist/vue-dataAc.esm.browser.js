@@ -50,28 +50,34 @@ const BASEOPTIONS = {
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
-  storeInput   : "ACINPUT",   //输入采集标识
-  storePage    : "ACPAGE",    //页面采集标识
-  storeClick   : "ACCLIK",    //点击事件采集标识
-  storeReqErr  : "ACRERR",    //请求异常采集标识
-  storeTiming  : "ACTIME",    //页面时间采集标识
-  storeCodeErr : "ACCERR",    //代码异常采集标识
-  storeCustom  : "ACCUSTOM",  //自定义事件采集标识 (2.0新增）
+  storeInput     : "ACINPUT",    //输入采集标识
+  storePage      : "ACPAGE",     //页面采集标识
+  storeClick     : "ACCLIK",     //点击事件采集标识
+  storeReqErr    : "ACRERR",     //请求异常采集标识
+  storeTiming    : "ACTIME",     //页面时间采集标识
+  storeCodeErr   : "ACCERR",     //代码异常采集标识
+  storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
+  storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）
+  storePrmseErr  : "ACPRERR",    //promise抛出异常 (2.0新增）
+  storeCompErr   : "ACCOMP",     //Vue组件性能监控 (2.0新增）
 
   /**
    *  全局开关，用来修改采集内容
    * */
   userSha      : 'vue_ac_userSha',   //用户标识存储key，有冲突可修改
-  useImgSend   : true,        //默认使用图片上报数据, false为xhr请求接口上报
-  useStorage   : true,        //默认使用storage,
-  maxDays      : 365,         //如果使用cookie，此项生效，配置cookie生效时间，默认一年
-  openInput    : true,        //是否开启输入数据采集
-  openCodeErr  : true,        //是否开启代码异常采集
-  openClick    : true,        //是否开启点击数据采集
-  openXhrData  : true,        //是否采集接口异常时的参数params
-  openXhrHock  : true,        //自动检测是否开启xhr异常采集
+  useImgSend      : true,     //默认使用图片上报数据, false为xhr请求接口上报
+  useStorage      : true,     //默认使用storage,
+  maxDays         : 365,      //如果使用cookie，此项生效，配置cookie生效时间，默认一年
+  openInput       : true,     //是否开启输入数据采集
+  openCodeErr     : true,     //是否开启代码异常采集
+  openClick       : true,     //是否开启点击数据采集
+  openXhrData     : true,     //是否采集接口异常时的参数params
+  openXhrHock     : true,     //是否开启xhr异常采集
   openPerformance : true,     //是否开启页面性能采集
-  openPage     : true,        //是否开启页面访问信息采集 (2.0新增）
+  openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
+  openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
+  openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
+  openComponent   : true,     //是否开启组件性能采集 (2.0新增）
 
   /**
    * 输入行为采集相关配置，通过以下配置修改要监控的输入框,
@@ -102,9 +108,10 @@ const BASEOPTIONS = {
   /**
    * 对上报频率的限制项 (2.0新增）
    * */
-  openReducer: false, //是否开启节流,用于限制上报频率
-  sizeLimit: 20,      //操作数据超过指定条目时自动上报
-  lazyReport: false  //开启懒惰上报，组件destroy时统一上报
+  openReducer: false,   //是否开启节流,用于限制上报频率
+  sizeLimit: 20,        //操作数据超过指定条目时自动上报
+  lifeReport: false,    //开启懒惰上报，组件destroy时统一上报
+  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
 };
 
 /**
@@ -320,6 +327,28 @@ class VueDataAc {
    * 页面初始化
    * */
   _init(){
+    /**
+     * 异常监控初始化
+     * */
+    if(this._options.openCodeErr){
+      this._initCodeErrAc();
+    }
+
+    /**
+     * 资源监控初始化
+     * */
+    if(this._options.openSourceErr){
+      this._initSourceErrAc();
+    }
+
+    /**
+     * Promise监控初始化
+     * */
+    if(this._options.openPromiseErr){
+      this._initPromiseErrAc();
+    }
+
+
     if(this._options.openXhrData){
       this._initXhrErrAc();
     }
@@ -328,9 +357,7 @@ class VueDataAc {
       this._initPerformance();
     }
 
-    if(this._options.openCodeErr){
-      this._initCodeErrAc();
-    }
+
 
     if(this._options.openInput){
       this._initInputAc();
@@ -340,9 +367,6 @@ class VueDataAc {
       this._initClickAc();
     }
 
-    if(this._options.openPage){
-      this._initPageAc();
-    }
   }
   
   /**
@@ -363,7 +387,96 @@ class VueDataAc {
   /**
    *  初始化代码异常监控
    * */
-  _initCodeErrAc(){}
+  _initCodeErrAc(){
+    /**
+     * 全局异常
+     * */
+    window.onerror = (msg, url, line, col, err) => {
+      //屏蔽跨域脚本异常， 建议跨域脚本增加 crossorigin
+      if (ac_util_isNullOrEmpty(url) && msg === "Script error.") {
+        return false;
+      }
+
+      let codeErrData = {
+        msg: msg,
+        line: line,
+        col: col
+      };
+      codeErrData.col = col || (window.event && window.event.errorCharacter) || 0;
+
+      //屏蔽关闭网页时的Network Error
+      setTimeout(() => {
+        if (!!err && !!err.stack) {
+          //可以直接使用堆栈信息
+          codeErrData.err = err.stack.toString();
+        } else if (!!arguments.callee) {
+          //尝试通过callee获取异常堆栈
+          let errmsg = [];
+          let f = arguments.callee.caller, c = 3;//防止堆栈信息过大
+          while (f && (--c > 0)) {
+            errmsg.push(f.toString());
+            if (f === f.caller) {
+              break;
+            }
+            f = f.caller;
+          }
+          errmsg = errmsg.join(",");
+          codeErrData.err = errmsg;
+        } else {
+          codeErrData.err = "script err";
+        }
+        this._setAcData(this._options.storeCodeErr, codeErrData);
+      }, 0);
+    };
+
+  }
+  /**
+   *  初始化资源加载异常监听
+   * */
+  _initSourceErrAc(){
+    window.addEventListener('error', (event) => {
+      const eventType = [].toString.call(event, event);
+      if (eventType === "[object Event]") {
+        let theTag = event.target || event.srcElement || event.originalTarget || {};
+        let { tagName, outerHTML = '', href, src, currentSrc, localName } = theTag;
+        tagName = tagName|| localName;
+
+        let resourceUri = href || src;
+
+        if (tagName === "IMG" && !ac_util_isNullOrEmpty(theTag.onerror)) {
+          //存在行内的 error事件  终止执行
+          return false;
+        }
+
+        //优化请求内容，对大标签内容进行截取
+        if(outerHTML && outerHTML.length > 200){
+          outerHTML = outerHTML.slice(0, 200);
+        }
+
+        this._setAcData(this._options.storeSourceErr, {
+          tagName,
+          outerHTML,
+          resourceUri,
+          currentSrc
+        });
+      }
+    });
+  }
+
+  /**
+   *  初始化 Promise 异常监听
+   *  在使用Promise的时候，如果没有声明catch代码块
+   *  Promise的异常会被抛出
+   * */
+  _initPromiseErrAc(){
+    window.addEventListener('unhandledrejection', (event) => {
+      this._setAcData(this._options.storePrmseErr, {
+        reason: event.reason || "unknown",
+      });
+      // 如果想要阻止继续抛出，即会在控制台显示 `Uncaught(in promise) Error` 的话，调用以下函数
+      event.preventDefault();
+    });
+  }
 
   /**
    *  初始化输入事件监听
@@ -374,11 +487,20 @@ class VueDataAc {
    *  初始化点击事件监听
    * */
   _initClickAc(){}
-
+  /**
+   * 自定义数据上报
+   * */
+  setCustomAc(data){
+    let { cusKey = 'custom', cusVal = ''} = data;
+    this._setAcData(this._options.storeCustom, {
+      cusKey,
+      cusVal
+    });
+  }
   /**
    *  数据上报, 可以根据实际场景进行上报优化：
    *  默认当事件触发就会自动上报，频率为一个事件1次上报
-   *  如果频率过大，可以使用 openReducer， sizeLimit，lazyReport进行节流
+   *  如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
    * */
   postAcData(){
     if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
@@ -480,8 +602,51 @@ class VueDataAc {
       case this._options.storeReqErr:
         break;
       case this._options.storeCodeErr:
+        let { msg, line, col, err } = data;
+        _Ac['acData'] = {
+          type: this._options.storeCodeErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          msg,
+          line,
+          col,
+          err
+        };
+        break;
+      case this._options.storeSourceErr:
+        let { tagName, outerHTML, resourceUri, currentSrc } = data;
+        _Ac['acData'] = {
+          type: this._options.storeSourceErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          fileName: currentSrc,
+          resourceUri,
+          tagName,
+          outerHTML,
+        };
+        break;
+      case this._options.storePrmseErr:
+        let { reason } = data;
+        _Ac['acData'] = {
+          type: this._options.storePrmseErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          reason: reason
+        };
         break;
       case this._options.storeCustom:
+        let { cusKey, cusVal } = data;
+        _Ac['acData'] = {
+          type: this._options.storeCustom,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          cusKey,
+          cusVal
+        };
         break;
       case this._options.storeTiming:
         break;
@@ -490,7 +655,7 @@ class VueDataAc {
     }
     this._acData.push(_Ac);
     if(this._options.openReducer){
-      if(this._options.sizeLimit && this._acData.length >= this._options.sizeLimit){
+      if(!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit){
         this.postAcData();
       }
     }else {
