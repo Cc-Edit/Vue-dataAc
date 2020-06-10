@@ -55,6 +55,7 @@
 ```
     {
         "uuid": "F6A6C801B7197603",             //用户标识
+        "t"   : "",                             //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
             "type"       :  "ACPAGE"            //行为标识
             "fromPath"   :  "/register?type=1"  //来源路由
@@ -72,6 +73,7 @@
 ```
  {
         "uuid": "F6A6C801B7197603",                 //用户标识
+        "t"   : "",                                 //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
              "type"    : "ACCERR",     		        //上报数据类型：代码异常
              "path"    : "www.domain.com/w/w/w/",   //事件发生页面的url
@@ -90,6 +92,7 @@
 ```
  {
         "uuid": "F6A6C801B7197603",                         //用户标识
+        "t"   : "",                                         //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
              "type"        : "ACSCERR",     		        //上报数据类型：资源加载异常
              "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
@@ -108,6 +111,7 @@
 ```
  {
         "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
             "type"        : "ACPRERR",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
@@ -129,8 +133,9 @@
 
  {
         "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"        : "ACCUSTOM",     		         //上报数据类型：资源加载异常
+            "type"        : "ACCUSTOM",     		     //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
             "sTme"        : "1591760073422",	         //事件发生时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
@@ -144,6 +149,7 @@
 ```
  {
         "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
             "type"          : "ACVUERR",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
@@ -164,9 +170,13 @@
     
 ## 方法：
 
-#### vue.$vueDataAc.setCustomAc(cusKey: string, cusVal: Any)
+#### vue.$vueDataAc.setCustomAc(cusKey: String, cusVal: Any)
     用于自定义事件的约定上报，例如在业务场景中对某些逻辑的埋点。
     自定义事件上报逻辑与其他事件上报共用，可以通过openReducer限制频率
     
 #### vue.$vueDataAc.postAcData()
     手动上报当前采集信息
+    
+#### vue.$vueDataAc.setUserToken(userToken: String)
+    用于关联用户后台标记，利用用户登录后的userid，sessionId
+    目的是将前后台日志打通，方便查找

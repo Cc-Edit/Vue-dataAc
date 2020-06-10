@@ -6,6 +6,7 @@ import {
   ac_util_isEmptyObject,
   ac_util_mergeOption,
   ac_util_checkOptions,
+  ac_util_getAllAttr,
   ac_util_getStorage,
   ac_util_setStorage,
   ac_util_getUuid,
@@ -35,6 +36,7 @@ export default class VueDataAc {
     this._acData = [];
     this._inputCacheData = []; //缓存输入框输入信息
     this._lastRouterStr = ''; //防止路由重复采集
+    this._userToken = ''; //关联后台token
     this._pageInTime = 0; //防止路由重复采集
     this._componentCount = 0; //保证所有组件渲染完成
     this._init();
@@ -150,10 +152,23 @@ export default class VueDataAc {
    *  初始化点击事件
    * */
   _initClickAc(){
-    document.addEventListener("click", function (e) {
+    document.addEventListener("click",  (e) => {
       let event = window.event || e;
       let target = event.srcElement ? event.srcElement : event.target;
-      console.log(target)
+      let className = e.className;
+      let {classTag} = this._options;
+      //主动埋点未命中
+      if(!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0){
+        return;
+      }
+      let attrs = ac_util_getAllAttr(target);
+
+      this._setAcData(this._options.storeClick, {
+        eId: e.id,
+        className: e.className,
+        val: (e.value || e.innerText).substr(0, 20),
+        attrs
+      })
     });
   }
 
@@ -285,54 +300,13 @@ export default class VueDataAc {
   }
 
   /**
-   * 自定义数据上报
-   * */
-  setCustomAc(data){
-    let { cusKey = 'custom', cusVal = ''} = data;
-    this._setAcData(this._options.storeCustom, {
-      cusKey,
-      cusVal
-    })
-  }
-
-  /**
-   *  数据上报, 可以根据实际场景进行上报优化：
-   *  默认当事件触发就会自动上报，频率为一个事件1次上报
-   *  如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
-   * */
-  postAcData(){
-    if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
-      return;
-    }
-
-    let reqData = JSON.stringify(this._acData);
-
-    if(this._options.useImgSend){
-      //图片上报
-      new Image().src = `${this._options.imageUrl}?acError=${reqData}`;
-    }else{
-      //接口上报
-      ac_util_ajax({
-        type: "POST",
-        dataType: "json",
-        contentType: "application/json",
-        data: reqData,
-        url: this._options.postUrl
-      });
-    }
-    /**
-     * 上报完成，清空数据
-     * */
-    this._acData = [];
-  }
-
-  /**
    * 数据采集存储, 包含数据格式化
    * options，当前采集的对象
    * */
   _setAcData(options, data) {
     let _Ac = {
-      uuid: this._uuid
+      uuid: this._uuid,
+      t: this._userToken
     }
     switch (options) {
       case this._options.storeInput:
@@ -359,7 +333,19 @@ export default class VueDataAc {
         }
         break;
       case this._options.storeClick:
-        {}
+        {
+          let { eId, className, val, attrs} = data;
+          _Ac['acData'] = {
+            type: this._options.storeVueErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            eId,
+            className,
+            val,
+            attrs
+          };
+        }
         break;
       case this._options.storeReqErr:
         {}
@@ -368,7 +354,7 @@ export default class VueDataAc {
         {
           let { componentName, fileName, propsData, info, msg, stack } = data;
           _Ac['acData'] = {
-            type: this._options.storeCodeErr,
+            type: this._options.storeVueErr,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
@@ -464,6 +450,54 @@ export default class VueDataAc {
         this.postAcData();
       }
     }
+  }
+
+  /**
+   * 自定义数据上报
+   * */
+  setCustomAc(data){
+    let { cusKey = 'custom', cusVal = ''} = data;
+    this._setAcData(this._options.storeCustom, {
+      cusKey,
+      cusVal
+    })
+  }
+
+  /**
+   *  数据上报, 可以根据实际场景进行上报优化：
+   *  默认当事件触发就会自动上报，频率为一个事件1次上报
+   *  如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
+   * */
+  postAcData(){
+    if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
+      return;
+    }
+
+    let reqData = JSON.stringify(this._acData);
+
+    if(this._options.useImgSend){
+      //图片上报
+      new Image().src = `${this._options.imageUrl}?acError=${reqData}`;
+    }else{
+      //接口上报
+      ac_util_ajax({
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data: reqData,
+        url: this._options.postUrl
+      });
+    }
+    /**
+     * 上报完成，清空数据
+     * */
+    this._acData = [];
+  }
+  /**
+   * 关联后台session
+   * */
+  setUserToken(value){
+    this._userToken = value;
   }
 }
 

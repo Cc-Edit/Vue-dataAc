@@ -15,6 +15,20 @@ export function ac_util_isEmptyObject ( obj ) {
   return true;
 }
 /**
+ * 获取元素所有属性
+ * */
+export function ac_util_getAllAttr( elem ) {
+  let len = (elem.attributes ? elem.attributes.length : 0);
+  let obj = {};
+  if(len > 0){
+    for(let i = 0; i < len; i++){
+      let attr = elem.attributes[i];
+      obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
+    }
+  }
+  return obj;
+}
+/**
  * 判断是否定义
  * @param v 变量
  * */
