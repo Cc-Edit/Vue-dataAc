@@ -40,18 +40,18 @@
 ### 页面访问，路由跳转，等同于PV/UV数据：
     
 ```
-{
-    "uuid": "F6A6C801B7197603",             //用户标识
-    "acData" : {
-        "type"       :  "ACPAGE"            //行为标识
-        "fromPath"   :  "/register?type=1"  //来源路由
-        "formParams" :  "{'type': 1}"       //来源参数
-        "toPath"     :  "/login"            //目标路由
-        "toParams"   :  "{}"                //目标参数
-        "sTme"   :  "19802020000"           //页面进入时间
-        "eTme"   :  "19802026000"           //离开页面时间
+    {
+        "uuid": "F6A6C801B7197603",             //用户标识
+        "acData" : {
+            "type"       :  "ACPAGE"            //行为标识
+            "fromPath"   :  "/register?type=1"  //来源路由
+            "formParams" :  "{'type': 1}"       //来源参数
+            "toPath"     :  "/login"            //目标路由
+            "toParams"   :  "{}"                //目标参数
+            "sTme"   :  "19802020000"           //页面进入时间
+            "eTme"   :  "19802026000"           //离开页面时间
+        }
     }
-}
 ```
     
 ## 错误代码：
