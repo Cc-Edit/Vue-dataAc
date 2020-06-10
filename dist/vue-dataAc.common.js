@@ -316,7 +316,7 @@ var BASEOPTIONS = {
    *  因为点击事件存在事件冒泡，我们会把父元素也采集到此次事件中，以保证精准定位，
    *  可以通过 acbLength 控制冒泡层级
    * */
-  classTag     : 'isjs-ac',   //主动埋点标识, 自动埋点时请配置空字符串
+  classTag     : '',      //主动埋点标识, 自动埋点时请配置空字符串
   acbLength    : 2,           //点击元素采集层数，自动埋点时会向上层查找，该选项可以配置查找层数
 
   /**
@@ -681,7 +681,7 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
           var val = data.val;
           var attrs = data.attrs;
         _Ac['acData'] = {
-          type: this._options.storeVueErr,
+          type: this._options.storeClick,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
           ua: navigator.userAgent,

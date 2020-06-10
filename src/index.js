@@ -336,7 +336,7 @@ export default class VueDataAc {
         {
           let { eId, className, val, attrs} = data;
           _Ac['acData'] = {
-            type: this._options.storeVueErr,
+            type: this._options.storeClick,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
