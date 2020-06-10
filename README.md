@@ -28,6 +28,15 @@
     - [x] 访问时间  
     - [x] 访问间隔  
     
+- [ ] 开关  
+    - [x] openPage 页面访问信息采集开关  
+    - [ ] openInput 是否开启输入数据采集     
+    - [ ] openCodeErr 是否开启代码异常采集     
+    - [ ] openClick 是否开启点击数据采集     
+    - [ ] openXhrData 是否采集接口异常时的参数params     
+    - [ ] openXhrHock 是否开启xhr异常采集     
+    - [ ] openPerformance 是否开启页面性能采集     
+    
 - [ ] npm自动发布  
 - [ ] demo  
 - [ ] 热点图  

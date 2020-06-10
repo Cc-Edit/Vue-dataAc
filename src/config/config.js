@@ -25,7 +25,7 @@ export const BASEOPTIONS = {
   openCodeErr  : true,        //是否开启代码异常采集
   openClick    : true,        //是否开启点击数据采集
   openXhrData  : true,        //是否采集接口异常时的参数params
-  openXhrHock  : true,        //自动检测是否开启xhr异常采集
+  openXhrHock  : true,        //是否开启xhr异常采集
   openPerformance : true,     //是否开启页面性能采集
   openPage     : true,        //是否开启页面访问信息采集 (2.0新增）
 

@@ -15,7 +15,7 @@ function install (Vue, options, VueDataAc) {
   Vue.mixin({
     watch:{
       $route: function $route(to, from) {
-        this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
+        this.$vueDataAc && this.$vueDataAc.openPage && this.$vueDataAc._mixinRouterWatch(to, from);
       }
     },
     /**
