@@ -13,7 +13,7 @@ import {
   ac_util_getTime,
   ac_util_ajax,
   ac_util_warn
-} from './util/index'
+} from './util/util'
 
 export default class VueDataAc {
 
