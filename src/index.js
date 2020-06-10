@@ -40,6 +40,14 @@ export default class VueDataAc {
    * 页面初始化
    * */
   _init(){
+    /**
+     * 异常监控初始化
+     * */
+    if(this._options.openCodeErr){
+      this._initCodeErrAc();
+    }
+
+
     if(this._options.openXhrData){
       this._initXhrErrAc();
     }
@@ -48,9 +56,7 @@ export default class VueDataAc {
       this._initPerformance();
     }
 
-    if(this._options.openCodeErr){
-      this._initCodeErrAc();
-    }
+
 
     if(this._options.openInput){
       this._initInputAc();
@@ -60,9 +66,6 @@ export default class VueDataAc {
       this._initClickAc();
     }
 
-    if(this._options.openPage){
-      this._initPageAc();
-    }
   }
   
   /**
@@ -83,8 +86,45 @@ export default class VueDataAc {
   /**
    *  初始化代码异常监控
    * */
-  _initCodeErrAc(){}
+  _initCodeErrAc(){
+    window.onerror = (msg, url, line, col, err) => {
+      //屏蔽跨域脚本异常， 建议跨域脚本增加 crossorigin
+      if (ac_util_isNullOrEmpty(url) && msg === "Script error.") {
+        return false;
+      }
 
+      let codeErrData = {
+        msg: msg,
+        line: line,
+        col: col
+      };
+      codeErrData.col = col || (window.event && window.event.errorCharacter) || 0;
+
+      //屏蔽关闭网页时的Network Error
+      setTimeout(() => {
+        if (!!err && !!err.stack) {
+          //可以直接使用堆栈信息
+          codeErrData.err = err.stack.toString();
+        } else if (!!arguments.callee) {
+          //尝试通过callee获取异常堆栈
+          let errmsg = [];
+          let f = arguments.callee.caller, c = 3;//防止堆栈信息过大
+          while (f && (--c > 0)) {
+            errmsg.push(f.toString());
+            if (f === f.caller) {
+              break;
+            }
+            f = f.caller;
+          }
+          errmsg = errmsg.join(",");
+          codeErrData.err = errmsg;
+        } else {
+          codeErrData.err = "script err";
+        }
+        this._setAcData(this._options.storeCodeErr, codeErrData)
+      }, 0)
+    }
+  }
   /**
    *  初始化输入事件监听
    * */
@@ -200,6 +240,17 @@ export default class VueDataAc {
       case this._options.storeReqErr:
         break;
       case this._options.storeCodeErr:
+        let { msg, line, col, err} = data;
+        _Ac['acData'] = {
+          type: this._options.storeCodeErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          msg,
+          line,
+          col,
+          err
+        };
         break;
       case this._options.storeCustom:
         break;
