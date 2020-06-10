@@ -247,7 +247,7 @@ function install (Vue, options, VueDataAc) {
  * 全局配置
  * */
 var BASEOPTIONS = {
-  storeVer     : '2.0.0',     //Vue 版本dataAc
+  storeVer     : '2.0.1',  //Vue 版本dataAc
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
