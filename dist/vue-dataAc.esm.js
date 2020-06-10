@@ -19,6 +19,20 @@ function ac_util_isEmptyObject ( obj ) {
   return true;
 }
 /**
+ * 获取元素所有属性
+ * */
+function ac_util_getAllAttr( elem ) {
+  var len = (elem.attributes ? elem.attributes.length : 0);
+  var obj = {};
+  if(len > 0){
+    for(var i = 0; i < len; i++){
+      var attr = elem.attributes[i];
+      obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
+    }
+  }
+  return obj;
+}
+/**
  * 判断是否定义
  * @param v 变量
  * */
@@ -336,6 +350,7 @@ var VueDataAc = function VueDataAc (options, Vue) {
   this._acData = [];
   this._inputCacheData = []; //缓存输入框输入信息
   this._lastRouterStr = ''; //防止路由重复采集
+  this._userToken = ''; //关联后台token
   this._pageInTime = 0; //防止路由重复采集
   this._componentCount = 0; //保证所有组件渲染完成
   this._init();
@@ -456,10 +471,26 @@ VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from){
  *初始化点击事件
  * */
 VueDataAc.prototype._initClickAc = function _initClickAc (){
-  document.addEventListener("click", function (e) {
+    var this$1 = this;
+
+  document.addEventListener("click",function (e) {
     var event = window.event || e;
     var target = event.srcElement ? event.srcElement : event.target;
-    console.log(target);
+    var className = e.className;
+    var ref = this$1._options;
+      var classTag = ref.classTag;
+    //主动埋点未命中
+    if(!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0){
+      return;
+    }
+    var attrs = ac_util_getAllAttr(target);
+
+    this$1._setAcData(this$1._options.storeClick, {
+      eId: e.id,
+      className: e.className,
+      val: (e.value || e.innerText).substr(0, 20),
+      attrs: attrs
+    });
   });
 };
 
@@ -607,49 +638,6 @@ VueDataAc.prototype._initPromiseErrAc = function _initPromiseErrAc (){
 };
 
 /**
- * 自定义数据上报
- * */
-VueDataAc.prototype.setCustomAc = function setCustomAc (data){
-  var cusKey = data.cusKey; if ( cusKey === void 0 ) cusKey = 'custom';
-    var cusVal = data.cusVal; if ( cusVal === void 0 ) cusVal = '';
-  this._setAcData(this._options.storeCustom, {
-    cusKey: cusKey,
-    cusVal: cusVal
-  });
-};
-
-/**
- *数据上报, 可以根据实际场景进行上报优化：
- *默认当事件触发就会自动上报，频率为一个事件1次上报
- *如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
- * */
-VueDataAc.prototype.postAcData = function postAcData (){
-  if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
-    return;
-  }
-
-  var reqData = JSON.stringify(this._acData);
-
-  if(this._options.useImgSend){
-    //图片上报
-    new Image().src = (this._options.imageUrl) + "?acError=" + reqData;
-  }else {
-    //接口上报
-    ac_util_ajax({
-      type: "POST",
-      dataType: "json",
-      contentType: "application/json",
-      data: reqData,
-      url: this._options.postUrl
-    });
-  }
-  /**
-   * 上报完成，清空数据
-   * */
-  this._acData = [];
-};
-
-/**
  * 数据采集存储, 包含数据格式化
  * options，当前采集的对象
  * */
@@ -657,7 +645,8 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
     var this$1 = this;
 
   var _Ac = {
-    uuid: this._uuid
+    uuid: this._uuid,
+    t: this._userToken
   };
   switch (options) {
     case this._options.storeInput:
@@ -684,6 +673,22 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
       }
       break;
     case this._options.storeClick:
+      {
+        var eId = data.eId;
+          var className = data.className;
+          var val = data.val;
+          var attrs = data.attrs;
+        _Ac['acData'] = {
+          type: this._options.storeVueErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          eId: eId,
+          className: className,
+          val: val,
+          attrs: attrs
+        };
+      }
       break;
     case this._options.storeReqErr:
       break;
@@ -696,7 +701,7 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
           var msg = data.msg;
           var stack = data.stack;
         _Ac['acData'] = {
-          type: this._options.storeCodeErr,
+          type: this._options.storeVueErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
           ua: navigator.userAgent,
@@ -796,6 +801,55 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
       this.postAcData();
     }
   }
+};
+
+/**
+ * 自定义数据上报
+ * */
+VueDataAc.prototype.setCustomAc = function setCustomAc (data){
+  var cusKey = data.cusKey; if ( cusKey === void 0 ) cusKey = 'custom';
+    var cusVal = data.cusVal; if ( cusVal === void 0 ) cusVal = '';
+  this._setAcData(this._options.storeCustom, {
+    cusKey: cusKey,
+    cusVal: cusVal
+  });
+};
+
+/**
+ *数据上报, 可以根据实际场景进行上报优化：
+ *默认当事件触发就会自动上报，频率为一个事件1次上报
+ *如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
+ * */
+VueDataAc.prototype.postAcData = function postAcData (){
+  if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
+    return;
+  }
+
+  var reqData = JSON.stringify(this._acData);
+
+  if(this._options.useImgSend){
+    //图片上报
+    new Image().src = (this._options.imageUrl) + "?acError=" + reqData;
+  }else {
+    //接口上报
+    ac_util_ajax({
+      type: "POST",
+      dataType: "json",
+      contentType: "application/json",
+      data: reqData,
+      url: this._options.postUrl
+    });
+  }
+  /**
+   * 上报完成，清空数据
+   * */
+  this._acData = [];
+};
+/**
+ * 关联后台session
+ * */
+VueDataAc.prototype.setUserToken = function setUserToken (value){
+  this._userToken = value;
 };
 
 VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
