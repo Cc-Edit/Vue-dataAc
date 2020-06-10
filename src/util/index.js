@@ -197,3 +197,20 @@ export function ac_util_ajax (options = {} ) {
     }
   }
 }
+/**
+ *  格式化Vue异常
+ *
+ * */
+export function  ac_util_formatVueErrStack(error) {
+  const msg = error.toString();
+  let stack = error.stack
+    .replace(/\n/gi, "") // 去掉换行
+    .replace(/\bat\b/gi, "@")
+    .replace(/\?[^:]+/gi, "")
+    .replace(/^\s*|\s*$/g, "")
+    .split("@") // 以@分割信息
+    .slice(0, 5) //只取5条
+    .join("&&");
+  if (stack.indexOf(msg) < 0)  stack = msg + "@" + stack;
+  return stack;
+}

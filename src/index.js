@@ -1,6 +1,7 @@
 import { install } from './install'
 import { BASEOPTIONS } from './config/config'
 import {
+  ac_util_formatVueErrStack,
   ac_util_isNullOrEmpty,
   ac_util_isEmptyObject,
   ac_util_mergeOption,
@@ -40,6 +41,13 @@ export default class VueDataAc {
    * 页面初始化
    * */
   _init(){
+    /**
+     * 异常监控初始化
+     * */
+    if(this._options.openVueErr){
+      this._initVueErrAc();
+    }
+
     /**
      * 异常监控初始化
      * */
@@ -96,7 +104,30 @@ export default class VueDataAc {
    *  初始化页面性能
    * */
   _initPerformance(){}
+  /**
+   *  初始化Vue异常监控
+   * */
+  _initVueErrAc(){
+    this._vue_ && this._vue_.config && this._vue_.config.errorHandler = (error = {}, vm, info) => {
+      const componentName = vm._isVue
+                            ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
+                              : vm.name;
+      const fileName = (vm._isVue && vm.$options && vm.$options.__file)
+                        ? (vm.$options && vm.$options.__file)
+                        : "";
+      const propsData = vm.$options && vm.$options.propsData;
 
+
+      this._setAcData(this._options.storeVueErr, {
+        componentName,
+        fileName,
+        propsData,
+        info,
+        msg: error.message || '',
+        stack: ac_util_formatVueErrStack(error),
+      })
+    };
+  }
   /**
    *  初始化代码异常监控
    * */
@@ -314,6 +345,21 @@ export default class VueDataAc {
         break;
       case this._options.storeReqErr:
         break;
+      case this._options.storeVueErr:
+        let { componentName, fileName, propsData, info, msg, stack } = data;
+        _Ac['acData'] = {
+          type: this._options.storeCodeErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          componentName,
+          fileName,
+          propsData,
+          info,
+          msg,
+          err: stack
+        };
+        break;
       case this._options.storeCodeErr:
         let { msg, line, col, err } = data;
         _Ac['acData'] = {
@@ -369,10 +415,22 @@ export default class VueDataAc {
     this._acData.push(_Ac);
     if(this._options.openReducer){
       if(!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit){
-        this.postAcData();
+        if(this._vue_ && this._vue_.$nextTick){
+          this._vue_.$nextTick(() => {
+            this.postAcData();
+          })
+        }else{
+          this.postAcData();
+        }
       }
     }else{
-      this.postAcData();
+      if(this._vue_ && this._vue_.$nextTick){
+        this._vue_.$nextTick(() => {
+          this.postAcData();
+        })
+      }else{
+        this.postAcData();
+      }
     }
   }
 }

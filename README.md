@@ -3,11 +3,11 @@
 
 ## TODO:
 
-- [ ] 异常监听  
+- [x] 异常监听  
     - [x] 代码异常  
-    - [ ] 资源加载异常  
-    - [ ] promise异常  
-    - [ ] Vue异常  
+    - [x] 资源加载异常  
+    - [x] promise异常  
+    - [x] Vue异常  
     
 - [ ] 用户行为监控  
     - [ ] 点击事件  
@@ -40,10 +40,8 @@
     - [ ] openXhrHock 是否开启xhr异常采集     
     - [ ] openPerformance 是否开启页面性能采集     
     
-- [ ] npm自动发布  
+- [x] npm自动发布  
 - [ ] demo  
-- [ ] 热点图  
-- [ ] 圈选  
 
     
     
@@ -138,7 +136,25 @@
          }
 }
 ```
- 
+### 6. Vue异常监控
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "acData" : {
+            "type"          : "ACSCERR",     		     //上报数据类型：资源加载异常
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件发生时间
+            "ua"            : "ios/chrome 44.44"         //浏览器信息 
+            "componentName" : "Button"                   //组件名
+            "fileName"      : "button.js"                //组件文件
+            "propsData"     : "{}"                       //组件props
+            "err"           : "..."                      //错误堆栈
+            "info"          : "信息"                      //错误信息
+            "msg"           : "1"                        //异常摘要
+         }
+}
+```
 
 ## 错误代码：
     0x00000001  没有找到对应的时间类型，用户新增加了事件类型，没有在setAcData中添加
