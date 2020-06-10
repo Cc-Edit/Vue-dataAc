@@ -409,7 +409,7 @@ class VueDataAc {
    * */
   _mixinMounted(VueRoot){
     let {acRange, selector} = this._options;
-    const _ACIDoms = document.querySelector(selector);
+    let _ACIDoms = document.querySelectorAll(selector);
     for (let i = 0, len = _ACIDoms.length; i < len; i++) {
       let selector = _ACIDoms[i];
       if (selector.type && acRange.indexOf(selector.type.toLowerCase()) > -1) {

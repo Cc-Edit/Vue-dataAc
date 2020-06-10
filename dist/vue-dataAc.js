@@ -419,7 +419,7 @@
     var ref = this._options;
       var acRange = ref.acRange;
       var selector = ref.selector;
-    var _ACIDoms = document.querySelector(selector);
+    var _ACIDoms = document.querySelectorAll(selector);
     for (var i = 0, len = _ACIDoms.length; i < len; i++) {
       var selector$1 = _ACIDoms[i];
       if (selector$1.type && acRange.indexOf(selector$1.type.toLowerCase()) > -1) {
