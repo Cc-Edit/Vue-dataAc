@@ -15,6 +15,7 @@ export const BASEOPTIONS = {
   storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
   storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）
   storePrmseErr  : "ACPRERR",    //promise抛出异常 (2.0新增）
+  storeCompErr   : "ACCOMP",     //Vue组件性能监控 (2.0新增）
 
   /**
    *  全局开关，用来修改采集内容
@@ -32,7 +33,7 @@ export const BASEOPTIONS = {
   openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
   openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
   openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
-  openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
+  openComponent   : true,     //是否开启组件性能采集 (2.0新增）
 
   /**
    * 输入行为采集相关配置，通过以下配置修改要监控的输入框,

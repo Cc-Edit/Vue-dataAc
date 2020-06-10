@@ -47,6 +47,20 @@ export default class VueDataAc {
       this._initCodeErrAc();
     }
 
+    /**
+     * 资源监控初始化
+     * */
+    if(this._options.openSourceErr){
+      this._initSourceErrAc();
+    }
+
+    /**
+     * Promise监控初始化
+     * */
+    if(this._options.openPromiseErr){
+      this._initPromiseErrAc();
+    }
+
 
     if(this._options.openXhrData){
       this._initXhrErrAc();
@@ -169,7 +183,11 @@ export default class VueDataAc {
    * */
   _initPromiseErrAc(){
     window.addEventListener('unhandledrejection', (event) => {
-
+      this._setAcData(this._options.storePrmseErr, {
+        reason: event.reason || "unknown",
+      })
+      // 如果想要阻止继续抛出，即会在控制台显示 `Uncaught(in promise) Error` 的话，调用以下函数
+      event.preventDefault();
     });
   }
 
@@ -288,7 +306,7 @@ export default class VueDataAc {
       case this._options.storeReqErr:
         break;
       case this._options.storeCodeErr:
-        let { msg, line, col, err} = data;
+        let { msg, line, col, err } = data;
         _Ac['acData'] = {
           type: this._options.storeCodeErr,
           path: window.location.href,
@@ -301,7 +319,7 @@ export default class VueDataAc {
         };
         break;
       case this._options.storeSourceErr:
-        let { tagName, outerHTML, resourceUri, currentSrc} = data;
+        let { tagName, outerHTML, resourceUri, currentSrc } = data;
         _Ac['acData'] = {
           type: this._options.storeSourceErr,
           path: window.location.href,
@@ -311,6 +329,16 @@ export default class VueDataAc {
           resourceUri,
           tagName,
           outerHTML,
+        };
+        break;
+      case this._options.storePrmseErr:
+        let { reason } = data;
+        _Ac['acData'] = {
+          type: this._options.storePrmseErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          reason: reason
         };
         break;
       case this._options.storeCustom:

@@ -30,8 +30,11 @@
     
 - [ ] 开关  
     - [x] openPage 页面访问信息采集开关  
+    - [x] openSourceErr 资源加载异常采集  
+    - [x] openPromiseErr promise异常采集  
+    - [x] openCodeErr 是否开启代码异常采集 
+    - [ ] openComponent 组件性能采集     
     - [ ] openInput 是否开启输入数据采集     
-    - [x] openCodeErr 是否开启代码异常采集     
     - [ ] openClick 是否开启点击数据采集     
     - [ ] openXhrData 是否采集接口异常时的参数params     
     - [ ] openXhrHock 是否开启xhr异常采集     
@@ -85,7 +88,7 @@
 
 ```
  {
-        "uuid": "F6A6C801B7197603",                 //用户标识
+        "uuid": "F6A6C801B7197603",                         //用户标识
         "acData" : {
              "type"        : "ACSCERR",     		        //上报数据类型：资源加载异常
              "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
@@ -95,6 +98,21 @@
              "tagName"     : "script",  		            //标签类型
              "outerHTML"   : "<script ...>",                //标签内容
              "ua"          : "ios/chrome 44.44"             //浏览器信息
+         }
+}
+```
+
+### 4. Promise 异常数据
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "acData" : {
+            "type"        : "ACSCERR",     		         //上报数据类型：资源加载异常
+            "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
+            "sTme"        : "1591760073422",	         //事件发生时间
+            "ua"          : "ios/chrome 44.44"           //浏览器信息 
+            "reason"      : "reason"                     //异常说明
          }
 }
 ```
