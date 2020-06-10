@@ -142,7 +142,7 @@ export default class VueDataAc {
   /**
    *  混入vue watch 用来监控路由变化
    * */
-  _mixinRouterWatch(){
+  _mixinRouterWatch(to = {}, from = {}){
     let toPath = to.fullPath || to.path || to.name;
     let toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
     let fromPath = from.fullPath || from.path || from.name;

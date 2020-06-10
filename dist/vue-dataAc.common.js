@@ -13,11 +13,11 @@
 function install (Vue, options, VueDataAc) {
   if (install.installed) { return }
   install.installed = true;
+
   Vue.mixin({
     watch:{
       $route: function $route(to, from) {
-        console.log(to, from);
-        debugger
+        this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
       }
     },
     /**
@@ -41,7 +41,7 @@ function install (Vue, options, VueDataAc) {
     }
   });
 
-  Vue.prototype.$vueDataAc = new VueDataAc(options);
+  Vue.prototype.$vueDataAc = new VueDataAc(options, Vue);
 }
 
 /**
@@ -58,6 +58,8 @@ var BASEOPTIONS = {
   storeReqErr  : "ACRERR",    //请求异常采集标识
   storeTiming  : "ACTIME",    //页面时间采集标识
   storeCodeErr : "ACCERR",    //代码异常采集标识
+  storeCustom  : "ACCUSTOM",  //自定义事件采集标识 (2.0新增）
+
   /**
    *  全局开关，用来修改采集内容
    * */
@@ -123,11 +125,6 @@ function ac_util_isEmptyObject ( obj ) {
   return true;
 }
 /**
- * 判断是否浏览器
- * */
-var ac_util_inBrowser = typeof window !== 'undefined';
-
-/**
  * 判断是否定义
  * @param v 变量
  * */
@@ -183,6 +180,17 @@ function ac_util_getUuid (len, radix) {
   var uuid = [], i;
   for (i = 0; i < len; i++) { uuid[i] = chars[0 | Math.random() * radix]; }
   return uuid.join('');
+}
+
+/**
+ * 获取时间戳
+ * */
+function ac_util_getTime () {
+  var date = new Date();
+  return {
+    timeStr: ((date.getFullYear()) + "/" + (date.getMonth() + 1) + "/" + (date.getDate()) + " " + (date.getHours()) + ":" + (date.getMinutes()) + ":" + (date.getSeconds())),
+    timeStamp: date.getTime()
+  }
 }
 
 /**
@@ -292,20 +300,24 @@ function ac_util_ajax (options ) {
   }
 }
 
-var VueDataAc = function VueDataAc (options) {
+var VueDataAc = function VueDataAc (options, Vue) {
   if ( options === void 0 ) options = {};
+  if ( Vue === void 0 ) Vue = {};
 
   var newOptions = ac_util_mergeOption(options, BASEOPTIONS);
   ac_util_checkOptions(newOptions);
   this._options = newOptions;
+  this._vue_ = Vue;
 
-  this._uuid = ac_util_getStorage(this._options, this._options.userSha, this._options);
+  this._uuid = ac_util_getStorage(this._options, this._options.userSha);
   if(ac_util_isNullOrEmpty(this._uuid)){
     this._uuid = ac_util_getUuid();
     ac_util_setStorage(this._options, this._options.userSha, this._uuid);
   }
 
   this._acData = [];
+  this._lastRouterStr = ''; //防止路由重复采集
+  this._pageInTime = 0; //防止路由重复采集
   this._init();
 };
 /**
@@ -377,7 +389,7 @@ VueDataAc.prototype.postAcData = function postAcData (){
     return;
   }
 
-  var reqData = JSON.stringify({uuid: this._uuid, acData: this._acData});
+  var reqData = JSON.stringify(this._acData);
 
   if(this._options.useImgSend){
     //图片上报
@@ -414,18 +426,89 @@ VueDataAc.prototype._mixinDestroyed = function _mixinDestroyed (){};
 /**
  *混入vue watch 用来监控路由变化
  * */
-VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (){
+VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from){
+    if ( to === void 0 ) to = {};
+    if ( from === void 0 ) from = {};
 
+  var toPath = to.fullPath || to.path || to.name;
+  var toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
+  var fromPath = from.fullPath || from.path || from.name;
+  var formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
+  if(this._lastRouterStr === (toPath + "-" + (JSON.stringify(toParams)))){
+    return
+  }
+
+  if(!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)){
+    this._lastRouterStr = toPath + "-" + (JSON.stringify(toParams));
+    this._setAcData(this._options.storePage, {
+      toPath: toPath,
+      toParams: toParams,
+      fromPath: fromPath,
+      formParams: formParams
+    });
+  }
+};
+/**
+ *上报
+ * */
+VueDataAc.prototype._report = function _report (acData){
+
+};
+/**
+ * 数据采集存储, 包含数据格式化
+ * options，当前采集的对象
+ * */
+VueDataAc.prototype._setAcData = function _setAcData (options, data) {
+  var _Ac = {
+    uuid: this._uuid
+  };
+  switch (options) {
+    case this._options.storeInput:
+      break;
+
+    case this._options.storePage:
+      var toPath = data.toPath;
+    var toParams = data.toParams;
+    var fromPath = data.fromPath;
+    var formParams = data.formParams;
+      var pageInTime = this._pageInTime;
+      var nowTime = ac_util_getTime().timeStamp;
+      this._pageInTime = nowTime;
+
+      _Ac['acData'] = {
+        type: this._options.storePage,
+        fromPath: fromPath,
+        formParams: formParams,
+        toPath: toPath,
+        toParams: toParams,
+        sTme: pageInTime,
+        eTme: nowTime
+      };
+      break;
+    case this._options.storeClick:
+      break;
+    case this._options.storeReqErr:
+      break;
+    case this._options.storeCodeErr:
+      break;
+    case this._options.storeCustom:
+      break;
+    case this._options.storeTiming:
+      break;
+    default:
+      ac_util_warn("--------系统错误：0x00000001------");
+  }
+  this._acData.push(_Ac);
+  if(this._options.openReducer){
+    if(this._options.sizeLimit && this._acData.length >= this._options.sizeLimit){
+      this.postAcData();
+    }
+  }else {
+    this.postAcData();
+  }
 };
 
 VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
 VueDataAc.version = '2.0.0';
-
-/**
- *  自动挂载
- * */
-if (ac_util_inBrowser && window.Vue) {
-  window.Vue.use(VueDataAc);
-}
 
 module.exports = VueDataAc;
