@@ -14,14 +14,16 @@ function install (Vue, options, VueDataAc) {
   Vue.mixin({
     watch:{
       $route(to, from) {
-
+        console.log(to, from);
+        debugger
       }
     },
     /**
      *  在组件初始化同时，进行页面访问的采集
      * */
     beforeCreate () {
-
+      console.log(this);
+      debugger
     },
     /**
      * 在组件移除同时，进行数据上报（可配置）

@@ -20,14 +20,16 @@
     Vue.mixin({
       watch:{
         $route: function $route(to, from) {
-
+          console.log(to, from);
+          debugger
         }
       },
       /**
        *  在组件初始化同时，进行页面访问的采集
        * */
       beforeCreate: function beforeCreate () {
-
+        console.log(this);
+        debugger
       },
       /**
        * 在组件移除同时，进行数据上报（可配置）

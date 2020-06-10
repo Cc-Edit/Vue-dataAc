@@ -15,11 +15,6 @@ export function ac_util_isEmptyObject ( obj ) {
   return true;
 }
 /**
- * 判断是否浏览器
- * */
-export const ac_util_inBrowser = typeof window !== 'undefined'
-
-/**
  * 判断是否定义
  * @param v 变量
  * */

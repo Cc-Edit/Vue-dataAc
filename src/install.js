@@ -1,5 +1,4 @@
 // import { ac_util_isNullOrEmpty, isDef } from './util/index'
-import VueDataAc from "./index";
 
 /**
  * 暴露插件接口
@@ -7,17 +6,19 @@ import VueDataAc from "./index";
 export function install (Vue, options, VueDataAc) {
   if (install.installed) return
   install.installed = true
+
   Vue.mixin({
     watch:{
       $route(to, from) {
-
+        this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
       }
     },
     /**
      *  在组件初始化同时，进行页面访问的采集
      * */
     beforeCreate () {
-
+      console.log(this)
+      debugger
     },
     /**
      * 在组件移除同时，进行数据上报（可配置）
@@ -33,5 +34,5 @@ export function install (Vue, options, VueDataAc) {
     }
   })
 
-  Vue.prototype.$vueDataAc = new VueDataAc(options);
+  Vue.prototype.$vueDataAc = new VueDataAc(options, Vue);
 }
