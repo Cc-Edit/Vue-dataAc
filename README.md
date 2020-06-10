@@ -106,7 +106,7 @@
  {
         "uuid": "F6A6C801B7197603",                      //用户标识
         "acData" : {
-            "type"        : "ACSCERR",     		         //上报数据类型：资源加载异常
+            "type"        : "ACPRERR",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
             "sTme"        : "1591760073422",	         //事件发生时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
@@ -127,7 +127,7 @@
  {
         "uuid": "F6A6C801B7197603",                      //用户标识
         "acData" : {
-            "type"        : "ACSCERR",     		         //上报数据类型：资源加载异常
+            "type"        : "ACCUSTOM",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
             "sTme"        : "1591760073422",	         //事件发生时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
@@ -142,7 +142,7 @@
  {
         "uuid": "F6A6C801B7197603",                      //用户标识
         "acData" : {
-            "type"          : "ACSCERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACVUERR",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件发生时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
