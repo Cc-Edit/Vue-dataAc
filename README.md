@@ -15,10 +15,10 @@
     - [ ] 自定义事件  
     - [x] 页面访问事件    
     
-- [ ] 数据上报  
+- [x] 数据上报  
     - [x] 图片上报  
     - [x] 接口上报  
-    - [ ] 手动上报  
+    - [x] 手动上报  
     
 - [ ] 页面性能上报  
     - [ ] performance  
@@ -116,7 +116,38 @@
          }
 }
 ```
+
+### 5. 自定义事件
+
+```
+  //自定义事件上报
+  vue.$vueDataAc.setCustomAc({
+    cusKey: "click-button-001",
+    cusVal: "1"
+  })  
+
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "acData" : {
+            "type"        : "ACSCERR",     		         //上报数据类型：资源加载异常
+            "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
+            "sTme"        : "1591760073422",	         //事件发生时间
+            "ua"          : "ios/chrome 44.44"           //浏览器信息 
+            "cusKey"      : "click-button-001"           //自定义事件key，用户定义
+            "cusVal"      ："1"                          //自定义事件值，用户定义
+         }
+}
+```
  
 
 ## 错误代码：
     0x00000001  没有找到对应的时间类型，用户新增加了事件类型，没有在setAcData中添加
+    
+## 方法：
+
+#### vue.$vueDataAc.setCustomAc(cusKey: string, cusVal: Any)
+    用于自定义事件的约定上报，例如在业务场景中对某些逻辑的埋点。
+    自定义事件上报逻辑与其他事件上报共用，可以通过openReducer限制频率
+    
+#### vue.$vueDataAc.postAcData()
+    手动上报当前采集信息

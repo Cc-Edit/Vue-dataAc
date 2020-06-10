@@ -64,7 +64,8 @@ export const BASEOPTIONS = {
   /**
    * 对上报频率的限制项 (2.0新增）
    * */
-  openReducer: false, //是否开启节流,用于限制上报频率
-  sizeLimit: 20,      //操作数据超过指定条目时自动上报
-  lazyReport: false  //开启懒惰上报，组件destroy时统一上报
+  openReducer: false,   //是否开启节流,用于限制上报频率
+  sizeLimit: 20,        //操作数据超过指定条目时自动上报
+  lifeReport: false,    //开启懒惰上报，组件destroy时统一上报
+  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
 }
