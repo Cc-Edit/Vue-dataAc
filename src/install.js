@@ -1,4 +1,4 @@
-// import { ac_util_isNullOrEmpty, isDef } from './util/index'
+import { ac_util_isDef } from './util/index'
 
 /**
  * 暴露插件接口
@@ -10,27 +10,22 @@ export function install (Vue, options, VueDataAc) {
   Vue.mixin({
     watch:{
       $route(to, from) {
+        /**
+         *  路由变化进行页面访问的采集
+         * */
         this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
       }
     },
     /**
-     *  在组件初始化同时，进行页面访问的采集
-     * */
-    beforeCreate () {
-      console.log(this)
-      debugger
-    },
-    /**
-     * 在组件移除同时，进行数据上报（可配置）
-     * */
-    destroyed () {
-
-    },
-    /**
      * 在组件渲染完成后，尝试进行事件劫持
+     * mounted 不会保证所有的子组件也都一起被挂载
+     * 所以使用 vm.$nextTick
      * */
     mounted () {
-
+      this.$vueDataAc._componentCount++;
+      this.$vueDataAc && this.$vueDataAc._options.openInput && this.$nextTick(function () {
+        --this.$vueDataAc._componentCount === 0 && this.$vueDataAc._mixinMounted(this);
+      });
     }
   })
 

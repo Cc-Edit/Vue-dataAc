@@ -33,8 +33,10 @@ export default class VueDataAc {
     }
 
     this._acData = [];
+    this._inputCacheData = []; //缓存输入框输入信息
     this._lastRouterStr = ''; //防止路由重复采集
     this._pageInTime = 0; //防止路由重复采集
+    this._componentCount = 0; //保证所有组件渲染完成
     this._init();
   }
   /**
@@ -69,6 +71,13 @@ export default class VueDataAc {
       this._initPromiseErrAc();
     }
 
+    /**
+     * 点击事件代理初始化
+     * */
+    if(this._options.openClick){
+      this._initClickAc();
+    }
+
 
     if(this._options.openXhrData){
       this._initXhrErrAc();
@@ -77,23 +86,76 @@ export default class VueDataAc {
     if(this._options.openPerformance){
       this._initPerformance();
     }
-
-
-
-    if(this._options.openInput){
-      this._initInputAc();
-    }
-
-    if(this._options.openClick){
-      this._initClickAc();
-    }
-
   }
-  
+
   /**
-   *  初始化页面访问监听
+   *  混入vue生命周期 Mounted
+   *  用来绑定全局代理事件，当根元素渲染完成后绑定
+   *  @param VueRoot 根元素
    * */
-  _initPageAc(){}
+  _mixinMounted(VueRoot){
+    let {acRange, selector} = this._options;
+    const _ACIDoms = document.querySelector(selector);
+    for (let i = 0, len = _ACIDoms.length; i < len; i++) {
+      let selector = _ACIDoms[i];
+      if (selector.type && acRange.indexOf(selector.type.toLowerCase()) > -1) {
+        /**
+         * 因为有弹窗类的组件中途添加，所以先移除，再添加
+         * 避免重复绑定
+         */
+        selector.removeEventListener("input", this._formatInputEvent);
+        selector.removeEventListener("blur", this._formatBlurEvent);
+
+        selector.addEventListener("input", this._formatInputEvent);
+        selector.addEventListener("blur", this._formatBlurEvent);
+      }
+    }
+  }
+  /**
+   * 输入事件
+   * */
+  _formatInputEvent(e){
+    console.log(e)
+  }
+  /**
+   * 失焦事件
+   * */
+  _formatBlurEvent(e){
+    console.log(e)
+  }
+  /**
+   *  混入vue watch 用来监控路由变化
+   * */
+  _mixinRouterWatch(to = {}, from = {}){
+    let toPath = to.fullPath || to.path || to.name;
+    let toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
+    let fromPath = from.fullPath || from.path || from.name;
+    let formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
+    if(this._lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`){
+      return
+    }
+
+    if(!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)){
+      this._lastRouterStr = `${toPath}-${JSON.stringify(toParams)}`;
+      this._setAcData(this._options.storePage, {
+        toPath,
+        toParams,
+        fromPath,
+        formParams
+      })
+    }
+  }
+
+  /**
+   *  初始化点击事件
+   * */
+  _initClickAc(){
+    document.addEventListener("click", function (e) {
+      let event = window.event || e;
+      let target = event.srcElement ? event.srcElement : event.target;
+      console.log(target)
+    });
+  }
 
   /**
    *  初始化请求劫持
@@ -108,7 +170,7 @@ export default class VueDataAc {
    *  初始化Vue异常监控
    * */
   _initVueErrAc(){
-    this._vue_ && this._vue_.config && this._vue_.config.errorHandler = (error = {}, vm, info) => {
+    this._vue_ && this._vue_.config && (this._vue_.config.errorHandler = (error = {}, vm, info) => {
       const componentName = vm._isVue
                             ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
                               : vm.name;
@@ -126,7 +188,7 @@ export default class VueDataAc {
         msg: error.message || '',
         stack: ac_util_formatVueErrStack(error),
       })
-    };
+    });
   }
   /**
    *  初始化代码异常监控
@@ -223,15 +285,6 @@ export default class VueDataAc {
   }
 
   /**
-   *  初始化输入事件监听
-   * */
-  _initInputAc(){}
-
-  /**
-   *  初始化点击事件监听
-   * */
-  _initClickAc(){}
-  /**
    * 自定义数据上报
    * */
   setCustomAc(data){
@@ -241,6 +294,7 @@ export default class VueDataAc {
       cusVal
     })
   }
+
   /**
    *  数据上报, 可以根据实际场景进行上报优化：
    *  默认当事件触发就会自动上报，频率为一个事件1次上报
@@ -271,48 +325,7 @@ export default class VueDataAc {
      * */
     this._acData = [];
   }
-  /**
-   *  混入vue生命周期 BeforeCreate
-   * */
-  _mixinBeforeCreate(){
 
-  }
-  /**
-   *  混入vue生命周期 Mounted
-   * */
-  _mixinMounted(){}
-  /**
-   *  混入vue生命周期 Destroyed
-   * */
-  _mixinDestroyed(){}
-  /**
-   *  混入vue watch 用来监控路由变化
-   * */
-  _mixinRouterWatch(to = {}, from = {}){
-    let toPath = to.fullPath || to.path || to.name;
-    let toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
-    let fromPath = from.fullPath || from.path || from.name;
-    let formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
-    if(this._lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`){
-      return
-    }
-
-    if(!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)){
-      this._lastRouterStr = `${toPath}-${JSON.stringify(toParams)}`;
-      this._setAcData(this._options.storePage, {
-        toPath,
-        toParams,
-        fromPath,
-        formParams
-      })
-    }
-  }
-  /**
-   *  上报
-   * */
-  _report(acData){
-
-  }
   /**
    * 数据采集存储, 包含数据格式化
    * options，当前采集的对象
@@ -323,91 +336,110 @@ export default class VueDataAc {
     }
     switch (options) {
       case this._options.storeInput:
+        {
+
+        }
         break;
-
       case this._options.storePage:
-        let { toPath, toParams, fromPath, formParams } = data;
-        let pageInTime = this._pageInTime;
-        let nowTime = ac_util_getTime().timeStamp;
-        this._pageInTime = nowTime;
+        {
+          let { toPath, toParams, fromPath, formParams } = data;
+          let pageInTime = this._pageInTime;
+          let nowTime = ac_util_getTime().timeStamp;
+          this._pageInTime = nowTime;
 
-        _Ac['acData'] = {
-          type: this._options.storePage,
-          fromPath: fromPath,
-          formParams: formParams,
-          toPath: toPath,
-          toParams: toParams,
-          sTme: pageInTime,
-          eTme: nowTime
-        };
+          _Ac['acData'] = {
+            type: this._options.storePage,
+            fromPath: fromPath,
+            formParams: formParams,
+            toPath: toPath,
+            toParams: toParams,
+            sTme: pageInTime,
+            eTme: nowTime
+          };
+        }
         break;
       case this._options.storeClick:
+        {}
         break;
       case this._options.storeReqErr:
+        {}
         break;
       case this._options.storeVueErr:
-        let { componentName, fileName, propsData, info, msg, stack } = data;
-        _Ac['acData'] = {
-          type: this._options.storeCodeErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          componentName,
-          fileName,
-          propsData,
-          info,
-          msg,
-          err: stack
-        };
+        {
+          let { componentName, fileName, propsData, info, msg, stack } = data;
+          _Ac['acData'] = {
+            type: this._options.storeCodeErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            componentName,
+            fileName,
+            propsData,
+            info,
+            msg,
+            err: stack
+          };
+        }
         break;
       case this._options.storeCodeErr:
-        let { msg, line, col, err } = data;
-        _Ac['acData'] = {
-          type: this._options.storeCodeErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          msg,
-          line,
-          col,
-          err
-        };
+        {
+          let { msg, line, col, err } = data;
+          _Ac['acData'] = {
+            type: this._options.storeCodeErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            msg,
+            line,
+            col,
+            err
+          };
+        }
         break;
       case this._options.storeSourceErr:
-        let { tagName, outerHTML, resourceUri, currentSrc } = data;
-        _Ac['acData'] = {
-          type: this._options.storeSourceErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          fileName: currentSrc,
-          resourceUri,
-          tagName,
-          outerHTML,
-        };
+        {
+          let { tagName, outerHTML, resourceUri, currentSrc } = data;
+          _Ac['acData'] = {
+            type: this._options.storeSourceErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            fileName: currentSrc,
+            resourceUri,
+            tagName,
+            outerHTML,
+          };
+        }
         break;
       case this._options.storePrmseErr:
-        let { reason } = data;
-        _Ac['acData'] = {
-          type: this._options.storePrmseErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          reason: reason
-        };
+        {
+          let { reason } = data;
+          _Ac['acData'] = {
+            type: this._options.storePrmseErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            reason: reason
+          };
+        }
         break;
       case this._options.storeCustom:
-        let { cusKey, cusVal } = data;
-        _Ac['acData'] = {
-          type: this._options.storeCustom,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          cusKey,
-          cusVal
-        };
+        {
+          let { cusKey, cusVal } = data;
+          _Ac['acData'] = {
+            type: this._options.storeCustom,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            cusKey,
+            cusVal
+          };
+        }
         break;
       case this._options.storeTiming:
+        {
+
+        }
         break;
       default:
         ac_util_warn(`--------系统错误：0x00000001------`)
