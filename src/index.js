@@ -98,6 +98,9 @@ export default class VueDataAc {
   _mixinMounted(VueRoot){
     let {acRange, selector} = this._options;
     const _ACIDoms = document.querySelector(selector);
+    if(ac_util_isNullOrEmpty(_ACIDoms)){
+      return
+    }
     for (let i = 0, len = _ACIDoms.length; i < len; i++) {
       let selector = _ACIDoms[i];
       if (selector.type && acRange.indexOf(selector.type.toLowerCase()) > -1) {
