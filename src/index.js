@@ -744,6 +744,7 @@ export default class VueDataAc {
   setUserToken(value) {
     this._userToken = value;
   }
+
   /**
    * 更新Options
    * */
