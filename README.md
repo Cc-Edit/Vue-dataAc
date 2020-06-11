@@ -74,6 +74,7 @@
 | openSourceErr | Boolean | true |  :smile: | 是否开启资源加载异常采集 | 2.0.0 |
 | openPromiseErr | Boolean | true |  :smile: | 是否开启promise异常采集 | 2.0.0 |
 | openComponent | Boolean | true |  :smile: | 是否开启组件性能采集 | 2.0.0 |
+| maxComponentLoadTime | Number | 1000 |  :rage: | 组件渲染超时阈值，太小会导致信息过多，出发点是找出渲染异常的组件 | 2.0.0 |
 | openXhrTimeOut | Boolean | true |  :smile: | 是否开启请求超时上报 | 2.0.0 |
 | maxRequestTime | Number | 10000 |  :smile: | 请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 | 2.0.0 |
 | customXhrErrCode | String | '' |  :smile: | 支持自定义响应code，当接口响应中的code为指定内容时上报异常 | 2.0.0 |
@@ -300,7 +301,6 @@
             "ALLRT"         : 1000                       //所有请求耗时
             "TTFB"          : 1000                       //TTFB读取页面第一个字节的时间
             "DNS"           : 1000                       //DNS查询时间
-            "DR"            : 1000                       //dom ready时间
          }
 }
 ```

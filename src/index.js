@@ -166,19 +166,25 @@ export default class VueDataAc {
     }
 
     let nowTime = ac_util_getTime().timeStamp;
-    let componentTimes = Component.$vueDataAc._componentsTime[tag] || [];
-    componentTimes.push(parseInt(nowTime - createdTime))
-    Component.$vueDataAc._componentsTime[tag] = componentTimes;
-
-    console.log( Component.$vueDataAc._componentsTime)
+    let loadTime = parseInt(nowTime - createdTime);
+    if(loadTime < Component.$vueDataAc._options.maxComponentLoadTime){
+      return;
+    }
 
     let isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
+    let componentsTimes = Component.$vueDataAc._componentsTime;
+    let thisTime = componentsTimes[tag] || [];
+
+    thisTime.push(loadTime)
+    componentsTimes[tag] = thisTime;
+
     if(isLoaded){
-      let componentsTimes = JSON.parse(JSON.stringify(Component.$vueDataAc._componentsTime));
       Component.$vueDataAc._componentsTime = {};
       this._setAcData(Component.$vueDataAc._options.storeCompErr, {
         componentsTimes
       })
+    }else{
+      Component.$vueDataAc._componentsTime = componentsTimes;
     }
   }
 
@@ -377,8 +383,7 @@ export default class VueDataAc {
           ONL: _timing.loadEventEnd - _timing.loadEventStart, //执行onload事件耗时
           ALLRT: _timing.responseEnd - _timing.requestStart, //所有请求耗时
           TTFB: _timing.responseStart - _timing.navigationStart, //TTFB 即 Time To First Byte,读取页面第一个字节的时间
-          DNS: _timing.domainLookupEnd - _timing.domainLookupStart, //DNS查询时间
-          DR: _timing.domComplete - _timing.responseEnd //dom ready时间，脚本加载完成时间
+          DNS: _timing.domainLookupEnd - _timing.domainLookupStart //DNS查询时间
         };
         this._setAcData(this._options.storeTiming, loadAcData)
       }
@@ -645,7 +650,7 @@ export default class VueDataAc {
       }
         break;
       case this._options.storeTiming: {
-        let {WT, TCP, ONL, ALLRT, TTFB, DNS, DR} = data;
+        let {WT, TCP, ONL, ALLRT, TTFB, DNS} = data;
         _Ac['acData'] = {
           type: this._options.storeTiming,
           path: window.location.href,
@@ -655,8 +660,7 @@ export default class VueDataAc {
           ONL,
           ALLRT,
           TTFB,
-          DNS,
-          DR,
+          DNS
         };
       }
         break;

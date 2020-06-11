@@ -334,7 +334,7 @@ const BASEOPTIONS = {
    * 所以需要做数据采样统计后才能得出结论
    * */
   openComponent   : true,     //是否开启组件性能采集 (2.0新增）
-
+  maxComponentLoadTime : 1000,//组件渲染时间阈值，大于此时间采集信息 (2.0新增）
 
   /**
    * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
@@ -528,19 +528,25 @@ class VueDataAc {
     }
 
     let nowTime = ac_util_getTime().timeStamp;
-    let componentTimes = Component.$vueDataAc._componentsTime[tag] || [];
-    componentTimes.push(parseInt(nowTime - createdTime));
-    Component.$vueDataAc._componentsTime[tag] = componentTimes;
-
-    console.log( Component.$vueDataAc._componentsTime);
+    let loadTime = parseInt(nowTime - createdTime);
+    if(loadTime < Component.$vueDataAc._options.maxComponentLoadTime){
+      return;
+    }
 
     let isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
+    let componentsTimes = Component.$vueDataAc._componentsTime;
+    let thisTime = componentsTimes[tag] || [];
+
+    thisTime.push(loadTime);
+    componentsTimes[tag] = thisTime;
+
     if(isLoaded){
-      let componentsTimes = JSON.parse(JSON.stringify(Component.$vueDataAc._componentsTime));
       Component.$vueDataAc._componentsTime = {};
       this._setAcData(Component.$vueDataAc._options.storeCompErr, {
         componentsTimes
       });
+    }else {
+      Component.$vueDataAc._componentsTime = componentsTimes;
     }
   }
 
@@ -739,8 +745,7 @@ class VueDataAc {
           ONL: _timing.loadEventEnd - _timing.loadEventStart, //执行onload事件耗时
           ALLRT: _timing.responseEnd - _timing.requestStart, //所有请求耗时
           TTFB: _timing.responseStart - _timing.navigationStart, //TTFB 即 Time To First Byte,读取页面第一个字节的时间
-          DNS: _timing.domainLookupEnd - _timing.domainLookupStart, //DNS查询时间
-          DR: _timing.domComplete - _timing.responseEnd //dom ready时间，脚本加载完成时间
+          DNS: _timing.domainLookupEnd - _timing.domainLookupStart //DNS查询时间
         };
         this._setAcData(this._options.storeTiming, loadAcData);
       }
@@ -1007,7 +1012,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeTiming: {
-        let {WT, TCP, ONL, ALLRT, TTFB, DNS, DR} = data;
+        let {WT, TCP, ONL, ALLRT, TTFB, DNS} = data;
         _Ac['acData'] = {
           type: this._options.storeTiming,
           path: window.location.href,
@@ -1017,8 +1022,7 @@ class VueDataAc {
           ONL,
           ALLRT,
           TTFB,
-          DNS,
-          DR,
+          DNS
         };
       }
         break;

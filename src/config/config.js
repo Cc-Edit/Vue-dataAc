@@ -41,7 +41,7 @@ export const BASEOPTIONS = {
    * 所以需要做数据采样统计后才能得出结论
    * */
   openComponent   : true,     //是否开启组件性能采集 (2.0新增）
-
+  maxComponentLoadTime : 1000,//组件渲染时间阈值，大于此时间采集信息 (2.0新增）
 
   /**
    * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
