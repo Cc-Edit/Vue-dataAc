@@ -3,12 +3,12 @@
 
 ## TODO:
 
-- [ ] 异常监控  
+- [x] 异常监控  
     - [x] 代码异常  
     - [x] 资源加载异常  
     - [x] promise异常  
     - [x] Vue异常  
-    - [ ] 请求异常(慢请求，超时，错误)  
+    - [x] 请求异常(慢请求，超时，错误)  
     
 - [x] 用户行为监控  
     - [x] 点击事件  
@@ -39,9 +39,9 @@
     - [x] openPromiseErr 是否开启promise异常采集 
     - [x] openClick 是否开启点击数据采集   
     - [x] openInput 是否开启输入数据采集   
+    - [x] openXhrData 是否采集接口异常时的参数params     
+    - [x] openXhrHock 是否开启xhr异常采集    
     - [ ] openComponent 组件性能采集     
-    - [ ] openXhrData 是否采集接口异常时的参数params     
-    - [ ] openXhrHock 是否开启xhr异常采集     
     - [ ] openPerformance 是否开启页面性能采集     
     
 - [x] npm自动发布  
