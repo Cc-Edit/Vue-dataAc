@@ -205,6 +205,30 @@
 }
 ```
 
+### 9. 接口异常数据（包含 请求时间过长/自定义code/请求错误）
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "acData" : {
+            "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件上报时间
+            "ua"            : "ios/chrome 44.44"         //浏览器信息 
+            "errSubType"    : "http/time/custom"         //异常类型：【time: 请求时间过长】【custom: 自定义code】【http:请求错误】
+            "responseURL"   : "/static/push"             //请求接口
+            "method"        : "GET"                      //请求方式
+            "readyState"    : 4                          //xhr.readyState状态码
+            "status"        : "404"                      //请求状态码
+            "statusText"    : "not found"                //错误描述
+            "requestTime"   : 3000                       //请求耗时
+            "response"      : "{...}"                    //接口响应摘要，截取前100个字符
+            "query"         : "{}"                       //请求参数，用 openXhrData 配置打开，注意用户信息泄露
+         }
+}
+```
+
 ## 错误代码：
     0x00000001  没有找到对应的时间类型，用户新增加了事件类型，没有在setAcData中添加
     

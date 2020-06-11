@@ -37,6 +37,14 @@ export const BASEOPTIONS = {
   openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
   openComponent   : true,     //是否开启组件性能采集 (2.0新增）
 
+  /**
+   * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
+   * 所以请求超时的上报需要做采样统计后才能得出结论
+   * 所以不算是异常或警告级别，应该算通知级别
+   * */
+  openXhrTimeOut  : true,     //是否开启请求超时上报 (2.0新增）
+  maxRequestTime  : 10000,    //请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 (2.0新增）
+  customXhrErrCode: '0000',   //支持自定义响应code，当接口响应中的code为指定内容时上报异常
 
   /**
    * 输入行为采集相关配置，通过以下配置修改要监控的输入框,

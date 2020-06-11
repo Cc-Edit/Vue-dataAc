@@ -40,13 +40,13 @@ export default class VueDataAc {
     }
 
     this._acData = [];
-    this._inputCacheData = {}; //缓存输入框输入信息
-    this._lastRouterStr = ''; //防止路由重复采集
-    this._userToken = ''; //关联后台token
-    this._pageInTime = 0; //防止路由重复采集
-    this._componentCount = 0; //保证所有组件渲染完成
+    this._proxyXhrObj = {};     //代理xhr
+    this._inputCacheData = {};  //缓存输入框输入信息
+    this._lastRouterStr = '';   //防止路由重复采集
+    this._userToken = '';       //关联后台token
+    this._pageInTime = 0;       //防止路由重复采集
+    this._componentCount = 0;   //保证所有组件渲染完成
     this._init();
-
   }
   /**
    * 页面初始化
@@ -120,6 +120,7 @@ export default class VueDataAc {
       }
     }
   }
+
   /**
    * 输入事件
    * */
@@ -154,6 +155,7 @@ export default class VueDataAc {
     }
     _VueDataAc._inputCacheData[inputKey] = cacheData;
   }
+
   /**
    * 失焦事件
    * */
@@ -183,6 +185,7 @@ export default class VueDataAc {
       attrs
     })
   }
+
   /**
    *  混入vue watch 用来监控路由变化
    * */
@@ -233,12 +236,72 @@ export default class VueDataAc {
   /**
    *  初始化请求劫持
    * */
-  _initXhrErrAc(){}
+  _initXhrErrAc(){
+    let _nativeAjaxOpen = XMLHttpRequest.prototype.open;
+    let _nativeAjaxSend = XMLHttpRequest.prototype.send;
+    let _nativeAjaxonReady = XMLHttpRequest.onreadystatechange;
+    this._proxyXhrObj = {
+      open: function() {
+        this._ac_method = (arguments[0] || [])[0];
+        return (_nativeAjaxOpen && _nativeAjaxOpen.apply(this, arguments));
+      },
+      send: function() {
+        this._ac_send_time = ac_util_getTime().timeStamp;
+        this._ac_post_data = (arguments[0] || [])[0] || '';
+        this.addEventListener('error', function (xhr) {
+          _VueDataAc._formatXhrErrorData(xhr.target);
+        });
 
+        this.onreadystatechange = function (xhr) {
+          _VueDataAc._formatXhrErrorData(xhr.target);
+          _nativeAjaxonReady && _nativeAjaxonReady.apply(this, arguments);
+        };
+
+        return (_nativeAjaxSend && _nativeAjaxSend.apply(this, arguments));
+      }
+    };
+
+    XMLHttpRequest.prototype.open = this._proxyXhrObj.open;
+    XMLHttpRequest.prototype.send = this._proxyXhrObj.send;
+  }
+
+  _formatXhrErrorData(xhr){
+    let _ajax = xhr;
+    let {method, send_time = 0, post_data = {}, readyState} = _ajax;
+
+    if (readyState === 4) {
+      let {status, statusText, response, responseURL} = _ajax;
+      let ready_time = ac_util_getTime().timeStamp
+      let requestTime = ready_time - (send_time || ready_time);
+      let {openXhrTimeOut, storeReqErr, customXhrErrCode, openXhrData} = _VueDataAc._options;
+
+      let isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
+      let isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
+      let isCustomErr = (`${response && response.code}` === customXhrErrCode);
+
+      if( (openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr){
+
+        _VueDataAc._setAcData(storeReqErr, {
+          responseURL,
+          method,
+          isHttpErr,
+          isCustomErr,
+          readyState,
+          status,
+          statusText,
+          requestTime,
+          response: ('' + response).substr(0, 100),
+          query: openXhrData ? post_data : ''
+        })
+
+      }
+    }
+  }
   /**
    *  初始化页面性能
    * */
   _initPerformance(){}
+
   /**
    *  初始化Vue异常监控
    * */
@@ -263,6 +326,7 @@ export default class VueDataAc {
       })
     });
   }
+
   /**
    *  初始化代码异常监控
    * */
@@ -309,6 +373,7 @@ export default class VueDataAc {
     }
 
   }
+
   /**
    *  初始化资源加载异常监听
    * */
@@ -417,7 +482,27 @@ export default class VueDataAc {
         }
         break;
       case this._options.storeReqErr:
-        {}
+        {
+          let { responseURL, method,
+                isHttpErr, isCustomErr,
+                readyState, status, statusText,
+                requestTime, response, query } = data;
+          _Ac['acData'] = {
+            type: this._options.storeReqErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
+            responseURL,
+            method,
+            readyState,
+            status,
+            statusText,
+            requestTime,
+            response,
+            query
+          };
+        }
         break;
       case this._options.storeVueErr:
         {
@@ -562,6 +647,7 @@ export default class VueDataAc {
      * */
     this._acData = [];
   }
+
   /**
    * 关联后台session
    * */

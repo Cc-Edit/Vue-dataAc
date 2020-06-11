@@ -98,6 +98,7 @@
 
   /**
    * 获取时间戳
+   * @return timeStamp: Number
    * */
   function ac_util_getTime () {
     var date = new Date();
@@ -302,6 +303,14 @@
     openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
     openComponent   : true,     //是否开启组件性能采集 (2.0新增）
 
+    /**
+     * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
+     * 所以请求超时的上报需要做采样统计后才能得出结论
+     * 所以不算是异常或警告级别，应该算通知级别
+     * */
+    openXhrTimeOut  : true,     //是否开启请求超时上报 (2.0新增）
+    maxRequestTime  : 10000,    //请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 (2.0新增）
+    customXhrErrCode: '0000',   //支持自定义响应code，当接口响应中的code为指定内容时上报异常
 
     /**
      * 输入行为采集相关配置，通过以下配置修改要监控的输入框,
@@ -360,13 +369,13 @@
     }
 
     this._acData = [];
-    this._inputCacheData = {}; //缓存输入框输入信息
+    this._proxyXhrObj = {};   //代理xhr
+    this._inputCacheData = {};//缓存输入框输入信息
     this._lastRouterStr = ''; //防止路由重复采集
-    this._userToken = ''; //关联后台token
-    this._pageInTime = 0; //防止路由重复采集
+    this._userToken = '';     //关联后台token
+    this._pageInTime = 0;     //防止路由重复采集
     this._componentCount = 0; //保证所有组件渲染完成
     this._init();
-
   };
   /**
    * 页面初始化
@@ -442,11 +451,11 @@
       }
     }
   };
+
   /**
    * 输入事件
    * */
   VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
-    console.log(1);
     var event = window.event || e;
     var target = event.srcElement ? event.srcElement : event.target;
     var id = target.id;
@@ -480,6 +489,7 @@
     }
     _VueDataAc._inputCacheData[inputKey] = cacheData;
   };
+
   /**
    * 失焦事件
    * */
@@ -510,6 +520,7 @@
       attrs: attrs
     });
   };
+
   /**
    *混入vue watch 用来监控路由变化
    * */
@@ -569,12 +580,82 @@
   /**
    *初始化请求劫持
    * */
-  VueDataAc.prototype._initXhrErrAc = function _initXhrErrAc (){};
+  VueDataAc.prototype._initXhrErrAc = function _initXhrErrAc (){
+    var _nativeAjaxOpen = XMLHttpRequest.prototype.open;
+    var _nativeAjaxSend = XMLHttpRequest.prototype.send;
+    var _nativeAjaxonReady = XMLHttpRequest.onreadystatechange;
+    this._proxyXhrObj = {
+      open: function() {
+        this._ac_method = (arguments[0] || [])[0];
+        return (_nativeAjaxOpen && _nativeAjaxOpen.apply(this, arguments));
+      },
+      send: function() {
+        this._ac_send_time = ac_util_getTime().timeStamp;
+        this._ac_post_data = (arguments[0] || [])[0] || '';
+        this.addEventListener('error', function (xhr) {
+          _VueDataAc._formatXhrErrorData(xhr.target);
+        });
 
+        this.onreadystatechange = function (xhr) {
+          _VueDataAc._formatXhrErrorData(xhr.target);
+          _nativeAjaxonReady && _nativeAjaxonReady.apply(this, arguments);
+        };
+
+        return (_nativeAjaxSend && _nativeAjaxSend.apply(this, arguments));
+      }
+    };
+
+    XMLHttpRequest.prototype.open = this._proxyXhrObj.open;
+    XMLHttpRequest.prototype.send = this._proxyXhrObj.send;
+  };
+
+  VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr){
+    var _ajax = xhr;
+    var method = _ajax.method;
+      var send_time = _ajax.send_time; if ( send_time === void 0 ) send_time = 0;
+      var post_data = _ajax.post_data; if ( post_data === void 0 ) post_data = {};
+      var readyState = _ajax.readyState;
+
+    if (readyState === 4) {
+      var status = _ajax.status;
+        var statusText = _ajax.statusText;
+        var response = _ajax.response;
+        var responseURL = _ajax.responseURL;
+      var ready_time = ac_util_getTime().timeStamp;
+      var requestTime = ready_time - (send_time || ready_time);
+      var ref = _VueDataAc._options;
+        var openXhrTimeOut = ref.openXhrTimeOut;
+        var storeReqErr = ref.storeReqErr;
+        var customXhrErrCode = ref.customXhrErrCode;
+        var openXhrData = ref.openXhrData;
+
+      var isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
+      var isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
+      var isCustomErr = (("" + (response && response.code)) === customXhrErrCode);
+
+      if( (openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr){
+
+        _VueDataAc._setAcData(storeReqErr, {
+          responseURL: responseURL,
+          method: method,
+          isHttpErr: isHttpErr,
+          isCustomErr: isCustomErr,
+          readyState: readyState,
+          status: status,
+          statusText: statusText,
+          requestTime: requestTime,
+          response: ('' + response).substr(0, 100),
+          query: openXhrData ? post_data : ''
+        });
+
+      }
+    }
+  };
   /**
    *初始化页面性能
    * */
   VueDataAc.prototype._initPerformance = function _initPerformance (){};
+
   /**
    *初始化Vue异常监控
    * */
@@ -603,6 +684,7 @@
       });
     });
   };
+
   /**
    *初始化代码异常监控
    * */
@@ -652,6 +734,7 @@
     };
 
   };
+
   /**
    *初始化资源加载异常监听
    * */
@@ -733,12 +816,13 @@
 
           _Ac['acData'] = {
             type: this._options.storePage,
+            sTme: nowTime,
             fromPath: fromPath,
             formParams: formParams,
             toPath: toPath,
             toParams: toParams,
-            sTme: pageInTime,
-            eTme: nowTime
+            inTime: pageInTime,
+            outTime: nowTime
           };
         }
         break;
@@ -779,6 +863,33 @@
         }
         break;
       case this._options.storeReqErr:
+        {
+          var responseURL = data.responseURL;
+            var method = data.method;
+            var isHttpErr = data.isHttpErr;
+            var isCustomErr = data.isCustomErr;
+            var readyState = data.readyState;
+            var status = data.status;
+            var statusText = data.statusText;
+            var requestTime = data.requestTime;
+            var response = data.response;
+            var query = data.query;
+          _Ac['acData'] = {
+            type: this._options.storeReqErr,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
+            responseURL: responseURL,
+            method: method,
+            readyState: readyState,
+            status: status,
+            statusText: statusText,
+            requestTime: requestTime,
+            response: response,
+            query: query
+          };
+        }
         break;
       case this._options.storeVueErr:
         {
@@ -933,6 +1044,7 @@
      * */
     this._acData = [];
   };
+
   /**
    * 关联后台session
    * */

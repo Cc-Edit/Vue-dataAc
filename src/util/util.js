@@ -98,6 +98,7 @@ export function ac_util_getUuid (len = 16, radix = 16) {//uuid长度以及进制
 
 /**
  * 获取时间戳
+ * @return timeStamp: Number
  * */
 export function ac_util_getTime () {
   let date = new Date();
