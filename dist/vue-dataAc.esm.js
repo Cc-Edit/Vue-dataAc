@@ -156,9 +156,6 @@ function ac_util_checkOptions(options) {
     if (ac_util_isNullOrEmpty(options['selector'])) {
       ac_util_warn("--------请指定输入框选择器：selector------");
     }
-    if (ac_util_isNullOrEmpty(options['acRange'])) {
-      ac_util_warn("--------请指定输入框选择器类型：acRange------");
-    }
   }
   //存储配置
   if (options['useStorage']) {
@@ -281,8 +278,8 @@ var BASEOPTIONS = {
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
-  storeInput     : "ACINPUT",    //输入采集标识
-  storePage      : "ACPAGE",     //页面采集标识
+  storeInput     : "ACINPUT",    //输入框行为采集标识
+  storePage      : "ACPAGE",     //页面访问信息采集标识
   storeClick     : "ACCLIK",     //点击事件采集标识
   storeReqErr    : "ACRERR",     //请求异常采集标识
   storeTiming    : "ACTIME",     //页面性能采集标识
@@ -298,12 +295,12 @@ var BASEOPTIONS = {
    * */
   userSha      : 'vue_ac_userSha',   //用户标识存储key，有冲突可修改
   useImgSend      : true,     //默认使用图片上报数据, false为xhr请求接口上报
-  useStorage      : true,     //默认使用storage,
-  maxDays         : 365,      //如果使用cookie，此项生效，配置cookie生效时间，默认一年
+  useStorage      : true,     //是否使用storage作为存储载体, 设置为 false 时使用cookie,
+  maxDays         : 365,      //如果使用cookie作为存储载体，此项生效，配置cookie存储时间，默认一年
   openInput       : true,     //是否开启输入数据采集
   openCodeErr     : true,     //是否开启代码异常采集
   openClick       : true,     //是否开启点击数据采集
-  openXhrData     : true,     //是否采集接口异常时的参数params
+  openXhrQuery    : true,     //是否采集接口异常时的参数params
   openXhrHock     : true,     //是否开启xhr异常采集
   openPerformance : true,     //是否开启页面性能采集
   openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
@@ -319,27 +316,24 @@ var BASEOPTIONS = {
    * */
   openXhrTimeOut  : true,     //是否开启请求超时上报 (2.0新增）
   maxRequestTime  : 10000,    //请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 (2.0新增）
-  customXhrErrCode: '0000',   //支持自定义响应code，当接口响应中的code为指定内容时上报异常
+  customXhrErrCode: '',   //支持自定义响应code，当接口响应中的code为指定内容时上报异常
 
   /**
    * 输入行为采集相关配置，通过以下配置修改要监控的输入框,
    * 设置 input 采集全量输入框，也可以通过修改 selector 配置实现主动埋点
    * 设置 selector 为 `input.isjs-ac` 为主动埋点，只会采集class为isjs-ac的输入框
-   * acRange 存在的目的是为了从安全角度排除 type 为 password 的输入框
+   * ignoreInputType 存在的目的是为了从安全角度排除 type 为 password 的输入框
    * 有更好方案请提给我  Thanks♪(･ω･)ﾉ
    * */
-  selector     : 'input',     //通过控制输入框的选择器来限定监听范围,使用document.querySelector进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html
-  acRange      : ['text','tel', 'password'],   //输入框采集范围, 不建议采集密码输入框内容，此处只为展示用
+  selector        : 'input',     //通过控制输入框的选择器来限定监听范围,使用document.querySelector进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html
+  ignoreInputType : ['password', 'file'],   //忽略的输入框type，不建议采集密码输入框内容
 
   /**
    *  点击行为采集相关配置，通过 classTag 进行主动埋点和自动埋点的切换：
    *  classTag 配置为 'isjs-ac' 只会采集 class 包含 isjs-ac 的元素
    *  classTag 配置为 '' 会采集所有被点击的元素，当然也会导致数据量大。
-   *  因为点击事件存在事件冒泡，我们会把父元素也采集到此次事件中，以保证精准定位，
-   *  可以通过 acbLength 控制冒泡层级
    * */
   classTag     : '',      //主动埋点标识, 自动埋点时请配置空字符串
-  acbLength    : 2,           //点击元素采集层数，自动埋点时会向上层查找，该选项可以配置查找层数
 
   /**
    * 以下内容为可配置信息，影响插件逻辑功能
@@ -352,7 +346,7 @@ var BASEOPTIONS = {
    * */
   openReducer: false,   //是否开启节流,用于限制上报频率
   sizeLimit: 20,        //操作数据超过指定条目时自动上报
-  lifeReport: false,    //开启懒惰上报，组件destroy时统一上报
+  lifeReport: false,    //开启懒惰上报，路由变化时统一上报
   manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
 };
 
@@ -427,7 +421,7 @@ VueDataAc.prototype._init = function _init () {
   }
 
 
-  if (this._options.openXhrData) {
+  if (this._options.openXhrQuery) {
     this._initXhrErrAc();
   }
 
@@ -443,12 +437,12 @@ VueDataAc.prototype._init = function _init () {
  * */
 VueDataAc.prototype._mixinMounted = function _mixinMounted (VueRoot) {
   var ref = this._options;
-    var acRange = ref.acRange;
+    var ignoreInputType = ref.ignoreInputType;
     var selector = ref.selector;
   var _ACIDoms = document.querySelectorAll(selector);
   for (var i = 0, len = _ACIDoms.length; i < len; i++) {
     var selector$1 = _ACIDoms[i];
-    if (selector$1.type && acRange.indexOf(selector$1.type.toLowerCase()) > -1) {
+    if (selector$1.type && ignoreInputType.indexOf(selector$1.type.toLowerCase()) < 0) {
       /**
        * 因为有弹窗类的组件中途添加，所以先移除，再添加
        * 避免重复绑定
@@ -554,6 +548,9 @@ VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from) {
       fromPath: fromPath,
       formParams: formParams
     });
+    if(!this._options.manualReport && this._options.lifeReport){
+      this.postAcData && this.postAcData();
+    }
   }
 };
 
@@ -637,7 +634,7 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr) {
       var openXhrTimeOut = ref.openXhrTimeOut;
       var storeReqErr = ref.storeReqErr;
       var customXhrErrCode = ref.customXhrErrCode;
-      var openXhrData = ref.openXhrData;
+      var openXhrQuery = ref.openXhrQuery;
 
     var isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
     var isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
@@ -655,7 +652,7 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr) {
         statusText: statusText,
         requestTime: requestTime,
         response: ('' + response).substr(0, 100),
-        query: openXhrData ? post_data : ''
+        query: openXhrQuery ? post_data : ''
       });
 
     }
