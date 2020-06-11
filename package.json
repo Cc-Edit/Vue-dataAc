@@ -1,7 +1,18 @@
 {
   "name": "vue-dataac",
-  "version": "2.0.2",
-  "description": "Vue-dataAc 重构 dataAcquisition 以支持Vue",
+  "version": "2.0.3",
+  "description": "Vue 用户行为采集，异常数据采集，Vue组件性能监控，前端异常采集",
+  "homepage": "https://github.com/adminV/Vue-dataAc",
+  "keywords": [
+    "vue report",
+    "vue monitor",
+    "用户行为采集",
+    "异常数据采集",
+    "组件性能监控",
+    "前端异常",
+    "js异常",
+    "js监控"
+  ],
   "author": "adminV",
   "license": "MIT",
   "main": "index.js",
