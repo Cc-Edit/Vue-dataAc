@@ -37,66 +37,66 @@
 ## 文档：
     为了尽可能灵活，以下所有配置项理论上都可以修改配置，
     我对每个配置项做了修改建议，供大家参考：
-:full_moon_with_face:   = 可以修改   
-:new_moon_with_face:   = 不要修改    
-:first_quarter_moon:   = 不建议修改     
+:smile:   = 可以修改   
+:anguished:   = 不要修改    
+:neutral_face:   = 不建议修改     
 
 ### 1. 标识类配置，作为数据上报信息的分类标识
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
 | :------------ |:---------------| :---------------|:---------------|:---------------|:-----:|
-| storeInput | String | 'ACINPUT' |  :first_quarter_moon: | 输入框行为采集标识 | 1.0.0 |
-| storePage | String | 'ACPAGE' |  :first_quarter_moon: | 页面访问信息采集标识 |1.0.0 |
-| storeClick | String | 'ACCLIK' |  :first_quarter_moon: | 点击事件采集标识 |1.0.0 |
-| storeReqErr | String | 'ACRERR' |  :first_quarter_moon: | 请求异常采集标识 |1.0.0 |
-| storeTiming | String | 'ACTIME' |  :first_quarter_moon: | 页面性能采集标识 |1.0.0 |
-| storeCodeErr | String | 'ACCERR' |  :first_quarter_moon: | 代码异常采集标识 |1.0.0 |
-| storeCustom | String | 'ACCUSTOM' |  :first_quarter_moon: | 自定义事件采集标识 | 2.0.0 |
-| storeSourceErr | String | 'ACSCERR' |  :first_quarter_moon: | 资源加载异常采集标识  |2.0.0 |
-| storePrmseErr | String | 'ACPRERR' |  :first_quarter_moon: | promise抛出异常标识 |2.0.0 |
-| storeCompErr | String | 'ACCOMP' |  :first_quarter_moon: | Vue组件性能监控标识 |2.0.0 |
-| storeVueErr | String | 'ACVUERR' |  :first_quarter_moon: | Vue异常监控标识  |2.0.0 |
+| storeInput | String | 'ACINPUT' |  :neutral_face: | 输入框行为采集标识 | 1.0.0 |
+| storePage | String | 'ACPAGE' |  :neutral_face: | 页面访问信息采集标识 |1.0.0 |
+| storeClick | String | 'ACCLIK' |  :neutral_face: | 点击事件采集标识 |1.0.0 |
+| storeReqErr | String | 'ACRERR' |  :neutral_face: | 请求异常采集标识 |1.0.0 |
+| storeTiming | String | 'ACTIME' |  :neutral_face: | 页面性能采集标识 |1.0.0 |
+| storeCodeErr | String | 'ACCERR' |  :neutral_face: | 代码异常采集标识 |1.0.0 |
+| storeCustom | String | 'ACCUSTOM' |  :neutral_face: | 自定义事件采集标识 | 2.0.0 |
+| storeSourceErr | String | 'ACSCERR' |  :neutral_face: | 资源加载异常采集标识  |2.0.0 |
+| storePrmseErr | String | 'ACPRERR' |  :neutral_face: | promise抛出异常标识 |2.0.0 |
+| storeCompErr | String | 'ACCOMP' |  :neutral_face: | Vue组件性能监控标识 |2.0.0 |
+| storeVueErr | String | 'ACVUERR' |  :neutral_face: | Vue异常监控标识  |2.0.0 |
 
 ### 2. 全局开关，用来自定义采集范围
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
 | :------------ |:---------------| :---------------|:---------------|:---------------|:-----:|
-| userSha | String | 'vue_ac_userSha' |  :full_moon_with_face: | 用户标识存储在Storage中的key，有冲突可修改 | 1.0.0 |
-| useImgSend | Boolean | true |  :full_moon_with_face: | 是否使用图片上报数据, 设置为 false 为 xhr 接口请求上报 | 2.0.0 |
-| useStorage | Boolean | true |  :full_moon_with_face: | 是否使用storage作为存储载体, 设置为 false 时使用cookie | 2.0.0 |
-| maxDays | Number | 365 |  :full_moon_with_face: | 如果使用cookie作为存储载体，此项生效，配置cookie存储时间，默认一年 | 2.0.0 |
-| openInput | Boolean | true |  :full_moon_with_face: | 是否开启输入数据采集 | 1.0.0 |
-| openCodeErr | Boolean | true |  :full_moon_with_face: | 是否开启代码异常采集 | 1.0.0 |
-| openClick | Boolean | true |  :full_moon_with_face: | 是否开启点击数据采集 | 1.0.0 |
-| openXhrQuery | Boolean | true |  :full_moon_with_face: | 采集接口异常时是否采集请求参数params | 2.0.0 |
-| openXhrHock | Boolean | true |  :full_moon_with_face: | 是否开启xhr异常采集 | 1.0.0 |
-| openPerformance | Boolean | true |  :full_moon_with_face: | 是否开启页面性能采集 | 1.0.0 |
-| openPage | Boolean | true |  :full_moon_with_face: | 是否开启页面访问信息采集(PV/UV) | 2.0.0 |
-| openVueErr | Boolean | true |  :full_moon_with_face: | 是否开启Vue异常监控 | 2.0.0 |
-| openSourceErr | Boolean | true |  :full_moon_with_face: | 是否开启资源加载异常采集 | 2.0.0 |
-| openPromiseErr | Boolean | true |  :full_moon_with_face: | 是否开启promise异常采集 | 2.0.0 |
-| openComponent | Boolean | true |  :full_moon_with_face: | 是否开启组件性能采集 | 2.0.0 |
-| openXhrTimeOut | Boolean | true |  :full_moon_with_face: | 是否开启请求超时上报 | 2.0.0 |
-| maxRequestTime | Number | 10000 |  :full_moon_with_face: | 请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 | 2.0.0 |
-| customXhrErrCode | String | '' |  :full_moon_with_face: | 支持自定义响应code，当接口响应中的code为指定内容时上报异常 | 2.0.0 |
+| userSha | String | 'vue_ac_userSha' |  :smile: | 用户标识存储在Storage中的key，有冲突可修改 | 1.0.0 |
+| useImgSend | Boolean | true |  :smile: | 是否使用图片上报数据, 设置为 false 为 xhr 接口请求上报 | 2.0.0 |
+| useStorage | Boolean | true |  :smile: | 是否使用storage作为存储载体, 设置为 false 时使用cookie | 2.0.0 |
+| maxDays | Number | 365 |  :smile: | 如果使用cookie作为存储载体，此项生效，配置cookie存储时间，默认一年 | 2.0.0 |
+| openInput | Boolean | true |  :smile: | 是否开启输入数据采集 | 1.0.0 |
+| openCodeErr | Boolean | true |  :smile: | 是否开启代码异常采集 | 1.0.0 |
+| openClick | Boolean | true |  :smile: | 是否开启点击数据采集 | 1.0.0 |
+| openXhrQuery | Boolean | true |  :smile: | 采集接口异常时是否采集请求参数params | 2.0.0 |
+| openXhrHock | Boolean | true |  :smile: | 是否开启xhr异常采集 | 1.0.0 |
+| openPerformance | Boolean | true |  :smile: | 是否开启页面性能采集 | 1.0.0 |
+| openPage | Boolean | true |  :smile: | 是否开启页面访问信息采集(PV/UV) | 2.0.0 |
+| openVueErr | Boolean | true |  :smile: | 是否开启Vue异常监控 | 2.0.0 |
+| openSourceErr | Boolean | true |  :smile: | 是否开启资源加载异常采集 | 2.0.0 |
+| openPromiseErr | Boolean | true |  :smile: | 是否开启promise异常采集 | 2.0.0 |
+| openComponent | Boolean | true |  :smile: | 是否开启组件性能采集 | 2.0.0 |
+| openXhrTimeOut | Boolean | true |  :smile: | 是否开启请求超时上报 | 2.0.0 |
+| maxRequestTime | Number | 10000 |  :smile: | 请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 | 2.0.0 |
+| customXhrErrCode | String | '' |  :smile: | 支持自定义响应code，当接口响应中的code为指定内容时上报异常 | 2.0.0 |
 
 ### 3. 行为采集配置
 | 配置项 | 类型  | 默认值 | 采集范围 | 是否可配置 | 说明 | 生效版本 |
 | :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|:-----:|
-| selector | String | 'input' | 所有input输入框（全量采集） | :full_moon_with_face: | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
-| selector | String | 'input.isjs-ac' | 所有class包含isjs-ac的input输入框（埋点采集） | :full_moon_with_face: | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
-| ignoreInputType | Array | `['password', 'file']` | type不是password和file的输入框 | :full_moon_with_face: | --- | 1.0.0 |
-| ignoreInputType | Array | `[]` | 所有输入框 | :full_moon_with_face: | --- | 1.0.0 |
-| classTag | String | '' | 所有元素（全量采集） | :full_moon_with_face: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
-| classTag | String | 'isjs-ac' | 只会采集 class 包含 isjs-ac 元素的点击（埋点采集） | :full_moon_with_face: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
+| selector | String | 'input' | 所有input输入框（全量采集） | :smile: | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
+| selector | String | 'input.isjs-ac' | 所有class包含isjs-ac的input输入框（埋点采集） | :smile: | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
+| ignoreInputType | Array | `['password', 'file']` | type不是password和file的输入框 | :smile: | --- | 1.0.0 |
+| ignoreInputType | Array | `[]` | 所有输入框 | :smile: | --- | 1.0.0 |
+| classTag | String | '' | 所有元素（全量采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
+| classTag | String | 'isjs-ac' | 只会采集 class 包含 isjs-ac 元素的点击（埋点采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
 
 ### 4. 数据上报配置
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
 | :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|
-| imageUrl | String | 'http://open.isjs.cn/admin/ac.png' | :full_moon_with_face: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
-| postUrl | String | 'http://open.isjs.cn/logStash/push' | :full_moon_with_face: | 接口上报地址 | 1.0.0 |
-| openReducer | Boolean | false | :full_moon_with_face: | 是否开启节流,用于限制上报频率，开启后sizeLimit，lifeReport，manualReport生效 | 2.0.0 |
-| sizeLimit | Number | 20 | :full_moon_with_face: | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
-| lifeReport | Boolean | false | :full_moon_with_face: | 开启懒惰上报，路由变化时统一上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
-| manualReport | Boolean | false | :full_moon_with_face: | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
+| imageUrl | String | 'http://open.isjs.cn/admin/ac.png' | :smile: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
+| postUrl | String | 'http://open.isjs.cn/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
+| openReducer | Boolean | false | :smile: | 是否开启节流,用于限制上报频率，开启后sizeLimit，lifeReport，manualReport生效 | 2.0.0 |
+| sizeLimit | Number | 20 | :smile: | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
+| lifeReport | Boolean | false | :smile: | 开启懒惰上报，路由变化时统一上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
+| manualReport | Boolean | false | :smile: | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
 
 
 ### 5. 实例方法
