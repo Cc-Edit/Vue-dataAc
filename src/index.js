@@ -326,11 +326,11 @@ export default class VueDataAc {
   _initVueErrAc(){
     this._vue_ && this._vue_.config && (this._vue_.config.errorHandler = (error = {}, vm, info) => {
       const componentName = vm._isVue
-                            ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
-                              : vm.name;
+        ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
+        : vm.name;
       const fileName = (vm._isVue && vm.$options && vm.$options.__file)
-                        ? (vm.$options && vm.$options.__file)
-                        : "";
+        ? (vm.$options && vm.$options.__file)
+        : "";
       const propsData = vm.$options && vm.$options.propsData;
 
 
@@ -451,144 +451,159 @@ export default class VueDataAc {
     }
     switch (options) {
       case this._options.storePage:
-        {
-          let { toPath, toParams, fromPath, formParams } = data;
-          let pageInTime = this._pageInTime;
-          let nowTime = ac_util_getTime().timeStamp;
-          this._pageInTime = nowTime;
+      {
+        let { toPath, toParams, fromPath, formParams } = data;
+        let pageInTime = this._pageInTime;
+        let nowTime = ac_util_getTime().timeStamp;
+        this._pageInTime = nowTime;
 
-          _Ac['acData'] = {
-            type: this._options.storePage,
-            sTme: nowTime,
-            fromPath: fromPath,
-            formParams: formParams,
-            toPath: toPath,
-            toParams: toParams,
-            inTime: pageInTime,
-            outTime: nowTime
-          };
-        }
+        _Ac['acData'] = {
+          type: this._options.storePage,
+          sTme: nowTime,
+          fromPath: fromPath,
+          formParams: formParams,
+          toPath: toPath,
+          toParams: toParams,
+          inTime: pageInTime,
+          outTime: nowTime
+        };
+      }
         break;
       case this._options.storeInput:
-        {
-          _Ac['acData'] = {
-            type: this._options.storeInput,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            ...data
-          };
-        }
+      {
+        let { eId, className, val, attrs} = data;
+        _Ac['acData'] = {
+          type: this._options.storeInput,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          eId,
+          className,
+          val,
+          attrs
+        };
+      }
         break;
       case this._options.storeClick:
-        {
-          _Ac['acData'] = {
-            type: this._options.storeClick,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            ...data
-          };
-        }
+      {
+        let { eId, className, val, attrs} = data;
+        _Ac['acData'] = {
+          type: this._options.storeClick,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          eId,
+          className,
+          val,
+          attrs
+        };
+      }
         break;
       case this._options.storeReqErr:
-        {
-          let { responseURL, method,
-                isHttpErr, isCustomErr,
-                readyState, status, statusText,
-                requestTime, response, query } = data;
-          _Ac['acData'] = {
-            type: this._options.storeReqErr,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
-            responseURL,
-            method,
-            readyState,
-            status,
-            statusText,
-            requestTime,
-            response,
-            query
-          };
-        }
+      {
+        let { responseURL, method,
+          isHttpErr, isCustomErr,
+          readyState, status, statusText,
+          requestTime, response, query } = data;
+        _Ac['acData'] = {
+          type: this._options.storeReqErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
+          responseURL,
+          method,
+          readyState,
+          status,
+          statusText,
+          requestTime,
+          response,
+          query
+        };
+      }
         break;
       case this._options.storeVueErr:
-        {
-          let { componentName, fileName, propsData, info, msg, stack } = data;
-          _Ac['acData'] = {
-            type: this._options.storeVueErr,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            componentName,
-            fileName,
-            propsData,
-            info,
-            msg,
-            err: stack
-          };
-        }
+      {
+        let { componentName, fileName, propsData, info, msg, stack } = data;
+        _Ac['acData'] = {
+          type: this._options.storeVueErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          componentName,
+          fileName,
+          propsData,
+          info,
+          msg,
+          err: stack
+        };
+      }
         break;
       case this._options.storeCodeErr:
-        {
-          _Ac['acData'] = {
-            type: this._options.storeCodeErr,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            ...data
-          };
-        }
+      {
+        let { msg, line, col, err } = data;
+        _Ac['acData'] = {
+          type: this._options.storeCodeErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          msg,
+          line,
+          col,
+          err
+        };
+      }
         break;
       case this._options.storeSourceErr:
-        {
-          let { tagName, outerHTML, resourceUri, currentSrc } = data;
-          _Ac['acData'] = {
-            type: this._options.storeSourceErr,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            fileName: currentSrc,
-            resourceUri,
-            tagName,
-            outerHTML,
-          };
-        }
+      {
+        let { tagName, outerHTML, resourceUri, currentSrc } = data;
+        _Ac['acData'] = {
+          type: this._options.storeSourceErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          fileName: currentSrc,
+          resourceUri,
+          tagName,
+          outerHTML,
+        };
+      }
         break;
       case this._options.storePrmseErr:
-        {
-          _Ac['acData'] = {
-            type: this._options.storePrmseErr,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            ...data
-          };
-        }
+      {
+        let { reason } = data;
+        _Ac['acData'] = {
+          type: this._options.storePrmseErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          reason: reason
+        };
+      }
         break;
       case this._options.storeCustom:
-        {
-          _Ac['acData'] = {
-            type: this._options.storeCustom,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            ...data
-          };
-        }
+      {
+        let { cusKey, cusVal } = data;
+        _Ac['acData'] = {
+          type: this._options.storeCustom,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          cusKey,
+          cusVal
+        };
+      }
         break;
       case this._options.storeTiming:
-        {
-          _Ac['acData'] = {
-            type: this._options.storeCustom,
-            path: window.location.href,
-            sTme: ac_util_getTime().timeStamp,
-            ua: navigator.userAgent,
-            ...data
-          };
-        }
+      {
+        _Ac['acData'] = {
+          type: this._options.storeCustom,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          ua: navigator.userAgent,
+          ...data
+        };
+      }
         break;
       default:
         ac_util_warn(`--------系统错误：0x00000001------`)
