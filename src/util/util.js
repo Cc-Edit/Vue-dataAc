@@ -161,9 +161,6 @@ export function ac_util_checkOptions(options) {
     if (ac_util_isNullOrEmpty(options['selector'])) {
       ac_util_warn(`--------请指定输入框选择器：selector------`)
     }
-    if (ac_util_isNullOrEmpty(options['acRange'])) {
-      ac_util_warn(`--------请指定输入框选择器类型：acRange------`)
-    }
   }
   //存储配置
   if (options['useStorage']) {

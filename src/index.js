@@ -89,7 +89,7 @@ export default class VueDataAc {
     }
 
 
-    if (this._options.openXhrData) {
+    if (this._options.openXhrQuery) {
       this._initXhrErrAc();
     }
 
@@ -104,11 +104,11 @@ export default class VueDataAc {
    *  @param VueRoot 根元素
    * */
   _mixinMounted(VueRoot) {
-    let {acRange, selector} = this._options;
+    let {ignoreInputType, selector} = this._options;
     let _ACIDoms = document.querySelectorAll(selector);
     for (let i = 0, len = _ACIDoms.length; i < len; i++) {
       let selector = _ACIDoms[i];
-      if (selector.type && acRange.indexOf(selector.type.toLowerCase()) > -1) {
+      if (selector.type && ignoreInputType.indexOf(selector.type.toLowerCase()) < 0) {
         /**
          * 因为有弹窗类的组件中途添加，所以先移除，再添加
          * 避免重复绑定
@@ -207,6 +207,9 @@ export default class VueDataAc {
         fromPath,
         formParams
       })
+      if(!this._options.manualReport && this._options.lifeReport){
+        this.postAcData && this.postAcData();
+      }
     }
   }
 
@@ -274,7 +277,7 @@ export default class VueDataAc {
       let {status, statusText, response, responseURL} = _ajax;
       let ready_time = ac_util_getTime().timeStamp
       let requestTime = ready_time - (send_time || ready_time);
-      let {openXhrTimeOut, storeReqErr, customXhrErrCode, openXhrData} = _VueDataAc._options;
+      let {openXhrTimeOut, storeReqErr, customXhrErrCode, openXhrQuery} = _VueDataAc._options;
 
       let isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
       let isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
@@ -292,7 +295,7 @@ export default class VueDataAc {
           statusText,
           requestTime,
           response: ('' + response).substr(0, 100),
-          query: openXhrData ? post_data : ''
+          query: openXhrQuery ? post_data : ''
         })
 
       }

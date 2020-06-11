@@ -1,56 +1,96 @@
 # Vue-dataAc
     Vue-dataAc 重构 dataAcquisition 以支持Vue
 
-## TODO:
+## 快速开始
 
-- [x] 异常监控  
-    - [x] 代码异常  
-    - [x] 资源加载异常  
-    - [x] promise异常  
-    - [x] Vue异常  
-    - [x] 请求异常(慢请求，超时，错误)  
+```
+    npm install vue-dataac
     
-- [x] 用户行为监控  
-    - [x] 点击事件  
-    - [x] 输入事件  
-    - [x] 自定义事件  
-    - [x] 页面访问事件    
+    import Vue from 'vue'
+    import VueDataAc from 'vue-dataac'
     
-- [x] 数据上报  
-    - [x] 图片上报  
-    - [x] 接口上报  
-    - [x] 手动上报  
+    Vue.use(VueDataAc, {
+        ...options
+    })
+```
+
+## 文档：
+        为了尽可能灵活，以下的所有配置项理论上都可以修改配置，
+        我对每个配置项做了修改建议，供大家参考：
+`:full_moon_with_face:` = 可以修改 `:new_moon_with_face:` = 不要修改  `:first_quarter_moon:` = 不建议修改  
+
+### 1. 标识类配置，作为数据上报信息的分类标识
+| 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
+| :------------ |:---------------| :---------------|:---------------|:---------------|:-----:|
+| storeInput | String | 'ACINPUT' |  `:first_quarter_moon:` | 输入框行为采集标识 | 1.0.0 |
+| storePage | String | 'ACPAGE' |  `:first_quarter_moon:` | 页面访问信息采集标识 |1.0.0 |
+| storeClick | String | 'ACCLIK' |  `:first_quarter_moon:` | 点击事件采集标识 |1.0.0 |
+| storeReqErr | String | 'ACRERR' |  `:first_quarter_moon:` | 请求异常采集标识 |1.0.0 |
+| storeTiming | String | 'ACTIME' |  `:first_quarter_moon:` | 页面性能采集标识 |1.0.0 |
+| storeCodeErr | String | 'ACCERR' |  `:first_quarter_moon:` | 代码异常采集标识 |1.0.0 |
+| storeCustom | String | 'ACCUSTOM' |  `:first_quarter_moon:` | 自定义事件采集标识 | 2.0.0 |
+| storeSourceErr | String | 'ACSCERR' |  `:first_quarter_moon:` | 资源加载异常采集标识  |2.0.0 |
+| storePrmseErr | String | 'ACPRERR' |  `:first_quarter_moon:` | promise抛出异常标识 |2.0.0 |
+| storeCompErr | String | 'ACCOMP' |  `:first_quarter_moon:` | Vue组件性能监控标识 |2.0.0 |
+| storeVueErr | String | 'ACVUERR' |  `:first_quarter_moon:` | Vue异常监控标识  |2.0.0 |
+
+### 2. 全局开关，用来自定义采集范围
+| 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
+| :------------ |:---------------| :---------------|:---------------|:---------------|:-----:|
+| userSha | String | 'vue_ac_userSha' |  `:full_moon_with_face:` | 用户标识存储在Storage中的key，有冲突可修改 | 1.0.0 |
+| useImgSend | Boolean | true |  `:full_moon_with_face:` | 是否使用图片上报数据, 设置为 false 为 xhr 接口请求上报 | 2.0.0 |
+| useStorage | Boolean | true |  `:full_moon_with_face:` | 是否使用storage作为存储载体, 设置为 false 时使用cookie | 2.0.0 |
+| maxDays | Number | 365 |  `:full_moon_with_face:` | 如果使用cookie作为存储载体，此项生效，配置cookie存储时间，默认一年 | 2.0.0 |
+| openInput | Boolean | true |  `:full_moon_with_face:` | 是否开启输入数据采集 | 1.0.0 |
+| openCodeErr | Boolean | true |  `:full_moon_with_face:` | 是否开启代码异常采集 | 1.0.0 |
+| openClick | Boolean | true |  `:full_moon_with_face:` | 是否开启点击数据采集 | 1.0.0 |
+| openXhrQuery | Boolean | true |  `:full_moon_with_face:` | 采集接口异常时是否采集请求参数params | 2.0.0 |
+| openXhrHock | Boolean | true |  `:full_moon_with_face:` | 是否开启xhr异常采集 | 1.0.0 |
+| openPerformance | Boolean | true |  `:full_moon_with_face:` | 是否开启页面性能采集 | 1.0.0 |
+| openPage | Boolean | true |  `:full_moon_with_face:` | 是否开启页面访问信息采集(PV/UV) | 2.0.0 |
+| openVueErr | Boolean | true |  `:full_moon_with_face:` | 是否开启Vue异常监控 | 2.0.0 |
+| openSourceErr | Boolean | true |  `:full_moon_with_face:` | 是否开启资源加载异常采集 | 2.0.0 |
+| openPromiseErr | Boolean | true |  `:full_moon_with_face:` | 是否开启promise异常采集 | 2.0.0 |
+| openComponent | Boolean | true |  `:full_moon_with_face:` | 是否开启组件性能采集 | 2.0.0 |
+| openXhrTimeOut | Boolean | true |  `:full_moon_with_face:` | 是否开启请求超时上报 | 2.0.0 |
+| maxRequestTime | Number | 10000 |  `:full_moon_with_face:` | 请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 | 2.0.0 |
+| customXhrErrCode | String | '' |  `:full_moon_with_face:` | 支持自定义响应code，当接口响应中的code为指定内容时上报异常 | 2.0.0 |
+
+### 3. 行为采集配置
+| 配置项 | 类型  | 默认值 | 采集范围 | 是否可配置 | 说明 | 生效版本 |
+| :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|:-----:|
+| selector | String | 'input' | 所有input输入框（全量采集） | `:full_moon_with_face:` | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
+| selector | String | 'input.isjs-ac' | 所有class包含isjs-ac的input输入框（埋点采集） | `:full_moon_with_face:` | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
+| ignoreInputType | Array | `['password', 'file']` | type不是password和file的输入框 | `:full_moon_with_face:` | --- | 1.0.0 |
+| ignoreInputType | Array | `[]` | 所有输入框 | `:full_moon_with_face:` | --- | 1.0.0 |
+| classTag | String | '' | 所有元素（全量采集） | `:full_moon_with_face:` | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
+| classTag | String | 'isjs-ac' | 只会采集 class 包含 isjs-ac 元素的点击（埋点采集） | `:full_moon_with_face:` | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
+
+### 4. 数据上报配置
+| 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
+| :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|:-----:|
+| imageUrl | String | 'http://open.isjs.cn/admin/ac.png' | `:full_moon_with_face:` | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
+| postUrl | String | 'http://open.isjs.cn/logStash/push' | `:full_moon_with_face:` | 接口上报地址 | 1.0.0 |
+| openReducer | Boolean | false | `:full_moon_with_face:` | 是否开启节流,用于限制上报频率，开启后sizeLimit，lifeReport，manualReport生效 | 2.0.0 |
+| sizeLimit | Number | 20 | `:full_moon_with_face:` | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
+| lifeReport | Boolean | false | `:full_moon_with_face:` | 开启懒惰上报，路由变化时统一上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
+| manualReport | Boolean | false | `:full_moon_with_face:` | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
+
+
+## 实例方法：
+
+### vue.$vueDataAc.setCustomAc(cusKey: String, cusVal: Any)
+    用于自定义事件的约定上报，例如在业务场景中对某些逻辑的埋点。
+    自定义事件上报逻辑与其他事件上报共用，可以通过openReducer限制频率
     
-- [ ] 页面性能上报  
-    - [x] performance  
-    - [ ] 组件性能上报  
+### vue.$vueDataAc.postAcData()
+    手动上报当前采集信息
     
-- [x] 留存  
-    - [x] 访问时间  
-    - [x] 访问间隔  
-    
-- [ ] 开关  
-    - [x] openPage 页面访问信息采集开关  
-    - [x] openSourceErr 资源加载异常采集  
-    - [x] openPromiseErr promise异常采集  
-    - [x] openCodeErr 是否开启代码异常采集 
-    - [x] openVueErr 是否开启Vue异常监控 
-    - [x] openSourceErr 是否开启资源加载异常采集 
-    - [x] openPromiseErr 是否开启promise异常采集 
-    - [x] openClick 是否开启点击数据采集   
-    - [x] openInput 是否开启输入数据采集   
-    - [x] openXhrData 是否采集接口异常时的参数params     
-    - [x] openXhrHock 是否开启xhr异常采集    
-    - [x] openPerformance 是否开启页面性能采集  
-    - [ ] openComponent 组件性能采集     
+### vue.$vueDataAc.setUserToken(userToken: String)
+用于关联用户后台标记，利用用户登录后的userid，sessionId
+    目的是将前后台日志打通，方便查找
        
-    
-- [x] npm自动发布  
-- [x] 后端日志关联机制  
-- [ ] demo  
-
-    
-    
+ 
 ## 上报数据格式：
 
 ### 1. 页面访问，路由跳转，等同于PV/UV数据：
@@ -225,7 +265,7 @@
             "statusText"    : "not found"                //错误描述
             "requestTime"   : 3000                       //请求耗时
             "response"      : "{...}"                    //接口响应摘要，截取前100个字符
-            "query"         : "{}"                       //请求参数，用 openXhrData 配置打开，注意用户信息泄露
+            "query"         : "{}"                       //请求参数，用 openXhrQuery 配置打开，注意用户信息泄露
          }
 }
 ```
@@ -254,16 +294,54 @@
 
 ## 错误代码：
     0x00000001  没有找到对应的时间类型，用户新增加了事件类型，没有在setAcData中添加
-    
-## 方法：
+     
+## TODO:
 
-#### vue.$vueDataAc.setCustomAc(cusKey: String, cusVal: Any)
-    用于自定义事件的约定上报，例如在业务场景中对某些逻辑的埋点。
-    自定义事件上报逻辑与其他事件上报共用，可以通过openReducer限制频率
+- [x] 异常监控  
+    - [x] 代码异常  
+    - [x] 资源加载异常  
+    - [x] promise异常  
+    - [x] Vue异常  
+    - [x] 请求异常(慢请求，超时，错误)  
     
-#### vue.$vueDataAc.postAcData()
-    手动上报当前采集信息
+- [x] 用户行为监控  
+    - [x] 点击事件  
+    - [x] 输入事件  
+    - [x] 自定义事件  
+    - [x] 页面访问事件    
     
-#### vue.$vueDataAc.setUserToken(userToken: String)
-    用于关联用户后台标记，利用用户登录后的userid，sessionId
-    目的是将前后台日志打通，方便查找
+- [x] 数据上报  
+    - [x] 图片上报  
+    - [x] 接口上报  
+    - [x] 手动上报  
+    
+- [ ] 页面性能上报  
+    - [x] performance  
+    - [ ] 组件性能上报  
+    
+- [x] 留存  
+    - [x] 访问时间  
+    - [x] 访问间隔  
+    
+- [ ] 开关  
+    - [x] openPage 页面访问信息采集开关  
+    - [x] openSourceErr 资源加载异常采集  
+    - [x] openPromiseErr promise异常采集  
+    - [x] openCodeErr 是否开启代码异常采集 
+    - [x] openVueErr 是否开启Vue异常监控 
+    - [x] openSourceErr 是否开启资源加载异常采集 
+    - [x] openPromiseErr 是否开启promise异常采集 
+    - [x] openClick 是否开启点击数据采集   
+    - [x] openInput 是否开启输入数据采集   
+    - [x] openXhrQuery 是否采集接口异常时的参数params     
+    - [x] openXhrHock 是否开启xhr异常采集    
+    - [x] openPerformance 是否开启页面性能采集  
+    - [ ] openComponent 组件性能采集     
+       
+    
+- [x] npm自动发布  
+- [x] 后端日志关联机制  
+- [ ] demo  
+
+    
+    
