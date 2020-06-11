@@ -124,7 +124,6 @@ export default class VueDataAc {
    * 输入事件
    * */
   _formatInputEvent(e){
-    console.log(1)
     let event = window.event || e;
     let target = event.srcElement ? event.srcElement : event.target;
     let {id, className, value, innerText}  = target;
@@ -377,12 +376,13 @@ export default class VueDataAc {
 
           _Ac['acData'] = {
             type: this._options.storePage,
+            sTme: nowTime,
             fromPath: fromPath,
             formParams: formParams,
             toPath: toPath,
             toParams: toParams,
-            sTme: pageInTime,
-            eTme: nowTime
+            inTime: pageInTime,
+            outTime: nowTime
           };
         }
         break;

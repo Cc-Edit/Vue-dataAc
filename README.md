@@ -10,9 +10,9 @@
     - [x] Vue异常  
     - [ ] 请求异常(慢请求，超时，错误)  
     
-- [ ] 用户行为监控  
+- [x] 用户行为监控  
     - [x] 点击事件  
-    - [ ] 输入事件  
+    - [x] 输入事件  
     - [x] 自定义事件  
     - [x] 页面访问事件    
     
@@ -38,8 +38,8 @@
     - [x] openSourceErr 是否开启资源加载异常采集 
     - [x] openPromiseErr 是否开启promise异常采集 
     - [x] openClick 是否开启点击数据采集   
+    - [x] openInput 是否开启输入数据采集   
     - [ ] openComponent 组件性能采集     
-    - [ ] openInput 是否开启输入数据采集     
     - [ ] openXhrData 是否采集接口异常时的参数params     
     - [ ] openXhrHock 是否开启xhr异常采集     
     - [ ] openPerformance 是否开启页面性能采集     
@@ -60,12 +60,13 @@
         "t"   : "",                             //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
             "type"       :  "ACPAGE"            //行为标识
+            "sTme"       :  1591760011268       //数据上报时间
             "fromPath"   :  "/register?type=1"  //来源路由
             "formParams" :  "{'type': 1}"       //来源参数
             "toPath"     :  "/login"            //目标路由
             "toParams"   :  "{}"                //目标参数
-            "sTme"   :  1591760011268           //页面进入时间
-            "eTme"   :  1591760073422           //离开页面时间
+            "inTime"     :  1591760011268       //页面进入时间
+            "outTime"    :  1591760073422       //离开页面时间
         }
     }
 ```
@@ -79,7 +80,7 @@
         "acData" : {
              "type"    : "ACCERR",     		        //上报数据类型：代码异常
              "path"    : "www.domain.com/w/w/w/",   //事件发生页面的url
-             "sTme"    : "1591760073422",	        //事件发生时间
+             "sTme"    : "1591760073422",	        //事件上报时间
              "msg"     : "script error",            //异常摘要
              "line"    : "301",  		            //代码行数
              "col"     : "13",  		            //代码列下标
@@ -98,7 +99,7 @@
         "acData" : {
              "type"        : "ACSCERR",     		        //上报数据类型：资源加载异常
              "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
-             "sTme"        : "1591760073422",	            //事件发生时间
+             "sTme"        : "1591760073422",	            //事件上报时间
              "fileName"    : "test.js",                     //文件名
              "resourceUri" : "http://isjs.cn/js/test.js",   //资源地址
              "tagName"     : "script",  		            //标签类型
@@ -117,7 +118,7 @@
         "acData" : {
             "type"        : "ACPRERR",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
-            "sTme"        : "1591760073422",	         //事件发生时间
+            "sTme"        : "1591760073422",	         //事件上报时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
             "reason"      : "reason"                     //异常说明
          }
@@ -139,7 +140,7 @@
         "acData" : {
             "type"        : "ACCUSTOM",     		     //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
-            "sTme"        : "1591760073422",	         //事件发生时间
+            "sTme"        : "1591760073422",	         //事件上报时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
             "cusKey"      : "click-button-001"           //自定义事件key，用户定义
             "cusVal"      ："1"                          //自定义事件值，用户定义
@@ -155,7 +156,7 @@
         "acData" : {
             "type"          : "ACVUERR",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
-            "sTme"          : "1591760073422",	         //事件发生时间
+            "sTme"          : "1591760073422",	         //事件上报时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
             "componentName" : "Button"                   //组件名
             "fileName"      : "button.js"                //组件文件
@@ -163,6 +164,43 @@
             "err"           : "..."                      //错误堆栈
             "info"          : "信息"                      //错误信息
             "msg"           : "1"                        //异常摘要
+         }
+}
+```
+### 7. 点击事件监控
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "acData" : {
+            "type"          : "ACCLIK",     		     //上报数据类型：资源加载异常
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件上报时间
+            "ua"            : "ios/chrome 44.44"         //浏览器信息 
+            "eId"           : ""                         //元素id属性
+            "className"     : "login-form"               //点击元素class属性
+            "val"           : "标题"                      //元素value或者innertext
+            "attrs"         : "{class:'...', placeholder:'...', type:'...'}"       //元素所有属性对象
+         }
+}
+```
+
+### 8. input输入事件监控
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "acData" : {
+            "type"          : "ACINPUT",     		     //上报数据类型：资源加载异常
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件上报时间
+            "ua"            : "ios/chrome 44.44"         //浏览器信息 
+            "eId"           : ""                         //元素id属性
+            "className"     : "van-field__control"       //元素class属性
+            "val"           : "0:111,638:11,395:1,327:,1742:5,214:55,207:555,175:5555"     //时间:当前值，用逗号分隔，体现时间变化
+            "attrs"         : "{class:'...', placeholder:'...', type:'...'}"               //元素所有属性对象
          }
 }
 ```
