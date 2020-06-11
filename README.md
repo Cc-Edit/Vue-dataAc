@@ -87,7 +87,7 @@
     手动上报当前采集信息
     
 ### vue.$vueDataAc.setUserToken(userToken: String)
-用于关联用户后台标记，利用用户登录后的userid，sessionId
+    用于关联用户后台标记，利用用户登录后的userid，sessionId
     目的是将前后台日志打通，方便查找
        
  
