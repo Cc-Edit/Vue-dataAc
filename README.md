@@ -37,9 +37,9 @@
 ## 文档：
     为了尽可能灵活，以下所有配置项理论上都可以修改配置，
     我对每个配置项做了修改建议，供大家参考：
-:full_moon_with_face: = 可以修改   
-:new_moon_with_face: = 不要修改    
-:first_quarter_moon:= 不建议修改     
+:full_moon_with_face:   = 可以修改   
+:new_moon_with_face:   = 不要修改    
+:first_quarter_moon:   = 不建议修改     
 
 ### 1. 标识类配置，作为数据上报信息的分类标识
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
