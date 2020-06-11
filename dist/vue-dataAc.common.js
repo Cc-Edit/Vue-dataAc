@@ -8,37 +8,42 @@
 /**
  * 判断是否为空
  * */
-function ac_util_isNullOrEmpty (obj) {
-  return ( obj !== 0 || obj !== "0" ) && ( obj === undefined || typeof obj === "undefined" || obj === null || obj === "null" || obj === "" );
+function ac_util_isNullOrEmpty(obj) {
+  return (obj !== 0 || obj !== "0") && (obj === undefined || typeof obj === "undefined" || obj === null || obj === "null" || obj === "");
 }
+
 /**
  * 判断是否为空对象
  * */
-function ac_util_isEmptyObject ( obj ) {
-  for( var key in obj ){
+function ac_util_isEmptyObject(obj) {
+  for (var key in obj) {
     return false;
   }
   return true;
 }
+
 /**
  * 获取元素所有属性
  * */
-function ac_util_getAllAttr( elem ) {
+function ac_util_getAllAttr(elem) {
   var len = (elem.attributes ? elem.attributes.length : 0);
   var obj = {};
-  if(len > 0){
-    for(var i = 0; i < len; i++){
+  if (len > 0) {
+    for (var i = 0; i < len; i++) {
       var attr = elem.attributes[i];
       obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
     }
   }
   return obj;
 }
+
 /**
  * 判断是否定义
  * @param v 变量
  * */
-function ac_util_isDef (v) { return v !== undefined; }
+function ac_util_isDef(v) {
+  return v !== undefined;
+}
 
 /**
  * 数据存储，可通过 useStorage 配置修改存储位置
@@ -47,7 +52,7 @@ function ac_util_isDef (v) { return v !== undefined; }
  * @param Day 存储时长，maxDays
  * @param options 配置信息
  * */
-function ac_util_setStorage (options, name, value, Day) {
+function ac_util_setStorage(options, name, value, Day) {
   if (options.useStorage) {
     window.localStorage.setItem(name, value);
   } else {
@@ -63,8 +68,8 @@ function ac_util_setStorage (options, name, value, Day) {
  * @param name * 存储key
  * @param options 配置信息
  * */
-function ac_util_getStorage (options, name) {
-  if (!name){ return null; }
+function ac_util_getStorage(options, name) {
+  if (!name) { return null; }
   if (options.useStorage) {
     return window.localStorage.getItem(name);
   } else {
@@ -82,7 +87,7 @@ function ac_util_getStorage (options, name) {
  * @param len * UUID长度,默认16
  * @param radix 进制，默认16
  * */
-function ac_util_getUuid (len, radix) {
+function ac_util_getUuid(len, radix) {
   if ( len === void 0 ) len = 16;
   if ( radix === void 0 ) radix = 16;
 //uuid长度以及进制
@@ -96,7 +101,7 @@ function ac_util_getUuid (len, radix) {
  * 获取时间戳
  * @return timeStamp: Number
  * */
-function ac_util_getTime () {
+function ac_util_getTime() {
   var date = new Date();
   return {
     timeStr: ((date.getFullYear()) + "/" + (date.getMonth() + 1) + "/" + (date.getDate()) + " " + (date.getHours()) + ":" + (date.getMinutes()) + ":" + (date.getSeconds())),
@@ -107,10 +112,10 @@ function ac_util_getTime () {
 /**
  * 配置项合并
  * */
-function ac_util_mergeOption (userOpt, baseOpt){
+function ac_util_mergeOption(userOpt, baseOpt) {
   var newOpt = {};
   var key;
-  var keys  = Object.keys(baseOpt);
+  var keys = Object.keys(baseOpt);
 
   for (var i = 0; i < keys.length; i++) {
     key = keys[i];
@@ -123,8 +128,8 @@ function ac_util_mergeOption (userOpt, baseOpt){
 /**
  * 配置项检查
  * */
-function ac_util_checkOptions (options){
-  if(ac_util_isEmptyObject(options)){
+function ac_util_checkOptions(options) {
+  if (ac_util_isEmptyObject(options)) {
     ac_util_warn("--------配置项异常：不能为空------");
     return;
   }
@@ -132,42 +137,43 @@ function ac_util_checkOptions (options){
     'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrData',
     'openXhrHock', 'openPerformance', 'openPage'];
   notEmpty.map(function (key) {
-    if(ac_util_isNullOrEmpty(options[key])){
+    if (ac_util_isNullOrEmpty(options[key])) {
       ac_util_warn(("--------配置项【" + key + "】不能为空------"));
     }
   });
 
   // 上报方式检查
-  if(options['useImgSend']){
-    if(ac_util_isNullOrEmpty(options['imageUrl'])){
+  if (options['useImgSend']) {
+    if (ac_util_isNullOrEmpty(options['imageUrl'])) {
       ac_util_warn("--------使用图片上报数据，需要配置 【imageUrl】------");
     }
-  }else {
-    if(ac_util_isNullOrEmpty(options['postUrl'])){
+  } else {
+    if (ac_util_isNullOrEmpty(options['postUrl'])) {
       ac_util_warn("--------使用接口上报数据，需要配置 【postUrl】------");
     }
   }
 
   //输入框采集配置
-  if(options['openInput']){
-    if(ac_util_isNullOrEmpty(options['selector'])){
+  if (options['openInput']) {
+    if (ac_util_isNullOrEmpty(options['selector'])) {
       ac_util_warn("--------请指定输入框选择器：selector------");
     }
-    if(ac_util_isNullOrEmpty(options['acRange'])){
+    if (ac_util_isNullOrEmpty(options['acRange'])) {
       ac_util_warn("--------请指定输入框选择器类型：acRange------");
     }
   }
   //存储配置
-  if(options['useStorage']){
-    if(typeof window.localStorage == 'undefined'){
+  if (options['useStorage']) {
+    if (typeof window.localStorage == 'undefined') {
       ac_util_warn("--------当前容器不支持Storage存储：useStorage------");
     }
   }
 }
+
 /**
  *  警告
  * */
-function ac_util_warn (message) {
+function ac_util_warn(message) {
   if (process.env.NODE_ENV !== 'production') {
     typeof console !== 'undefined' && console.warn(("[vue-dataAc] " + message));
   }
@@ -176,7 +182,7 @@ function ac_util_warn (message) {
 /**
  *  内嵌AJAX
  * */
-function ac_util_ajax (options ) {
+function ac_util_ajax(options) {
   if ( options === void 0 ) options = {};
 
   var xhr, params;
@@ -210,11 +216,12 @@ function ac_util_ajax (options ) {
     }
   }
 }
+
 /**
  *  格式化Vue异常
  *
  * */
-function  ac_util_formatVueErrStack(error) {
+function ac_util_formatVueErrStack(error) {
   var msg = error.toString();
   var stack = error.stack
     .replace(/\n/gi, "") // 去掉换行
@@ -224,19 +231,19 @@ function  ac_util_formatVueErrStack(error) {
     .split("@") // 以@分割信息
     .slice(0, 5) //只取5条
     .join("&&");
-  if (stack.indexOf(msg) < 0)  { stack = msg + "@" + stack; }
+  if (stack.indexOf(msg) < 0) { stack = msg + "@" + stack; }
   return stack;
 }
 
 /**
  * 暴露插件接口
  * */
-function install (Vue, options, VueDataAc) {
+function install(Vue, options, VueDataAc) {
   if (install.installed) { return }
   install.installed = true;
 
   Vue.mixin({
-    watch:{
+    watch: {
       $route: function $route(to, from) {
         /**
          *  路由变化进行页面访问的采集
@@ -244,12 +251,20 @@ function install (Vue, options, VueDataAc) {
         this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
       }
     },
+    beforeDestroy: function beforeDestroy() {
+      /**
+       * 根元素移除时手动上报，以免累计条数不满足 sizeLimit
+       * */
+      if (this && this.$root && this._uid === this.$root._uid) {
+        this.$vueDataAc && this.$vueDataAc.postAcData();
+      }
+    },
     /**
      * 在组件渲染完成后，尝试进行事件劫持
      * mounted 不会保证所有的子组件也都一起被挂载
      * 所以使用 vm.$nextTick
      * */
-    mounted: function mounted () {
+    mounted: function mounted() {
       this.$vueDataAc._componentCount++;
       this.$vueDataAc && this.$vueDataAc._options.openInput && this.$nextTick(function () {
         --this.$vueDataAc._componentCount === 0 && this.$vueDataAc._mixinMounted(this);
@@ -272,7 +287,7 @@ var BASEOPTIONS = {
   storePage      : "ACPAGE",     //页面采集标识
   storeClick     : "ACCLIK",     //点击事件采集标识
   storeReqErr    : "ACRERR",     //请求异常采集标识
-  storeTiming    : "ACTIME",     //页面时间采集标识
+  storeTiming    : "ACTIME",     //页面性能采集标识
   storeCodeErr   : "ACCERR",     //代码异常采集标识
   storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
   storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）
@@ -348,7 +363,7 @@ var BASEOPTIONS = {
  * */
 var _VueDataAc;
 
-var VueDataAc = function VueDataAc (options, Vue) {
+var VueDataAc = function VueDataAc(options, Vue) {
   if ( options === void 0 ) options = {};
   if ( Vue === void 0 ) Vue = {};
 
@@ -359,7 +374,7 @@ var VueDataAc = function VueDataAc (options, Vue) {
   _VueDataAc = this;
 
   this._uuid = ac_util_getStorage(this._options, this._options.userSha);
-  if(ac_util_isNullOrEmpty(this._uuid)){
+  if (ac_util_isNullOrEmpty(this._uuid)) {
     this._uuid = ac_util_getUuid();
     ac_util_setStorage(this._options, this._options.userSha, this._uuid);
   }
@@ -373,51 +388,52 @@ var VueDataAc = function VueDataAc (options, Vue) {
   this._componentCount = 0; //保证所有组件渲染完成
   this._init();
 };
+
 /**
  * 页面初始化
  * */
-VueDataAc.prototype._init = function _init (){
+VueDataAc.prototype._init = function _init () {
   /**
    * 异常监控初始化
    * */
-  if(this._options.openVueErr){
+  if (this._options.openVueErr) {
     this._initVueErrAc();
   }
 
   /**
    * 异常监控初始化
    * */
-  if(this._options.openCodeErr){
+  if (this._options.openCodeErr) {
     this._initCodeErrAc();
   }
 
   /**
    * 资源监控初始化
    * */
-  if(this._options.openSourceErr){
+  if (this._options.openSourceErr) {
     this._initSourceErrAc();
   }
 
   /**
    * Promise监控初始化
    * */
-  if(this._options.openPromiseErr){
+  if (this._options.openPromiseErr) {
     this._initPromiseErrAc();
   }
 
   /**
    * 点击事件代理初始化
    * */
-  if(this._options.openClick){
+  if (this._options.openClick) {
     this._initClickAc();
   }
 
 
-  if(this._options.openXhrData){
+  if (this._options.openXhrData) {
     this._initXhrErrAc();
   }
 
-  if(this._options.openPerformance){
+  if (this._options.openPerformance) {
     this._initPerformance();
   }
 };
@@ -427,7 +443,7 @@ VueDataAc.prototype._init = function _init (){
  *用来绑定全局代理事件，当根元素渲染完成后绑定
  *@param VueRoot 根元素
  * */
-VueDataAc.prototype._mixinMounted = function _mixinMounted (VueRoot){
+VueDataAc.prototype._mixinMounted = function _mixinMounted (VueRoot) {
   var ref = this._options;
     var acRange = ref.acRange;
     var selector = ref.selector;
@@ -451,7 +467,7 @@ VueDataAc.prototype._mixinMounted = function _mixinMounted (VueRoot){
 /**
  * 输入事件
  * */
-VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
+VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e) {
   var event = window.event || e;
   var target = event.srcElement ? event.srcElement : event.target;
   var id = target.id;
@@ -467,20 +483,20 @@ VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
    * */
   try {
     inputKey = JSON.stringify(attrs);
-  }catch (e) {
+  } catch (e) {
     inputKey = id + "-" + className;
   }
 
   var cacheData = _VueDataAc._inputCacheData[inputKey];
-  if(ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)){
+  if (ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)) {
     cacheData = {
       value: ("0:" + _value),
-      timeStamp : _now
+      timeStamp: _now
     };
-  }else {
+  } else {
     cacheData = {
       value: ((cacheData.value) + "," + (parseInt(_now - cacheData.timeStamp)) + ":" + _value),
-      timeStamp : _now
+      timeStamp: _now
     };
   }
   _VueDataAc._inputCacheData[inputKey] = cacheData;
@@ -489,7 +505,7 @@ VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
 /**
  * 失焦事件
  * */
-VueDataAc.prototype._formatBlurEvent = function _formatBlurEvent (e){
+VueDataAc.prototype._formatBlurEvent = function _formatBlurEvent (e) {
   var event = window.event || e;
   var target = event.srcElement ? event.srcElement : event.target;
   var id = target.id;
@@ -501,12 +517,12 @@ VueDataAc.prototype._formatBlurEvent = function _formatBlurEvent (e){
    * */
   try {
     inputKey = JSON.stringify(attrs);
-  }catch (e) {
+  } catch (e) {
     inputKey = id + "-" + className;
   }
 
   var cacheData = _VueDataAc._inputCacheData[inputKey];
-  if(ac_util_isNullOrEmpty(cacheData)) { return; }
+  if (ac_util_isNullOrEmpty(cacheData)) { return; }
 
   _VueDataAc._inputCacheData[inputKey] = null;
   _VueDataAc._setAcData(_VueDataAc._options.storeInput, {
@@ -520,7 +536,7 @@ VueDataAc.prototype._formatBlurEvent = function _formatBlurEvent (e){
 /**
  *混入vue watch 用来监控路由变化
  * */
-VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from){
+VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from) {
     if ( to === void 0 ) to = {};
     if ( from === void 0 ) from = {};
 
@@ -528,11 +544,11 @@ VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from){
   var toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
   var fromPath = from.fullPath || from.path || from.name;
   var formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
-  if(this._lastRouterStr === (toPath + "-" + (JSON.stringify(toParams)))){
+  if (this._lastRouterStr === (toPath + "-" + (JSON.stringify(toParams)))) {
     return
   }
 
-  if(!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)){
+  if (!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)) {
     this._lastRouterStr = toPath + "-" + (JSON.stringify(toParams));
     this._setAcData(this._options.storePage, {
       toPath: toPath,
@@ -546,10 +562,10 @@ VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from){
 /**
  *初始化点击事件
  * */
-VueDataAc.prototype._initClickAc = function _initClickAc (){
+VueDataAc.prototype._initClickAc = function _initClickAc () {
     var this$1 = this;
 
-  document.addEventListener("click",function (e) {
+  document.addEventListener("click", function (e) {
     var event = window.event || e;
     var target = event.srcElement ? event.srcElement : event.target;
     var className = target.className;
@@ -559,7 +575,7 @@ VueDataAc.prototype._initClickAc = function _initClickAc (){
     var ref = this$1._options;
       var classTag = ref.classTag;
     //主动埋点未命中
-    if(!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0){
+    if (!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0) {
       return;
     }
     var attrs = ac_util_getAllAttr(target);
@@ -576,16 +592,16 @@ VueDataAc.prototype._initClickAc = function _initClickAc (){
 /**
  *初始化请求劫持
  * */
-VueDataAc.prototype._initXhrErrAc = function _initXhrErrAc (){
+VueDataAc.prototype._initXhrErrAc = function _initXhrErrAc () {
   var _nativeAjaxOpen = XMLHttpRequest.prototype.open;
   var _nativeAjaxSend = XMLHttpRequest.prototype.send;
   var _nativeAjaxonReady = XMLHttpRequest.onreadystatechange;
   this._proxyXhrObj = {
-    open: function() {
+    open: function () {
       this._ac_method = (arguments[0] || [])[0];
       return (_nativeAjaxOpen && _nativeAjaxOpen.apply(this, arguments));
     },
-    send: function() {
+    send: function () {
       this._ac_send_time = ac_util_getTime().timeStamp;
       this._ac_post_data = (arguments[0] || [])[0] || '';
       this.addEventListener('error', function (xhr) {
@@ -605,7 +621,7 @@ VueDataAc.prototype._initXhrErrAc = function _initXhrErrAc (){
   XMLHttpRequest.prototype.send = this._proxyXhrObj.send;
 };
 
-VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr){
+VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr) {
   var _ajax = xhr;
   var method = _ajax.method;
     var send_time = _ajax.send_time; if ( send_time === void 0 ) send_time = 0;
@@ -629,7 +645,7 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr){
     var isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
     var isCustomErr = (("" + (response && response.code)) === customXhrErrCode);
 
-    if( (openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr){
+    if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
 
       _VueDataAc._setAcData(storeReqErr, {
         responseURL: responseURL,
@@ -647,26 +663,45 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr){
     }
   }
 };
+
 /**
  *初始化页面性能
  * */
-VueDataAc.prototype._initPerformance = function _initPerformance (){};
+VueDataAc.prototype._initPerformance = function _initPerformance () {
+  if (window.performance) {
+    var performance = window.performance || {};
+    var _timing = performance.timing;
+
+    if (!ac_util_isNullOrEmpty(_timing)) {
+      var loadAcData = {
+        WT: _timing.responseStart - _timing.navigationStart, //白屏时间
+        TCP: _timing.connectEnd - _timing.connectStart, //TCP连接耗时
+        ONL: _timing.loadEventEnd - _timing.loadEventStart, //执行onload事件耗时
+        ALLRT: _timing.responseEnd - _timing.requestStart, //所有请求耗时
+        TTFB: _timing.responseStart - _timing.navigationStart, //TTFB 即 Time To First Byte,读取页面第一个字节的时间
+        DNS: _timing.domainLookupEnd - _timing.domainLookupStart, //DNS查询时间
+        DR: _timing.domComplete - _timing.responseEnd //dom ready时间，脚本加载完成时间
+      };
+      this._setAcData(this._options.storeTiming, loadAcData);
+    }
+  }
+};
 
 /**
  *初始化Vue异常监控
  * */
-VueDataAc.prototype._initVueErrAc = function _initVueErrAc (){
+VueDataAc.prototype._initVueErrAc = function _initVueErrAc () {
     var this$1 = this;
 
   this._vue_ && this._vue_.config && (this._vue_.config.errorHandler = function (error, vm, info) {
       if ( error === void 0 ) error = {};
 
     var componentName = vm._isVue
-                          ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
-                            : vm.name;
+      ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
+      : vm.name;
     var fileName = (vm._isVue && vm.$options && vm.$options.__file)
-                      ? (vm.$options && vm.$options.__file)
-                      : "";
+      ? (vm.$options && vm.$options.__file)
+      : "";
     var propsData = vm.$options && vm.$options.propsData;
 
 
@@ -684,7 +719,7 @@ VueDataAc.prototype._initVueErrAc = function _initVueErrAc (){
 /**
  *初始化代码异常监控
  * */
-VueDataAc.prototype._initCodeErrAc = function _initCodeErrAc (){
+VueDataAc.prototype._initCodeErrAc = function _initCodeErrAc () {
     var arguments$1 = arguments;
     var this$1 = this;
 
@@ -734,7 +769,7 @@ VueDataAc.prototype._initCodeErrAc = function _initCodeErrAc (){
 /**
  *初始化资源加载异常监听
  * */
-VueDataAc.prototype._initSourceErrAc = function _initSourceErrAc (){
+VueDataAc.prototype._initSourceErrAc = function _initSourceErrAc () {
     var this$1 = this;
 
   window.addEventListener('error', function (event) {
@@ -747,7 +782,7 @@ VueDataAc.prototype._initSourceErrAc = function _initSourceErrAc (){
         var src = theTag.src;
         var currentSrc = theTag.currentSrc;
         var localName = theTag.localName;
-      tagName = tagName|| localName;
+      tagName = tagName || localName;
 
       var resourceUri = href || src;
 
@@ -757,7 +792,7 @@ VueDataAc.prototype._initSourceErrAc = function _initSourceErrAc (){
       }
 
       //优化请求内容，对大标签内容进行截取
-      if(outerHTML && outerHTML.length > 200){
+      if (outerHTML && outerHTML.length > 200) {
         outerHTML = outerHTML.slice(0, 200);
       }
 
@@ -776,7 +811,7 @@ VueDataAc.prototype._initSourceErrAc = function _initSourceErrAc (){
  *在使用Promise的时候，如果没有声明catch代码块
  *Promise的异常会被抛出
  * */
-VueDataAc.prototype._initPromiseErrAc = function _initPromiseErrAc (){
+VueDataAc.prototype._initPromiseErrAc = function _initPromiseErrAc () {
     var this$1 = this;
 
   window.addEventListener('unhandledrejection', function (event) {
@@ -800,199 +835,211 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
     t: this._userToken
   };
   switch (options) {
-    case this._options.storePage:
-      {
-        var toPath = data.toPath;
-          var toParams = data.toParams;
-          var fromPath = data.fromPath;
-          var formParams = data.formParams;
-        var pageInTime = this._pageInTime;
-        var nowTime = ac_util_getTime().timeStamp;
-        this._pageInTime = nowTime;
+    case this._options.storePage: {
+      var toPath = data.toPath;
+        var toParams = data.toParams;
+        var fromPath = data.fromPath;
+        var formParams = data.formParams;
+      var pageInTime = this._pageInTime;
+      var nowTime = ac_util_getTime().timeStamp;
+      this._pageInTime = nowTime;
 
-        _Ac['acData'] = {
-          type: this._options.storePage,
-          sTme: nowTime,
-          fromPath: fromPath,
-          formParams: formParams,
-          toPath: toPath,
-          toParams: toParams,
-          inTime: pageInTime,
-          outTime: nowTime
-        };
-      }
+      _Ac['acData'] = {
+        type: this._options.storePage,
+        sTme: nowTime,
+        fromPath: fromPath,
+        formParams: formParams,
+        toPath: toPath,
+        toParams: toParams,
+        inTime: pageInTime,
+        outTime: nowTime
+      };
+    }
       break;
-    case this._options.storeInput:
-      {
-        var eId = data.eId;
-          var className = data.className;
-          var val = data.val;
-          var attrs = data.attrs;
-        _Ac['acData'] = {
-          type: this._options.storeInput,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          eId: eId,
-          className: className,
-          val: val,
-          attrs: attrs
-        };
-      }
+    case this._options.storeInput: {
+      var eId = data.eId;
+        var className = data.className;
+        var val = data.val;
+        var attrs = data.attrs;
+      _Ac['acData'] = {
+        type: this._options.storeInput,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        eId: eId,
+        className: className,
+        val: val,
+        attrs: attrs
+      };
+    }
       break;
-    case this._options.storeClick:
-      {
-        var eId$1 = data.eId;
-          var className$1 = data.className;
-          var val$1 = data.val;
-          var attrs$1 = data.attrs;
-        _Ac['acData'] = {
-          type: this._options.storeClick,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          eId: eId$1,
-          className: className$1,
-          val: val$1,
-          attrs: attrs$1
-        };
-      }
+    case this._options.storeClick: {
+      var eId$1 = data.eId;
+        var className$1 = data.className;
+        var val$1 = data.val;
+        var attrs$1 = data.attrs;
+      _Ac['acData'] = {
+        type: this._options.storeClick,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        eId: eId$1,
+        className: className$1,
+        val: val$1,
+        attrs: attrs$1
+      };
+    }
       break;
-    case this._options.storeReqErr:
-      {
-        var responseURL = data.responseURL;
-          var method = data.method;
-          var isHttpErr = data.isHttpErr;
-          var isCustomErr = data.isCustomErr;
-          var readyState = data.readyState;
-          var status = data.status;
-          var statusText = data.statusText;
-          var requestTime = data.requestTime;
-          var response = data.response;
-          var query = data.query;
-        _Ac['acData'] = {
-          type: this._options.storeReqErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
-          responseURL: responseURL,
-          method: method,
-          readyState: readyState,
-          status: status,
-          statusText: statusText,
-          requestTime: requestTime,
-          response: response,
-          query: query
-        };
-      }
+    case this._options.storeReqErr: {
+      var responseURL = data.responseURL;
+        var method = data.method;
+        var isHttpErr = data.isHttpErr;
+        var isCustomErr = data.isCustomErr;
+        var readyState = data.readyState;
+        var status = data.status;
+        var statusText = data.statusText;
+        var requestTime = data.requestTime;
+        var response = data.response;
+        var query = data.query;
+      _Ac['acData'] = {
+        type: this._options.storeReqErr,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
+        responseURL: responseURL,
+        method: method,
+        readyState: readyState,
+        status: status,
+        statusText: statusText,
+        requestTime: requestTime,
+        response: response,
+        query: query
+      };
+    }
       break;
-    case this._options.storeVueErr:
-      {
-        var componentName = data.componentName;
-          var fileName = data.fileName;
-          var propsData = data.propsData;
-          var info = data.info;
-          var msg = data.msg;
-          var stack = data.stack;
-        _Ac['acData'] = {
-          type: this._options.storeVueErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          componentName: componentName,
-          fileName: fileName,
-          propsData: propsData,
-          info: info,
-          msg: msg,
-          err: stack
-        };
-      }
+    case this._options.storeVueErr: {
+      var componentName = data.componentName;
+        var fileName = data.fileName;
+        var propsData = data.propsData;
+        var info = data.info;
+        var msg = data.msg;
+        var stack = data.stack;
+      _Ac['acData'] = {
+        type: this._options.storeVueErr,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        componentName: componentName,
+        fileName: fileName,
+        propsData: propsData,
+        info: info,
+        msg: msg,
+        err: stack
+      };
+    }
       break;
-    case this._options.storeCodeErr:
-      {
-        var msg$1 = data.msg;
-          var line = data.line;
-          var col = data.col;
-          var err = data.err;
-        _Ac['acData'] = {
-          type: this._options.storeCodeErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          msg: msg$1,
-          line: line,
-          col: col,
-          err: err
-        };
-      }
+    case this._options.storeCodeErr: {
+      var msg$1 = data.msg;
+        var line = data.line;
+        var col = data.col;
+        var err = data.err;
+      _Ac['acData'] = {
+        type: this._options.storeCodeErr,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        msg: msg$1,
+        line: line,
+        col: col,
+        err: err
+      };
+    }
       break;
-    case this._options.storeSourceErr:
-      {
-        var tagName = data.tagName;
-          var outerHTML = data.outerHTML;
-          var resourceUri = data.resourceUri;
-          var currentSrc = data.currentSrc;
-        _Ac['acData'] = {
-          type: this._options.storeSourceErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          fileName: currentSrc,
-          resourceUri: resourceUri,
-          tagName: tagName,
-          outerHTML: outerHTML,
-        };
-      }
+    case this._options.storeSourceErr: {
+      var tagName = data.tagName;
+        var outerHTML = data.outerHTML;
+        var resourceUri = data.resourceUri;
+        var currentSrc = data.currentSrc;
+      _Ac['acData'] = {
+        type: this._options.storeSourceErr,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        fileName: currentSrc,
+        resourceUri: resourceUri,
+        tagName: tagName,
+        outerHTML: outerHTML,
+      };
+    }
       break;
-    case this._options.storePrmseErr:
-      {
-        var reason = data.reason;
-        _Ac['acData'] = {
-          type: this._options.storePrmseErr,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          reason: reason
-        };
-      }
+    case this._options.storePrmseErr: {
+      var reason = data.reason;
+      _Ac['acData'] = {
+        type: this._options.storePrmseErr,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        reason: reason
+      };
+    }
       break;
-    case this._options.storeCustom:
-      {
-        var cusKey = data.cusKey;
-          var cusVal = data.cusVal;
-        _Ac['acData'] = {
-          type: this._options.storeCustom,
-          path: window.location.href,
-          sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
-          cusKey: cusKey,
-          cusVal: cusVal
-        };
-      }
+    case this._options.storeCustom: {
+      var cusKey = data.cusKey;
+        var cusVal = data.cusVal;
+      _Ac['acData'] = {
+        type: this._options.storeCustom,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        cusKey: cusKey,
+        cusVal: cusVal
+      };
+    }
       break;
-    case this._options.storeTiming:
+    case this._options.storeTiming: {
+      var WT = data.WT;
+        var TCP = data.TCP;
+        var ONL = data.ONL;
+        var ALLRT = data.ALLRT;
+        var TTFB = data.TTFB;
+        var DNS = data.DNS;
+        var DR = data.DR;
+      _Ac['acData'] = {
+        type: this._options.storeTiming,
+        path: window.location.href,
+        sTme: ac_util_getTime().timeStamp,
+        ua: navigator.userAgent,
+        WT: WT,
+        TCP: TCP,
+        ONL: ONL,
+        ALLRT: ALLRT,
+        TTFB: TTFB,
+        DNS: DNS,
+        DR: DR,
+      };
+    }
       break;
     default:
       ac_util_warn("--------系统错误：0x00000001------");
   }
   this._acData.push(_Ac);
-  if(this._options.openReducer){
-    if(!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit){
-      if(this._vue_ && this._vue_.$nextTick){
+  if (this._options.openReducer) {
+    if (!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit) {
+      if (this._vue_ && this._vue_.$nextTick) {
         this._vue_.$nextTick(function () {
           this$1.postAcData();
         });
-      }else {
+      } else {
         this.postAcData();
       }
     }
-  }else {
-    if(this._vue_ && this._vue_.$nextTick){
+  } else {
+    if (this._vue_ && this._vue_.$nextTick) {
       this._vue_.$nextTick(function () {
         this$1.postAcData();
       });
-    }else {
+    } else {
       this.postAcData();
     }
   }
@@ -1001,7 +1048,7 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
 /**
  * 自定义数据上报
  * */
-VueDataAc.prototype.setCustomAc = function setCustomAc (data){
+VueDataAc.prototype.setCustomAc = function setCustomAc (data) {
   var cusKey = data.cusKey; if ( cusKey === void 0 ) cusKey = 'custom';
     var cusVal = data.cusVal; if ( cusVal === void 0 ) cusVal = '';
   this._setAcData(this._options.storeCustom, {
@@ -1015,17 +1062,17 @@ VueDataAc.prototype.setCustomAc = function setCustomAc (data){
  *默认当事件触发就会自动上报，频率为一个事件1次上报
  *如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
  * */
-VueDataAc.prototype.postAcData = function postAcData (){
-  if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
+VueDataAc.prototype.postAcData = function postAcData () {
+  if (ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0) {
     return;
   }
 
   var reqData = JSON.stringify(this._acData);
 
-  if(this._options.useImgSend){
+  if (this._options.useImgSend) {
     //图片上报
     new Image().src = (this._options.imageUrl) + "?acError=" + reqData;
-  }else {
+  } else {
     //接口上报
     ac_util_ajax({
       type: "POST",
@@ -1044,7 +1091,7 @@ VueDataAc.prototype.postAcData = function postAcData (){
 /**
  * 关联后台session
  * */
-VueDataAc.prototype.setUserToken = function setUserToken (value){
+VueDataAc.prototype.setUserToken = function setUserToken (value) {
   this._userToken = value;
 };
 

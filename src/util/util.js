@@ -1,38 +1,42 @@
-
 /**
  * 判断是否为空
  * */
-export function ac_util_isNullOrEmpty (obj) {
-  return ( obj !== 0 || obj !== "0" ) && ( obj === undefined || typeof obj === "undefined" || obj === null || obj === "null" || obj === "" );
+export function ac_util_isNullOrEmpty(obj) {
+  return (obj !== 0 || obj !== "0") && (obj === undefined || typeof obj === "undefined" || obj === null || obj === "null" || obj === "");
 }
+
 /**
  * 判断是否为空对象
  * */
-export function ac_util_isEmptyObject ( obj ) {
-  for( let key in obj ){
+export function ac_util_isEmptyObject(obj) {
+  for (let key in obj) {
     return false;
   }
   return true;
 }
+
 /**
  * 获取元素所有属性
  * */
-export function ac_util_getAllAttr( elem ) {
+export function ac_util_getAllAttr(elem) {
   let len = (elem.attributes ? elem.attributes.length : 0);
   let obj = {};
-  if(len > 0){
-    for(let i = 0; i < len; i++){
+  if (len > 0) {
+    for (let i = 0; i < len; i++) {
       let attr = elem.attributes[i];
       obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
     }
   }
   return obj;
 }
+
 /**
  * 判断是否定义
  * @param v 变量
  * */
-export function ac_util_isDef (v) { return v !== undefined; }
+export function ac_util_isDef(v) {
+  return v !== undefined;
+}
 
 /**
  * 数据存储，可通过 useStorage 配置修改存储位置
@@ -41,7 +45,7 @@ export function ac_util_isDef (v) { return v !== undefined; }
  * @param Day 存储时长，maxDays
  * @param options 配置信息
  * */
-export function ac_util_setStorage (options, name, value, Day) {
+export function ac_util_setStorage(options, name, value, Day) {
   if (options.useStorage) {
     window.localStorage.setItem(name, value);
   } else {
@@ -57,8 +61,8 @@ export function ac_util_setStorage (options, name, value, Day) {
  * @param name * 存储key
  * @param options 配置信息
  * */
-export function ac_util_getStorage (options, name) {
-  if (!name)return null;
+export function ac_util_getStorage(options, name) {
+  if (!name) return null;
   if (options.useStorage) {
     return window.localStorage.getItem(name);
   } else {
@@ -76,7 +80,7 @@ export function ac_util_getStorage (options, name) {
  * @param name * 存储key
  * @param options 配置信息
  * */
-export function ac_util_delStorage (options, name) {
+export function ac_util_delStorage(options, name) {
   if (options.useStorage) {
     window.localStorage.removeItem(name);
   } else {
@@ -89,7 +93,7 @@ export function ac_util_delStorage (options, name) {
  * @param len * UUID长度,默认16
  * @param radix 进制，默认16
  * */
-export function ac_util_getUuid (len = 16, radix = 16) {//uuid长度以及进制
+export function ac_util_getUuid(len = 16, radix = 16) {//uuid长度以及进制
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
   let uuid = [], i;
   for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
@@ -100,7 +104,7 @@ export function ac_util_getUuid (len = 16, radix = 16) {//uuid长度以及进制
  * 获取时间戳
  * @return timeStamp: Number
  * */
-export function ac_util_getTime () {
+export function ac_util_getTime() {
   let date = new Date();
   return {
     timeStr: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
@@ -111,10 +115,10 @@ export function ac_util_getTime () {
 /**
  * 配置项合并
  * */
-export function ac_util_mergeOption (userOpt, baseOpt){
+export function ac_util_mergeOption(userOpt, baseOpt) {
   let newOpt = {};
   let key;
-  const keys  = Object.keys(baseOpt);
+  const keys = Object.keys(baseOpt);
 
   for (let i = 0; i < keys.length; i++) {
     key = keys[i]
@@ -127,8 +131,8 @@ export function ac_util_mergeOption (userOpt, baseOpt){
 /**
  * 配置项检查
  * */
-export function ac_util_checkOptions (options){
-  if(ac_util_isEmptyObject(options)){
+export function ac_util_checkOptions(options) {
+  if (ac_util_isEmptyObject(options)) {
     ac_util_warn(`--------配置项异常：不能为空------`);
     return;
   }
@@ -136,42 +140,43 @@ export function ac_util_checkOptions (options){
     'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrData',
     'openXhrHock', 'openPerformance', 'openPage']
   notEmpty.map(key => {
-    if(ac_util_isNullOrEmpty(options[key])){
+    if (ac_util_isNullOrEmpty(options[key])) {
       ac_util_warn(`--------配置项【${key}】不能为空------`)
     }
   });
 
   // 上报方式检查
-  if(options['useImgSend']){
-    if(ac_util_isNullOrEmpty(options['imageUrl'])){
+  if (options['useImgSend']) {
+    if (ac_util_isNullOrEmpty(options['imageUrl'])) {
       ac_util_warn(`--------使用图片上报数据，需要配置 【imageUrl】------`)
     }
-  }else{
-    if(ac_util_isNullOrEmpty(options['postUrl'])){
+  } else {
+    if (ac_util_isNullOrEmpty(options['postUrl'])) {
       ac_util_warn(`--------使用接口上报数据，需要配置 【postUrl】------`)
     }
   }
 
   //输入框采集配置
-  if(options['openInput']){
-    if(ac_util_isNullOrEmpty(options['selector'])){
+  if (options['openInput']) {
+    if (ac_util_isNullOrEmpty(options['selector'])) {
       ac_util_warn(`--------请指定输入框选择器：selector------`)
     }
-    if(ac_util_isNullOrEmpty(options['acRange'])){
+    if (ac_util_isNullOrEmpty(options['acRange'])) {
       ac_util_warn(`--------请指定输入框选择器类型：acRange------`)
     }
   }
   //存储配置
-  if(options['useStorage']){
-    if(typeof window.localStorage == 'undefined'){
+  if (options['useStorage']) {
+    if (typeof window.localStorage == 'undefined') {
       ac_util_warn(`--------当前容器不支持Storage存储：useStorage------`)
     }
   }
 }
+
 /**
  *  警告
  * */
-export function ac_util_warn (message) {
+export function ac_util_warn(message) {
   if (process.env.NODE_ENV !== 'production') {
     typeof console !== 'undefined' && console.warn(`[vue-dataAc] ${message}`)
   }
@@ -180,7 +185,7 @@ export function ac_util_warn (message) {
 /**
  *  内嵌AJAX
  * */
-export function ac_util_ajax (options = {} ) {
+export function ac_util_ajax(options = {}) {
   let xhr, params;
   options.type = (options.type || "GET").toUpperCase();
   options.dataType = (options.dataType || "json");
@@ -212,11 +217,12 @@ export function ac_util_ajax (options = {} ) {
     }
   }
 }
+
 /**
  *  格式化Vue异常
  *
  * */
-export function  ac_util_formatVueErrStack(error) {
+export function ac_util_formatVueErrStack(error) {
   const msg = error.toString();
   let stack = error.stack
     .replace(/\n/gi, "") // 去掉换行
@@ -226,6 +232,6 @@ export function  ac_util_formatVueErrStack(error) {
     .split("@") // 以@分割信息
     .slice(0, 5) //只取5条
     .join("&&");
-  if (stack.indexOf(msg) < 0)  stack = msg + "@" + stack;
+  if (stack.indexOf(msg) < 0) stack = msg + "@" + stack;
   return stack;
 }

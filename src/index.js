@@ -1,5 +1,5 @@
-import { install } from './install'
-import { BASEOPTIONS } from './config/config'
+import {install} from './install'
+import {BASEOPTIONS} from './config/config'
 import {
   ac_util_formatVueErrStack,
   ac_util_isNullOrEmpty,
@@ -26,7 +26,7 @@ export default class VueDataAc {
    * @param options 配置项
    * @param Vue 当前Vue实例， 主要目的是使用nextTick, 保证数据上报不影响页面展示效率
    * */
-  constructor (options = {}, Vue = {}) {
+  constructor(options = {}, Vue = {}) {
     let newOptions = ac_util_mergeOption(options, BASEOPTIONS);
     ac_util_checkOptions(newOptions);
     this._options = newOptions;
@@ -34,7 +34,7 @@ export default class VueDataAc {
     _VueDataAc = this;
 
     this._uuid = ac_util_getStorage(this._options, this._options.userSha);
-    if(ac_util_isNullOrEmpty(this._uuid)){
+    if (ac_util_isNullOrEmpty(this._uuid)) {
       this._uuid = ac_util_getUuid();
       ac_util_setStorage(this._options, this._options.userSha, this._uuid);
     }
@@ -48,51 +48,52 @@ export default class VueDataAc {
     this._componentCount = 0;   //保证所有组件渲染完成
     this._init();
   }
+
   /**
    * 页面初始化
    * */
-  _init(){
+  _init() {
     /**
      * 异常监控初始化
      * */
-    if(this._options.openVueErr){
+    if (this._options.openVueErr) {
       this._initVueErrAc();
     }
 
     /**
      * 异常监控初始化
      * */
-    if(this._options.openCodeErr){
+    if (this._options.openCodeErr) {
       this._initCodeErrAc();
     }
 
     /**
      * 资源监控初始化
      * */
-    if(this._options.openSourceErr){
+    if (this._options.openSourceErr) {
       this._initSourceErrAc();
     }
 
     /**
      * Promise监控初始化
      * */
-    if(this._options.openPromiseErr){
+    if (this._options.openPromiseErr) {
       this._initPromiseErrAc();
     }
 
     /**
      * 点击事件代理初始化
      * */
-    if(this._options.openClick){
+    if (this._options.openClick) {
       this._initClickAc();
     }
 
 
-    if(this._options.openXhrData){
+    if (this._options.openXhrData) {
       this._initXhrErrAc();
     }
 
-    if(this._options.openPerformance){
+    if (this._options.openPerformance) {
       this._initPerformance();
     }
   }
@@ -102,7 +103,7 @@ export default class VueDataAc {
    *  用来绑定全局代理事件，当根元素渲染完成后绑定
    *  @param VueRoot 根元素
    * */
-  _mixinMounted(VueRoot){
+  _mixinMounted(VueRoot) {
     let {acRange, selector} = this._options;
     let _ACIDoms = document.querySelectorAll(selector);
     for (let i = 0, len = _ACIDoms.length; i < len; i++) {
@@ -124,10 +125,10 @@ export default class VueDataAc {
   /**
    * 输入事件
    * */
-  _formatInputEvent(e){
+  _formatInputEvent(e) {
     let event = window.event || e;
     let target = event.srcElement ? event.srcElement : event.target;
-    let {id, className, value, innerText}  = target;
+    let {id, className, value, innerText} = target;
     let attrs = ac_util_getAllAttr(target);
     let _value = value || innerText;
     let _now = ac_util_getTime().timeStamp;
@@ -137,20 +138,20 @@ export default class VueDataAc {
      * */
     try {
       inputKey = JSON.stringify(attrs)
-    }catch (e) {
+    } catch (e) {
       inputKey = `${id}-${className}`;
     }
 
     let cacheData = _VueDataAc._inputCacheData[inputKey];
-    if(ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)){
+    if (ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)) {
       cacheData = {
         value: `0:${_value}`,
-        timeStamp : _now
+        timeStamp: _now
       };
-    }else{
+    } else {
       cacheData = {
         value: `${cacheData.value},${parseInt(_now - cacheData.timeStamp)}:${_value}`,
-        timeStamp : _now
+        timeStamp: _now
       };
     }
     _VueDataAc._inputCacheData[inputKey] = cacheData;
@@ -159,10 +160,10 @@ export default class VueDataAc {
   /**
    * 失焦事件
    * */
-  _formatBlurEvent(e){
+  _formatBlurEvent(e) {
     let event = window.event || e;
     let target = event.srcElement ? event.srcElement : event.target;
-    let {id, className}  = target;
+    let {id, className} = target;
     let attrs = ac_util_getAllAttr(target);
     let inputKey = '';
     /**
@@ -170,12 +171,12 @@ export default class VueDataAc {
      * */
     try {
       inputKey = JSON.stringify(attrs)
-    }catch (e) {
+    } catch (e) {
       inputKey = `${id}-${className}`;
     }
 
     let cacheData = _VueDataAc._inputCacheData[inputKey];
-    if(ac_util_isNullOrEmpty(cacheData)) return;
+    if (ac_util_isNullOrEmpty(cacheData)) return;
 
     _VueDataAc._inputCacheData[inputKey] = null;
     _VueDataAc._setAcData(_VueDataAc._options.storeInput, {
@@ -189,16 +190,16 @@ export default class VueDataAc {
   /**
    *  混入vue watch 用来监控路由变化
    * */
-  _mixinRouterWatch(to = {}, from = {}){
+  _mixinRouterWatch(to = {}, from = {}) {
     let toPath = to.fullPath || to.path || to.name;
     let toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
     let fromPath = from.fullPath || from.path || from.name;
     let formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
-    if(this._lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`){
+    if (this._lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`) {
       return
     }
 
-    if(!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)){
+    if (!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)) {
       this._lastRouterStr = `${toPath}-${JSON.stringify(toParams)}`;
       this._setAcData(this._options.storePage, {
         toPath,
@@ -212,14 +213,14 @@ export default class VueDataAc {
   /**
    *  初始化点击事件
    * */
-  _initClickAc(){
-    document.addEventListener("click",  (e) => {
+  _initClickAc() {
+    document.addEventListener("click", (e) => {
       let event = window.event || e;
       let target = event.srcElement ? event.srcElement : event.target;
       let {className, id, value, innerText} = target;
-      let { classTag } = this._options;
+      let {classTag} = this._options;
       //主动埋点未命中
-      if(!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0){
+      if (!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0) {
         return;
       }
       let attrs = ac_util_getAllAttr(target);
@@ -236,16 +237,16 @@ export default class VueDataAc {
   /**
    *  初始化请求劫持
    * */
-  _initXhrErrAc(){
+  _initXhrErrAc() {
     let _nativeAjaxOpen = XMLHttpRequest.prototype.open;
     let _nativeAjaxSend = XMLHttpRequest.prototype.send;
     let _nativeAjaxonReady = XMLHttpRequest.onreadystatechange;
     this._proxyXhrObj = {
-      open: function() {
+      open: function () {
         this._ac_method = (arguments[0] || [])[0];
         return (_nativeAjaxOpen && _nativeAjaxOpen.apply(this, arguments));
       },
-      send: function() {
+      send: function () {
         this._ac_send_time = ac_util_getTime().timeStamp;
         this._ac_post_data = (arguments[0] || [])[0] || '';
         this.addEventListener('error', function (xhr) {
@@ -265,7 +266,7 @@ export default class VueDataAc {
     XMLHttpRequest.prototype.send = this._proxyXhrObj.send;
   }
 
-  _formatXhrErrorData(xhr){
+  _formatXhrErrorData(xhr) {
     let _ajax = xhr;
     let {method, send_time = 0, post_data = {}, readyState} = _ajax;
 
@@ -279,7 +280,7 @@ export default class VueDataAc {
       let isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
       let isCustomErr = (`${response && response.code}` === customXhrErrCode);
 
-      if( (openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr){
+      if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
 
         _VueDataAc._setAcData(storeReqErr, {
           responseURL,
@@ -297,10 +298,11 @@ export default class VueDataAc {
       }
     }
   }
+
   /**
    *  初始化页面性能
    * */
-  _initPerformance(){
+  _initPerformance() {
     if (window.performance) {
       let performance = window.performance || {};
       let _timing = performance.timing;
@@ -323,7 +325,7 @@ export default class VueDataAc {
   /**
    *  初始化Vue异常监控
    * */
-  _initVueErrAc(){
+  _initVueErrAc() {
     this._vue_ && this._vue_.config && (this._vue_.config.errorHandler = (error = {}, vm, info) => {
       const componentName = vm._isVue
         ? ((vm.$options && vm.$options.name) || (vm.$options && vm.$options._componentTag))
@@ -348,7 +350,7 @@ export default class VueDataAc {
   /**
    *  初始化代码异常监控
    * */
-  _initCodeErrAc(){
+  _initCodeErrAc() {
     /**
      * 全局异常
      * */
@@ -395,13 +397,13 @@ export default class VueDataAc {
   /**
    *  初始化资源加载异常监听
    * */
-  _initSourceErrAc(){
+  _initSourceErrAc() {
     window.addEventListener('error', (event) => {
       const eventType = [].toString.call(event, event);
       if (eventType === "[object Event]") {
         let theTag = event.target || event.srcElement || event.originalTarget || {};
-        let { tagName, outerHTML = '', href, src, currentSrc, localName } = theTag;
-        tagName = tagName|| localName;
+        let {tagName, outerHTML = '', href, src, currentSrc, localName} = theTag;
+        tagName = tagName || localName;
 
         let resourceUri = href || src;
 
@@ -411,7 +413,7 @@ export default class VueDataAc {
         }
 
         //优化请求内容，对大标签内容进行截取
-        if(outerHTML && outerHTML.length > 200){
+        if (outerHTML && outerHTML.length > 200) {
           outerHTML = outerHTML.slice(0, 200)
         }
 
@@ -430,7 +432,7 @@ export default class VueDataAc {
    *  在使用Promise的时候，如果没有声明catch代码块
    *  Promise的异常会被抛出
    * */
-  _initPromiseErrAc(){
+  _initPromiseErrAc() {
     window.addEventListener('unhandledrejection', (event) => {
       this._setAcData(this._options.storePrmseErr, {
         reason: event.reason || "unknown",
@@ -450,9 +452,8 @@ export default class VueDataAc {
       t: this._userToken
     }
     switch (options) {
-      case this._options.storePage:
-      {
-        let { toPath, toParams, fromPath, formParams } = data;
+      case this._options.storePage: {
+        let {toPath, toParams, fromPath, formParams} = data;
         let pageInTime = this._pageInTime;
         let nowTime = ac_util_getTime().timeStamp;
         this._pageInTime = nowTime;
@@ -469,9 +470,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeInput:
-      {
-        let { eId, className, val, attrs} = data;
+      case this._options.storeInput: {
+        let {eId, className, val, attrs} = data;
         _Ac['acData'] = {
           type: this._options.storeInput,
           path: window.location.href,
@@ -484,9 +484,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeClick:
-      {
-        let { eId, className, val, attrs} = data;
+      case this._options.storeClick: {
+        let {eId, className, val, attrs} = data;
         _Ac['acData'] = {
           type: this._options.storeClick,
           path: window.location.href,
@@ -499,12 +498,13 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeReqErr:
-      {
-        let { responseURL, method,
+      case this._options.storeReqErr: {
+        let {
+          responseURL, method,
           isHttpErr, isCustomErr,
           readyState, status, statusText,
-          requestTime, response, query } = data;
+          requestTime, response, query
+        } = data;
         _Ac['acData'] = {
           type: this._options.storeReqErr,
           path: window.location.href,
@@ -522,9 +522,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeVueErr:
-      {
-        let { componentName, fileName, propsData, info, msg, stack } = data;
+      case this._options.storeVueErr: {
+        let {componentName, fileName, propsData, info, msg, stack} = data;
         _Ac['acData'] = {
           type: this._options.storeVueErr,
           path: window.location.href,
@@ -539,9 +538,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeCodeErr:
-      {
-        let { msg, line, col, err } = data;
+      case this._options.storeCodeErr: {
+        let {msg, line, col, err} = data;
         _Ac['acData'] = {
           type: this._options.storeCodeErr,
           path: window.location.href,
@@ -554,9 +552,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeSourceErr:
-      {
-        let { tagName, outerHTML, resourceUri, currentSrc } = data;
+      case this._options.storeSourceErr: {
+        let {tagName, outerHTML, resourceUri, currentSrc} = data;
         _Ac['acData'] = {
           type: this._options.storeSourceErr,
           path: window.location.href,
@@ -569,9 +566,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storePrmseErr:
-      {
-        let { reason } = data;
+      case this._options.storePrmseErr: {
+        let {reason} = data;
         _Ac['acData'] = {
           type: this._options.storePrmseErr,
           path: window.location.href,
@@ -581,9 +577,8 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeCustom:
-      {
-        let { cusKey, cusVal } = data;
+      case this._options.storeCustom: {
+        let {cusKey, cusVal} = data;
         _Ac['acData'] = {
           type: this._options.storeCustom,
           path: window.location.href,
@@ -594,14 +589,20 @@ export default class VueDataAc {
         };
       }
         break;
-      case this._options.storeTiming:
-      {
+      case this._options.storeTiming: {
+        let {WT, TCP, ONL, ALLRT, TTFB, DNS, DR} = data;
         _Ac['acData'] = {
-          type: this._options.storeCustom,
+          type: this._options.storeTiming,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
           ua: navigator.userAgent,
-          ...data
+          WT,
+          TCP,
+          ONL,
+          ALLRT,
+          TTFB,
+          DNS,
+          DR,
         };
       }
         break;
@@ -609,22 +610,22 @@ export default class VueDataAc {
         ac_util_warn(`--------系统错误：0x00000001------`)
     }
     this._acData.push(_Ac);
-    if(this._options.openReducer){
-      if(!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit){
-        if(this._vue_ && this._vue_.$nextTick){
+    if (this._options.openReducer) {
+      if (!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit) {
+        if (this._vue_ && this._vue_.$nextTick) {
           this._vue_.$nextTick(() => {
             this.postAcData();
           })
-        }else{
+        } else {
           this.postAcData();
         }
       }
-    }else{
-      if(this._vue_ && this._vue_.$nextTick){
+    } else {
+      if (this._vue_ && this._vue_.$nextTick) {
         this._vue_.$nextTick(() => {
           this.postAcData();
         })
-      }else{
+      } else {
         this.postAcData();
       }
     }
@@ -633,8 +634,8 @@ export default class VueDataAc {
   /**
    * 自定义数据上报
    * */
-  setCustomAc(data){
-    let { cusKey = 'custom', cusVal = ''} = data;
+  setCustomAc(data) {
+    let {cusKey = 'custom', cusVal = ''} = data;
     this._setAcData(this._options.storeCustom, {
       cusKey,
       cusVal
@@ -646,17 +647,17 @@ export default class VueDataAc {
    *  默认当事件触发就会自动上报，频率为一个事件1次上报
    *  如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
    * */
-  postAcData(){
-    if(ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0){
+  postAcData() {
+    if (ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0) {
       return;
     }
 
     let reqData = JSON.stringify(this._acData);
 
-    if(this._options.useImgSend){
+    if (this._options.useImgSend) {
       //图片上报
       new Image().src = `${this._options.imageUrl}?acError=${reqData}`;
-    }else{
+    } else {
       //接口上报
       ac_util_ajax({
         type: "POST",
@@ -675,7 +676,7 @@ export default class VueDataAc {
   /**
    * 关联后台session
    * */
-  setUserToken(value){
+  setUserToken(value) {
     this._userToken = value;
   }
 }

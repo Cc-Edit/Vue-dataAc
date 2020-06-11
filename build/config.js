@@ -50,7 +50,7 @@ module.exports = [
   }
 ].map(genConfig)
 
-function genConfig (opts) {
+function genConfig(opts) {
   const config = {
     input: {
       input: resolve('src/index.js'),
