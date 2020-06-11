@@ -22,7 +22,7 @@
     - [x] 手动上报  
     
 - [ ] 页面性能上报  
-    - [ ] performance  
+    - [x] performance  
     - [ ] 组件性能上报  
     
 - [x] 留存  
@@ -41,8 +41,9 @@
     - [x] openInput 是否开启输入数据采集   
     - [x] openXhrData 是否采集接口异常时的参数params     
     - [x] openXhrHock 是否开启xhr异常采集    
+    - [x] openPerformance 是否开启页面性能采集  
     - [ ] openComponent 组件性能采集     
-    - [ ] openPerformance 是否开启页面性能采集     
+       
     
 - [x] npm自动发布  
 - [x] 后端日志关联机制  
@@ -225,6 +226,28 @@
             "requestTime"   : 3000                       //请求耗时
             "response"      : "{...}"                    //接口响应摘要，截取前100个字符
             "query"         : "{}"                       //请求参数，用 openXhrData 配置打开，注意用户信息泄露
+         }
+}
+```
+
+### 10. 页面性能监控
+
+```
+ {
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "acData" : {
+            "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件上报时间
+            "ua"            : "ios/chrome 44.44"         //浏览器信息 
+            "WT"            : 1000                       //白屏时间
+            "TCP"           : 1000                       //TCP连接耗时
+            "ONL"           : 1000                       //执行onload事件耗时
+            "ALLRT"         : 1000                       //所有请求耗时
+            "TTFB"          : 1000                       //TTFB读取页面第一个字节的时间
+            "DNS"           : 1000                       //DNS查询时间
+            "DR"            : 1000                       //dom ready时间
          }
 }
 ```
