@@ -512,7 +512,7 @@ VueDataAc.prototype._mixinComponentsPerformanceStart = function _mixinComponents
     return;
   }
 
-  Component.prototype.$_vueAc_bc_time = ac_util_getTime().timeStamp;
+  Component.$_vueAc_bc_time = ac_util_getTime().timeStamp;
   Component.$vueDataAc._componentTimeCount++;
 };
 
