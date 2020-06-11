@@ -28,7 +28,10 @@ export default class VueDataAc {
    * */
   constructor(options = {}, Vue = {}) {
     let newOptions = ac_util_mergeOption(options, BASEOPTIONS);
-    ac_util_checkOptions(newOptions);
+    if(!ac_util_checkOptions(newOptions)){
+      return
+    }
+
     this._options = newOptions;
     this._vue_ = Vue;
     _VueDataAc = this;
@@ -681,6 +684,15 @@ export default class VueDataAc {
    * */
   setUserToken(value) {
     this._userToken = value;
+  }
+  /**
+   * 更新Options
+   * */
+  updateOptions(options) {
+    let newOptions = ac_util_mergeOption(options, this._options);
+    if(ac_util_checkOptions(newOptions)){
+      this._options = newOptions;
+    }
   }
 }
 

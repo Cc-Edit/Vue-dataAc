@@ -129,9 +129,10 @@ function ac_util_mergeOption(userOpt, baseOpt) {
  * 配置项检查
  * */
 function ac_util_checkOptions(options) {
+  var flag = true;
   if (ac_util_isEmptyObject(options)) {
     ac_util_warn("--------配置项异常：不能为空------");
-    return;
+    return false;
   }
   var notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr',
     'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrData',
@@ -139,17 +140,19 @@ function ac_util_checkOptions(options) {
   notEmpty.map(function (key) {
     if (ac_util_isNullOrEmpty(options[key])) {
       ac_util_warn(("--------配置项【" + key + "】不能为空------"));
+      flag = false;
     }
   });
-
   // 上报方式检查
   if (options['useImgSend']) {
     if (ac_util_isNullOrEmpty(options['imageUrl'])) {
       ac_util_warn("--------使用图片上报数据，需要配置 【imageUrl】------");
+      return false;
     }
   } else {
     if (ac_util_isNullOrEmpty(options['postUrl'])) {
       ac_util_warn("--------使用接口上报数据，需要配置 【postUrl】------");
+      return false;
     }
   }
 
@@ -157,14 +160,17 @@ function ac_util_checkOptions(options) {
   if (options['openInput']) {
     if (ac_util_isNullOrEmpty(options['selector'])) {
       ac_util_warn("--------请指定输入框选择器：selector------");
+      return false;
     }
   }
   //存储配置
   if (options['useStorage']) {
     if (typeof window.localStorage == 'undefined') {
       ac_util_warn("--------当前容器不支持Storage存储：useStorage------");
+      return false;
     }
   }
+  return flag
 }
 
 /**
@@ -362,7 +368,10 @@ var VueDataAc = function VueDataAc(options, Vue) {
   if ( Vue === void 0 ) Vue = {};
 
   var newOptions = ac_util_mergeOption(options, BASEOPTIONS);
-  ac_util_checkOptions(newOptions);
+  if(!ac_util_checkOptions(newOptions)){
+    return
+  }
+
   this._options = newOptions;
   this._vue_ = Vue;
   _VueDataAc = this;
@@ -1090,6 +1099,15 @@ VueDataAc.prototype.postAcData = function postAcData () {
  * */
 VueDataAc.prototype.setUserToken = function setUserToken (value) {
   this._userToken = value;
+};
+/**
+ * 更新Options
+ * */
+VueDataAc.prototype.updateOptions = function updateOptions (options) {
+  var newOptions = ac_util_mergeOption(options, this._options);
+  if(ac_util_checkOptions(newOptions)){
+    this._options = newOptions;
+  }
 };
 
 VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
