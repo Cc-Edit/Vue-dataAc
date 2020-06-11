@@ -1,6 +1,6 @@
 {
   "name": "vue-dataac",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Vue-dataAc 重构 dataAcquisition 以支持Vue",
   "author": "adminV",
   "license": "MIT",
