@@ -1,5 +1,13 @@
-# Vue-dataAc
-    Vue-dataAc 重构 dataAcquisition 以支持Vue
+# Vue-dataAc - Vue 数据采集上报插件（求小星星，求star）
+   
+    
+## 写在前面
+    大家在使用过程中有任何需求，或者有不满意的点都可以提交上来。
+    欢迎关注我的公众号: **js前端架构**
+| 欢迎关注我的公众号: **js前端架构** | 赞助+  | 
+| :------------: |:---------------:| 
+|![js前端架构](http://www.isjs.cn/wp-content/uploads/2013/06/2018_07_25_1136562613-1.png "关注我哟")|![打赏](http://www.isjs.cn/wp-content/uploads/2020/06/WechatIMG68.jpeg "感谢")|
+
 
 ## 快速开始
 
@@ -13,6 +21,7 @@
         ...options
     })
 ```
+
 
 ## 文档：
     为了尽可能灵活，以下所有配置项理论上都可以修改配置，
