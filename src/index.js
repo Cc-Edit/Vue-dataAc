@@ -34,7 +34,7 @@ export default class VueDataAc {
     }
 
     this._acData = [];
-    this._inputCacheData = []; //缓存输入框输入信息
+    this._inputCacheData = {}; //缓存输入框输入信息
     this._lastRouterStr = ''; //防止路由重复采集
     this._userToken = ''; //关联后台token
     this._pageInTime = 0; //防止路由重复采集
@@ -117,13 +117,65 @@ export default class VueDataAc {
    * 输入事件
    * */
   _formatInputEvent(e){
-    console.log(e)
+    console.log(1)
+    let event = window.event || e;
+    let target = event.srcElement ? event.srcElement : event.target;
+    let {id, className, value, innerText}  = target;
+    let attrs = ac_util_getAllAttr(target);
+    let _value = value || innerText;
+    let _now = ac_util_getTime().timeStamp;
+    let inputKey = '';
+    /**
+     * 尝试用所有属性做key，异常情况下拼接id+class
+     * */
+    try {
+      inputKey = JSON.stringify(attrs)
+    }catch (e) {
+      inputKey = `${id}-${className}`;
+    }
+
+    let cacheData = this._inputCacheData[inputKey];
+    if(ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)){
+      cacheData = {
+        value: `0:${_value}`,
+        timeStamp : _now
+      };
+    }else{
+      cacheData = {
+        value: `${cacheData.value},${parseInt(_now - cacheData.timeStamp)}:${_value}`,
+        timeStamp : _now
+      };
+    }
+
+    this._inputCacheData[inputKey] = cacheData;
   }
   /**
    * 失焦事件
    * */
   _formatBlurEvent(e){
-    console.log(e)
+    let event = window.event || e;
+    let target = event.srcElement ? event.srcElement : event.target;
+    let {id, className}  = target;
+    let attrs = ac_util_getAllAttr(target);
+    let inputKey = '';
+    /**
+     * 尝试用所有属性做key，异常情况下拼接id+class
+     * */
+    try {
+      inputKey = JSON.stringify(attrs)
+    }catch (e) {
+      inputKey = `${id}-${className}`;
+    }
+
+    let cacheData = this._inputCacheData[inputKey];
+    this._inputCacheData[inputKey] = null;
+
+    this._setAcData(this._options.storeInput, {
+      eId: id,
+      className: className,
+      val: cacheData.value,
+      attrs
+    })
   }
   /**
    *  混入vue watch 用来监控路由变化
@@ -155,7 +207,7 @@ export default class VueDataAc {
     document.addEventListener("click",  (e) => {
       let event = window.event || e;
       let target = event.srcElement ? event.srcElement : event.target;
-      let className = target.className;
+      let {className, id, value, innerText} = target;
       let { classTag } = this._options;
       //主动埋点未命中
       if(!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0){
@@ -164,9 +216,9 @@ export default class VueDataAc {
       let attrs = ac_util_getAllAttr(target);
 
       this._setAcData(this._options.storeClick, {
-        eId: target.id,
-        className: target.className,
-        val: (target.value || target.innerText).substr(0, 20),
+        eId: id,
+        className: className,
+        val: (value || innerText).substr(0, 20),
         attrs
       })
     });
@@ -309,11 +361,6 @@ export default class VueDataAc {
       t: this._userToken
     }
     switch (options) {
-      case this._options.storeInput:
-        {
-
-        }
-        break;
       case this._options.storePage:
         {
           let { toPath, toParams, fromPath, formParams } = data;
@@ -329,6 +376,21 @@ export default class VueDataAc {
             toParams: toParams,
             sTme: pageInTime,
             eTme: nowTime
+          };
+        }
+        break;
+      case this._options.storeInput:
+        {
+          let { eId, className, val, attrs} = data;
+          _Ac['acData'] = {
+            type: this._options.storeInput,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            eId,
+            className,
+            val,
+            attrs
           };
         }
         break;

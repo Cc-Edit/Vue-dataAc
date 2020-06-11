@@ -354,7 +354,7 @@
     }
 
     this._acData = [];
-    this._inputCacheData = []; //缓存输入框输入信息
+    this._inputCacheData = {}; //缓存输入框输入信息
     this._lastRouterStr = ''; //防止路由重复采集
     this._userToken = ''; //关联后台token
     this._pageInTime = 0; //防止路由重复采集
@@ -439,13 +439,69 @@
    * 输入事件
    * */
   VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
-    console.log(e);
+    console.log(1);
+    var event = window.event || e;
+    var target = event.srcElement ? event.srcElement : event.target;
+    var id = target.id;
+      var className = target.className;
+      var value = target.value;
+      var innerText = target.innerText;
+    var attrs = ac_util_getAllAttr(target);
+    var _value = value || innerText;
+    var _now = ac_util_getTime().timeStamp;
+    var inputKey = '';
+    /**
+     * 尝试用所有属性做key，异常情况下拼接id+class
+     * */
+    try {
+      inputKey = JSON.stringify(attrs);
+    }catch (e) {
+      inputKey = id + "-" + className;
+    }
+
+    var cacheData = this._inputCacheData[inputKey];
+    if(ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)){
+      cacheData = {
+        value: ("0:" + _value),
+        timeStamp : _now
+      };
+    }else {
+      cacheData = {
+        value: ((cacheData.value) + "," + (parseInt(_now - cacheData.timeStamp)) + ":" + _value),
+        timeStamp : _now
+      };
+    }
+
+    this._inputCacheData[inputKey] = cacheData;
   };
   /**
    * 失焦事件
    * */
   VueDataAc.prototype._formatBlurEvent = function _formatBlurEvent (e){
-    console.log(e);
+    var event = window.event || e;
+    var target = event.srcElement ? event.srcElement : event.target;
+    var id = target.id;
+      var className = target.className;
+    var attrs = ac_util_getAllAttr(target);
+    var inputKey = '';
+    /**
+     * 尝试用所有属性做key，异常情况下拼接id+class
+     * */
+    try {
+      inputKey = JSON.stringify(attrs);
+    }catch (e) {
+      inputKey = id + "-" + className;
+    }
+
+    var cacheData = this._inputCacheData[inputKey];
+    this._inputCacheData[inputKey] = null;
+
+    this._setAcData(this._options.storeInput, {
+      eId: id,
+      className: className,
+      val: cacheData.value,
+      attrs: attrs
+    });
   };
   /**
    *混入vue watch 用来监控路由变化
@@ -483,6 +539,9 @@
       var event = window.event || e;
       var target = event.srcElement ? event.srcElement : event.target;
       var className = target.className;
+        var id = target.id;
+        var value = target.value;
+        var innerText = target.innerText;
       var ref = this$1._options;
         var classTag = ref.classTag;
       //主动埋点未命中
@@ -492,9 +551,9 @@
       var attrs = ac_util_getAllAttr(target);
 
       this$1._setAcData(this$1._options.storeClick, {
-        eId: target.id,
-        className: target.className,
-        val: (target.value || target.innerText).substr(0, 20),
+        eId: id,
+        className: className,
+        val: (value || innerText).substr(0, 20),
         attrs: attrs
       });
     });
@@ -655,8 +714,6 @@
       t: this._userToken
     };
     switch (options) {
-      case this._options.storeInput:
-        break;
       case this._options.storePage:
         {
           var toPath = data.toPath;
@@ -678,14 +735,14 @@
           };
         }
         break;
-      case this._options.storeClick:
+      case this._options.storeInput:
         {
           var eId = data.eId;
             var className = data.className;
             var val = data.val;
             var attrs = data.attrs;
           _Ac['acData'] = {
-            type: this._options.storeClick,
+            type: this._options.storeInput,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
@@ -693,6 +750,24 @@
             className: className,
             val: val,
             attrs: attrs
+          };
+        }
+        break;
+      case this._options.storeClick:
+        {
+          var eId$1 = data.eId;
+            var className$1 = data.className;
+            var val$1 = data.val;
+            var attrs$1 = data.attrs;
+          _Ac['acData'] = {
+            type: this._options.storeClick,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            eId: eId$1,
+            className: className$1,
+            val: val$1,
+            attrs: attrs$1
           };
         }
         break;
