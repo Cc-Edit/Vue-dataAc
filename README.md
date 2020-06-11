@@ -371,7 +371,10 @@
     
 - [x] npm自动发布  
 - [x] 后端日志关联机制  
-- [ ] demo  
+- [x] eslint  
+- [ ] unit test  
+- [ ] docs
+- [ ] demo
 - [ ] 文章
 
     
