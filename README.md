@@ -30,7 +30,7 @@
 
 **直接引用**
 ```
-<script src="../node_modules/vue-dataac/dist/vue-dataAc.min.js"></script>
+    <script src="../node_modules/vue-dataac/dist/vue-dataAc.min.js"></script>
 ```
 
 **Vue Cli**
