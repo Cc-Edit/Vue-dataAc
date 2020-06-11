@@ -15,9 +15,11 @@
 ```
 
 ## 文档：
-        为了尽可能灵活，以下的所有配置项理论上都可以修改配置，
-        我对每个配置项做了修改建议，供大家参考：
-:full_moon_with_face: = 可以修改 :new_moon_with_face: = 不要修改 :first_quarter_moon:= 不建议修改  
+    为了尽可能灵活，以下所有配置项理论上都可以修改配置，
+    我对每个配置项做了修改建议，供大家参考：
+:full_moon_with_face: = 可以修改 
+:new_moon_with_face: = 不要修改 
+:first_quarter_moon:= 不建议修改  
 
 ### 1. 标识类配置，作为数据上报信息的分类标识
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
@@ -77,16 +79,16 @@
 | manualReport | Boolean | false | :full_moon_with_face: | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
 
 
-## 实例方法：
+### 5. 实例方法
 
-### vue.$vueDataAc.setCustomAc(cusKey: String, cusVal: Any)
+#### 1. vue.$vueDataAc.setCustomAc(cusKey: String, cusVal: Any)
     用于自定义事件的约定上报，例如在业务场景中对某些逻辑的埋点。
     自定义事件上报逻辑与其他事件上报共用，可以通过openReducer限制频率
     
-### vue.$vueDataAc.postAcData()
+#### 2. vue.$vueDataAc.postAcData()
     手动上报当前采集信息
     
-### vue.$vueDataAc.setUserToken(userToken: String)
+#### 3. vue.$vueDataAc.setUserToken(userToken: String)
     用于关联用户后台标记，利用用户登录后的userid，sessionId
     目的是将前后台日志打通，方便查找
        
@@ -292,9 +294,6 @@
 }
 ```
 
-## 错误代码：
-    0x00000001  没有找到对应的时间类型，用户新增加了事件类型，没有在setAcData中添加
-     
 ## TODO:
 
 - [x] 异常监控  
