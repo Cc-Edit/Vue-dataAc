@@ -736,7 +736,7 @@
 
       var isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
       var isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
-      var isCustomErr = (("" + (response && response.code)) === customXhrErrCode);
+      var isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (("" + (response && response.code)) === customXhrErrCode));
 
       if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
 

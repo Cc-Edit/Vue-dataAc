@@ -703,7 +703,7 @@ class VueDataAc {
 
       let isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
       let isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
-      let isCustomErr = (`${response && response.code}` === customXhrErrCode);
+      let isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (`${response && response.code}` === customXhrErrCode));
 
       if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
 
