@@ -141,12 +141,12 @@
         "uuid": "F6A6C801B7197603",                 //用户标识
         "t"   : "",                                 //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-             "type"    : "ACCERR",     		        //上报数据类型：代码异常
+             "type"    : "ACCERR",     		       //上报数据类型：代码异常
              "path"    : "www.domain.com/w/w/w/",   //事件发生页面的url
-             "sTme"    : "1591760073422",	        //事件上报时间
+             "sTme"    : "1591760073422",	          //事件上报时间
              "msg"     : "script error",            //异常摘要
-             "line"    : "301",  		            //代码行数
-             "col"     : "13",  		            //代码列下标
+             "line"    : "301",  		             //代码行数
+             "col"     : "13",  		                //代码列下标
              "err"     : "error message",           //错误信息
              "ua"      : "ios/chrome 44.44"         //浏览器信息
          }
@@ -160,12 +160,12 @@
         "uuid": "F6A6C801B7197603",                         //用户标识
         "t"   : "",                                         //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-             "type"        : "ACSCERR",     		        //上报数据类型：资源加载异常
+             "type"        : "ACSCERR",     		            //上报数据类型：资源加载异常
              "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
              "sTme"        : "1591760073422",	            //事件上报时间
              "fileName"    : "test.js",                     //文件名
              "resourceUri" : "http://isjs.cn/js/test.js",   //资源地址
-             "tagName"     : "script",  		            //标签类型
+             "tagName"     : "script",  		               //标签类型
              "outerHTML"   : "<script ...>",                //标签内容
              "ua"          : "ios/chrome 44.44"             //浏览器信息
          }
@@ -181,7 +181,7 @@
         "acData" : {
             "type"        : "ACPRERR",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
-            "sTme"        : "1591760073422",	         //事件上报时间
+            "sTme"        : "1591760073422",	            //事件上报时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
             "reason"      : "reason"                     //异常说明
          }
@@ -201,9 +201,9 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"        : "ACCUSTOM",     		     //上报数据类型：资源加载异常
+            "type"        : "ACCUSTOM",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
-            "sTme"        : "1591760073422",	         //事件上报时间
+            "sTme"        : "1591760073422",	            //事件上报时间
             "ua"          : "ios/chrome 44.44"           //浏览器信息 
             "cusKey"      : "click-button-001"           //自定义事件key，用户定义
             "cusVal"      ："1"                          //自定义事件值，用户定义
@@ -217,7 +217,7 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACVUERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACVUERR",     		      //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
@@ -237,7 +237,7 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACCLIK",     		     //上报数据类型：资源加载异常
+            "type"          : "ACCLIK",     		         //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
@@ -256,7 +256,7 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACINPUT",     		     //上报数据类型：资源加载异常
+            "type"          : "ACINPUT",     		      //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
@@ -275,7 +275,7 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACRERR",     		         //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
@@ -299,7 +299,7 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACRERR",     		         //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "ua"            : "ios/chrome 44.44"         //浏览器信息 
