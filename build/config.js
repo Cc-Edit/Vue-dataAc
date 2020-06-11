@@ -1,6 +1,7 @@
 const path = require('path')
 
 const buble = require('rollup-plugin-buble') // es6 转 es5
+const eslint = require('rollup-plugin-eslint').eslint;
 const flow = require('rollup-plugin-flow-no-whitespace') //忽略报错使用flow
 const cjs = require('rollup-plugin-commonjs')  // 将非ES6语法的包转为ES6可用
 const node = require('rollup-plugin-node-resolve') // 帮助寻找node_modules里的包
@@ -55,6 +56,7 @@ function genConfig(opts) {
     input: {
       input: resolve('src/index.js'),
       plugins: [
+        eslint(),
         flow(),
         node(),
         cjs(),

@@ -9,7 +9,7 @@ export function ac_util_isNullOrEmpty(obj) {
  * 判断是否为空对象
  * */
 export function ac_util_isEmptyObject(obj) {
-  for (let key in obj) {
+  for (const key in obj) {
     return false;
   }
   return true;
@@ -19,11 +19,11 @@ export function ac_util_isEmptyObject(obj) {
  * 获取元素所有属性
  * */
 export function ac_util_getAllAttr(elem) {
-  let len = (elem.attributes ? elem.attributes.length : 0);
-  let obj = {};
+  const len = (elem.attributes ? elem.attributes.length : 0);
+  const obj = {};
   if (len > 0) {
     for (let i = 0; i < len; i++) {
-      let attr = elem.attributes[i];
+      const attr = elem.attributes[i];
       obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
     }
   }
@@ -50,7 +50,7 @@ export function ac_util_setStorage(options, name, value, Day) {
     window.localStorage.setItem(name, value);
   } else {
     if (!Day) Day = options.maxDays;
-    let exp = new Date();
+    const exp = new Date();
     exp.setTime(exp.getTime() + Day * 24 * 60 * 60000);
     document.cookie = `${name}=${encodeURIComponent(value)};expires=${exp.toUTCString()};path=/`;
   }
@@ -66,7 +66,7 @@ export function ac_util_getStorage(options, name) {
   if (options.useStorage) {
     return window.localStorage.getItem(name);
   } else {
-    let arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+    const arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
     if (arr && arr.length > 1) {
       return (decodeURIComponent(arr[2]));
     } else {
@@ -94,9 +94,9 @@ export function ac_util_delStorage(options, name) {
  * @param radix 进制，默认16
  * */
 export function ac_util_getUuid(len = 16, radix = 16) {//uuid长度以及进制
-  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-  let uuid = [], i;
-  for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+  const uuid = [];
+  for (let i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
   return uuid.join('');
 }
 
@@ -105,7 +105,7 @@ export function ac_util_getUuid(len = 16, radix = 16) {//uuid长度以及进制
  * @return timeStamp: Number
  * */
 export function ac_util_getTime() {
-  let date = new Date();
+  const date = new Date();
   return {
     timeStr: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
     timeStamp: date.getTime()
@@ -116,13 +116,11 @@ export function ac_util_getTime() {
  * 配置项合并
  * */
 export function ac_util_mergeOption(userOpt, baseOpt) {
-  let newOpt = {};
-  let key;
+  const newOpt = {};
   const keys = Object.keys(baseOpt);
 
   for (let i = 0; i < keys.length; i++) {
-    key = keys[i]
-    newOpt[key] = ac_util_isDef(userOpt[key]) ? userOpt[key] : baseOpt[key];
+    newOpt[keys[i]] = ac_util_isDef(userOpt[keys[i]]) ? userOpt[keys[i]] : baseOpt[keys[i]];
   }
 
   return newOpt;
@@ -169,7 +167,7 @@ export function ac_util_checkOptions(options) {
   }
   //存储配置
   if (options['useStorage']) {
-    if (typeof window.localStorage == 'undefined') {
+    if (typeof window.localStorage === 'undefined') {
       ac_util_warn(`--------当前容器不支持Storage存储：useStorage------`)
       return false;
     }

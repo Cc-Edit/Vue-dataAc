@@ -1,237 +1,8 @@
 /*!
-  * vue-dataAc v2.0.1
+  * vue-dataAc v2.0.5
   * (c) 2020 adminV
   * @license MIT
   */
-/**
- * 判断是否为空
- * */
-function ac_util_isNullOrEmpty(obj) {
-  return (obj !== 0 || obj !== "0") && (obj === undefined || typeof obj === "undefined" || obj === null || obj === "null" || obj === "");
-}
-
-/**
- * 判断是否为空对象
- * */
-function ac_util_isEmptyObject(obj) {
-  for (let key in obj) {
-    return false;
-  }
-  return true;
-}
-
-/**
- * 获取元素所有属性
- * */
-function ac_util_getAllAttr(elem) {
-  let len = (elem.attributes ? elem.attributes.length : 0);
-  let obj = {};
-  if (len > 0) {
-    for (let i = 0; i < len; i++) {
-      let attr = elem.attributes[i];
-      obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
-    }
-  }
-  return obj;
-}
-
-/**
- * 判断是否定义
- * @param v 变量
- * */
-function ac_util_isDef(v) {
-  return v !== undefined;
-}
-
-/**
- * 数据存储，可通过 useStorage 配置修改存储位置
- * @param name * 存储key
- * @param value * 存储内容
- * @param Day 存储时长，maxDays
- * @param options 配置信息
- * */
-function ac_util_setStorage(options, name, value, Day) {
-  if (options.useStorage) {
-    window.localStorage.setItem(name, value);
-  } else {
-    if (!Day) Day = options.maxDays;
-    let exp = new Date();
-    exp.setTime(exp.getTime() + Day * 24 * 60 * 60000);
-    document.cookie = `${name}=${encodeURIComponent(value)};expires=${exp.toUTCString()};path=/`;
-  }
-}
-
-/**
- * 存储读取
- * @param name * 存储key
- * @param options 配置信息
- * */
-function ac_util_getStorage(options, name) {
-  if (!name) return null;
-  if (options.useStorage) {
-    return window.localStorage.getItem(name);
-  } else {
-    let arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
-    if (arr && arr.length > 1) {
-      return (decodeURIComponent(arr[2]));
-    } else {
-      return null;
-    }
-  }
-}
-
-/**
- * 生成UUID
- * @param len * UUID长度,默认16
- * @param radix 进制，默认16
- * */
-function ac_util_getUuid(len = 16, radix = 16) {//uuid长度以及进制
-  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-  let uuid = [], i;
-  for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
-  return uuid.join('');
-}
-
-/**
- * 获取时间戳
- * @return timeStamp: Number
- * */
-function ac_util_getTime() {
-  let date = new Date();
-  return {
-    timeStr: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-    timeStamp: date.getTime()
-  }
-}
-
-/**
- * 配置项合并
- * */
-function ac_util_mergeOption(userOpt, baseOpt) {
-  let newOpt = {};
-  let key;
-  const keys = Object.keys(baseOpt);
-
-  for (let i = 0; i < keys.length; i++) {
-    key = keys[i];
-    newOpt[key] = ac_util_isDef(userOpt[key]) ? userOpt[key] : baseOpt[key];
-  }
-
-  return newOpt;
-}
-
-/**
- * 配置项检查
- * */
-function ac_util_checkOptions(options) {
-  let flag = true;
-  if (ac_util_isEmptyObject(options)) {
-    ac_util_warn(`--------配置项异常：不能为空------`);
-    return false;
-  }
-  const notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr', 'storeCustom',
-    'storeSourceErr', 'storePrmseErr', 'storeCompErr', 'storeVueErr',
-    'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrQuery',
-    'openXhrHock', 'openPerformance', 'openPage', 'openVueErr', 'openSourceErr', 'openPromiseErr', 'openComponent', 'openXhrTimeOut'];
-  notEmpty.map(key => {
-    if (ac_util_isNullOrEmpty(options[key])) {
-      ac_util_warn(`--------配置项【${key}】不能为空------`);
-      flag = false;
-    }
-  });
-  // 上报方式检查
-  if (options['useImgSend']) {
-    if (ac_util_isNullOrEmpty(options['imageUrl'])) {
-      ac_util_warn(`--------使用图片上报数据，需要配置 【imageUrl】------`);
-      return false;
-    }
-  } else {
-    if (ac_util_isNullOrEmpty(options['postUrl'])) {
-      ac_util_warn(`--------使用接口上报数据，需要配置 【postUrl】------`);
-      return false;
-    }
-  }
-
-  //输入框采集配置
-  if (options['openInput']) {
-    if (ac_util_isNullOrEmpty(options['selector'])) {
-      ac_util_warn(`--------请指定输入框选择器：selector------`);
-      return false;
-    }
-  }
-  //存储配置
-  if (options['useStorage']) {
-    if (typeof window.localStorage == 'undefined') {
-      ac_util_warn(`--------当前容器不支持Storage存储：useStorage------`);
-      return false;
-    }
-  }
-  return flag
-}
-
-/**
- *  警告
- * */
-function ac_util_warn(message) {
-  {
-    typeof console !== 'undefined' && console.warn(`[vue-dataAc] ${message}`);
-  }
-}
-
-/**
- *  内嵌AJAX
- * */
-function ac_util_ajax(options = {}) {
-  let xhr, params;
-  options.type = (options.type || "GET").toUpperCase();
-  options.dataType = (options.dataType || "json");
-  options.async = (options.async || true);
-  if (options.data) {
-    params = options.data;
-  }
-  if (window.XMLHttpRequest) {
-    // 非IE6
-    xhr = new XMLHttpRequest();
-    if (xhr.overrideMimeType) {
-      xhr.overrideMimeType('text/xml');
-    }
-  } else {
-    //IE6及其以下版本浏览器
-    xhr = new ActiveXObject("Microsoft.XMLHTTP");
-  }
-
-  if (options.type === "GET") {
-    xhr.open("GET", options.url + "?" + params, options.async);
-    xhr.send(null);
-  } else if (options.type === "POST") {
-    xhr.open("POST", options.url, options.async);
-    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-    if (params) {
-      xhr.send(params);
-    } else {
-      xhr.send();
-    }
-  }
-}
-
-/**
- *  格式化Vue异常
- *
- * */
-function ac_util_formatVueErrStack(error) {
-  const msg = error.toString();
-  let stack = error.stack
-    .replace(/\n/gi, "") // 去掉换行
-    .replace(/\bat\b/gi, "@")
-    .replace(/\?[^:]+/gi, "")
-    .replace(/^\s*|\s*$/g, "")
-    .split("@") // 以@分割信息
-    .slice(0, 5) //只取5条
-    .join("&&");
-  if (stack.indexOf(msg) < 0) stack = msg + "@" + stack;
-  return stack;
-}
-
 /**
  * 暴露插件接口
  * */
@@ -295,7 +66,7 @@ function install(Vue, options, VueDataAc) {
  * 全局配置
  * */
 const BASEOPTIONS = {
-  storeVer     : '2.0.1',  //Vue 版本dataAc
+  storeVer     : '2.0.5',  //Vue 版本dataAc
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
@@ -378,18 +149,244 @@ const BASEOPTIONS = {
 };
 
 /**
+ * 判断是否为空
+ * */
+function ac_util_isNullOrEmpty(obj) {
+  return (obj !== 0 || obj !== "0") && (obj === undefined || typeof obj === "undefined" || obj === null || obj === "null" || obj === "");
+}
+
+/**
+ * 判断是否为空对象
+ * */
+function ac_util_isEmptyObject(obj) {
+  for (const key in obj) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * 获取元素所有属性
+ * */
+function ac_util_getAllAttr(elem) {
+  const len = (elem.attributes ? elem.attributes.length : 0);
+  const obj = {};
+  if (len > 0) {
+    for (let i = 0; i < len; i++) {
+      const attr = elem.attributes[i];
+      obj[attr.nodeName] = attr.nodeValue.replace(/"/igm, "'");
+    }
+  }
+  return obj;
+}
+
+/**
+ * 判断是否定义
+ * @param v 变量
+ * */
+function ac_util_isDef(v) {
+  return v !== undefined;
+}
+
+/**
+ * 数据存储，可通过 useStorage 配置修改存储位置
+ * @param name * 存储key
+ * @param value * 存储内容
+ * @param Day 存储时长，maxDays
+ * @param options 配置信息
+ * */
+function ac_util_setStorage(options, name, value, Day) {
+  if (options.useStorage) {
+    window.localStorage.setItem(name, value);
+  } else {
+    if (!Day) Day = options.maxDays;
+    const exp = new Date();
+    exp.setTime(exp.getTime() + Day * 24 * 60 * 60000);
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${exp.toUTCString()};path=/`;
+  }
+}
+
+/**
+ * 存储读取
+ * @param name * 存储key
+ * @param options 配置信息
+ * */
+function ac_util_getStorage(options, name) {
+  if (!name) return null;
+  if (options.useStorage) {
+    return window.localStorage.getItem(name);
+  } else {
+    const arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+    if (arr && arr.length > 1) {
+      return (decodeURIComponent(arr[2]));
+    } else {
+      return null;
+    }
+  }
+}
+
+/**
+ * 生成UUID
+ * @param len * UUID长度,默认16
+ * @param radix 进制，默认16
+ * */
+function ac_util_getUuid(len = 16, radix = 16) {//uuid长度以及进制
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+  const uuid = [];
+  for (let i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+  return uuid.join('');
+}
+
+/**
+ * 获取时间戳
+ * @return timeStamp: Number
+ * */
+function ac_util_getTime() {
+  const date = new Date();
+  return {
+    timeStr: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+    timeStamp: date.getTime()
+  }
+}
+
+/**
+ * 配置项合并
+ * */
+function ac_util_mergeOption(userOpt, baseOpt) {
+  const newOpt = {};
+  const keys = Object.keys(baseOpt);
+
+  for (let i = 0; i < keys.length; i++) {
+    newOpt[keys[i]] = ac_util_isDef(userOpt[keys[i]]) ? userOpt[keys[i]] : baseOpt[keys[i]];
+  }
+
+  return newOpt;
+}
+
+/**
+ * 配置项检查
+ * */
+function ac_util_checkOptions(options) {
+  let flag = true;
+  if (ac_util_isEmptyObject(options)) {
+    ac_util_warn(`--------配置项异常：不能为空------`);
+    return false;
+  }
+  const notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr', 'storeCustom',
+    'storeSourceErr', 'storePrmseErr', 'storeCompErr', 'storeVueErr',
+    'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrQuery',
+    'openXhrHock', 'openPerformance', 'openPage', 'openVueErr', 'openSourceErr', 'openPromiseErr', 'openComponent', 'openXhrTimeOut'];
+  notEmpty.map(key => {
+    if (ac_util_isNullOrEmpty(options[key])) {
+      ac_util_warn(`--------配置项【${key}】不能为空------`);
+      flag = false;
+    }
+  });
+  // 上报方式检查
+  if (options['useImgSend']) {
+    if (ac_util_isNullOrEmpty(options['imageUrl'])) {
+      ac_util_warn(`--------使用图片上报数据，需要配置 【imageUrl】------`);
+      return false;
+    }
+  } else {
+    if (ac_util_isNullOrEmpty(options['postUrl'])) {
+      ac_util_warn(`--------使用接口上报数据，需要配置 【postUrl】------`);
+      return false;
+    }
+  }
+
+  //输入框采集配置
+  if (options['openInput']) {
+    if (ac_util_isNullOrEmpty(options['selector'])) {
+      ac_util_warn(`--------请指定输入框选择器：selector------`);
+      return false;
+    }
+  }
+  //存储配置
+  if (options['useStorage']) {
+    if (typeof window.localStorage === 'undefined') {
+      ac_util_warn(`--------当前容器不支持Storage存储：useStorage------`);
+      return false;
+    }
+  }
+  return flag
+}
+
+/**
+ *  警告
+ * */
+function ac_util_warn(message) {
+  {
+    typeof console !== 'undefined' && console.warn(`[vue-dataAc] ${message}`);
+  }
+}
+
+/**
+ *  内嵌AJAX
+ * */
+function ac_util_ajax(options = {}) {
+  let xhr, params;
+  options.type = (options.type || "GET").toUpperCase();
+  options.dataType = (options.dataType || "json");
+  options.async = (options.async || true);
+  if (options.data) {
+    params = options.data;
+  }
+  if (window.XMLHttpRequest) {
+    // 非IE6
+    xhr = new XMLHttpRequest();
+    if (xhr.overrideMimeType) {
+      xhr.overrideMimeType('text/xml');
+    }
+  } else {
+    //IE6及其以下版本浏览器
+    xhr = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  if (options.type === "GET") {
+    xhr.open("GET", options.url + "?" + params, options.async);
+    xhr.send(null);
+  } else if (options.type === "POST") {
+    xhr.open("POST", options.url, options.async);
+    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+    if (params) {
+      xhr.send(params);
+    } else {
+      xhr.send();
+    }
+  }
+}
+
+/**
+ *  格式化Vue异常
+ *
+ * */
+function ac_util_formatVueErrStack(error) {
+  const msg = error.toString();
+  let stack = error.stack
+    .replace(/\n/gi, "") // 去掉换行
+    .replace(/\bat\b/gi, "@")
+    .replace(/\?[^:]+/gi, "")
+    .replace(/^\s*|\s*$/g, "")
+    .split("@") // 以@分割信息
+    .slice(0, 5) //只取5条
+    .join("&&");
+  if (stack.indexOf(msg) < 0) stack = msg + "@" + stack;
+  return stack;
+}
+
+/**
  * 原生事件涉及到移除与绑定，所以缓存VueDataAc
  * */
 let _VueDataAc;
 
 class VueDataAc {
-
   /**
    * @param options 配置项
    * @param Vue 当前Vue实例， 主要目的是使用nextTick, 保证数据上报不影响页面展示效率
    * */
   constructor(options = {}, Vue = {}) {
-    let newOptions = ac_util_mergeOption(options, BASEOPTIONS);
+    const newOptions = ac_util_mergeOption(options, BASEOPTIONS);
     if(!ac_util_checkOptions(newOptions)){
       this.installed = false;
       return
@@ -477,10 +474,10 @@ class VueDataAc {
    *  @param VueRoot 根元素
    * */
   _mixinInputEvent(VueRoot) {
-    let {ignoreInputType, selector} = this._options;
-    let _ACIDoms = document.querySelectorAll(selector);
+    const {ignoreInputType, selector} = this._options;
+    const _ACIDoms = document.querySelectorAll(selector);
     for (let i = 0, len = _ACIDoms.length; i < len; i++) {
-      let selector = _ACIDoms[i];
+      const selector = _ACIDoms[i];
       if (selector.type && ignoreInputType.indexOf(selector.type.toLowerCase()) < 0) {
         /**
          * 因为有弹窗类的组件中途添加，所以先移除，再添加
@@ -501,8 +498,8 @@ class VueDataAc {
    *  @param Component 组件
    * */
   _mixinComponentsPerformanceStart(Component){
-    let {$vnode = {}} = Component;
-    let tag = $vnode.tag;
+    const {$vnode = {}} = Component;
+    const tag = $vnode.tag;
     //没有tag的组件不做采集，找不到唯一标识
     if(ac_util_isNullOrEmpty(tag)){
       return;
@@ -518,24 +515,24 @@ class VueDataAc {
    *  @param Component 组件
    * */
   _mixinComponentsPerformanceEnd(Component){
-    let createdTime = Component.$_vueAc_bc_time;
-    let {$vnode = {}} = Component;
-    let tag = $vnode.tag;
+    const createdTime = Component.$_vueAc_bc_time;
+    const {$vnode = {}} = Component;
+    const tag = $vnode.tag;
 
     //没有tag的组件不做采集，找不到唯一标识
     if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(tag)){
       return;
     }
 
-    let nowTime = ac_util_getTime().timeStamp;
-    let loadTime = parseInt(nowTime - createdTime);
+    const nowTime = ac_util_getTime().timeStamp;
+    const loadTime = parseInt(nowTime - createdTime);
     if(loadTime < Component.$vueDataAc._options.maxComponentLoadTime){
       return;
     }
 
-    let isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
-    let componentsTimes = Component.$vueDataAc._componentsTime;
-    let thisTime = componentsTimes[tag] || [];
+    const isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
+    const componentsTimes = Component.$vueDataAc._componentsTime;
+    const thisTime = componentsTimes[tag] || [];
 
     thisTime.push(loadTime);
     componentsTimes[tag] = thisTime;
@@ -554,12 +551,12 @@ class VueDataAc {
    * 输入事件
    * */
   _formatInputEvent(e) {
-    let event = window.event || e;
-    let target = event.srcElement ? event.srcElement : event.target;
-    let {id, className, value, innerText} = target;
-    let attrs = ac_util_getAllAttr(target);
-    let _value = value || innerText;
-    let _now = ac_util_getTime().timeStamp;
+    const event = window.event || e;
+    const target = event.srcElement ? event.srcElement : event.target;
+    const {id, className, value, innerText} = target;
+    const attrs = ac_util_getAllAttr(target);
+    const _value = value || innerText;
+    const _now = ac_util_getTime().timeStamp;
     let inputKey = '';
     /**
      * 尝试用所有属性做key，异常情况下拼接id+class
@@ -589,10 +586,10 @@ class VueDataAc {
    * 失焦事件
    * */
   _formatBlurEvent(e) {
-    let event = window.event || e;
-    let target = event.srcElement ? event.srcElement : event.target;
-    let {id, className} = target;
-    let attrs = ac_util_getAllAttr(target);
+    const event = window.event || e;
+    const target = event.srcElement ? event.srcElement : event.target;
+    const {id, className} = target;
+    const attrs = ac_util_getAllAttr(target);
     let inputKey = '';
     /**
      * 尝试用所有属性做key，异常情况下拼接id+class
@@ -603,7 +600,7 @@ class VueDataAc {
       inputKey = `${id}-${className}`;
     }
 
-    let cacheData = _VueDataAc._inputCacheData[inputKey];
+    const cacheData = _VueDataAc._inputCacheData[inputKey];
     if (ac_util_isNullOrEmpty(cacheData)) return;
 
     _VueDataAc._inputCacheData[inputKey] = null;
@@ -619,10 +616,10 @@ class VueDataAc {
    *  混入vue watch 用来监控路由变化
    * */
   _mixinRouterWatch(to = {}, from = {}) {
-    let toPath = to.fullPath || to.path || to.name;
-    let toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
-    let fromPath = from.fullPath || from.path || from.name;
-    let formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
+    const toPath = to.fullPath || to.path || to.name;
+    const toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
+    const fromPath = from.fullPath || from.path || from.name;
+    const formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
     if (this._lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`) {
       return
     }
@@ -646,15 +643,15 @@ class VueDataAc {
    * */
   _initClickAc() {
     document.addEventListener("click", (e) => {
-      let event = window.event || e;
-      let target = event.srcElement ? event.srcElement : event.target;
-      let {className, id, value, innerText} = target;
-      let {classTag} = this._options;
+      const event = window.event || e;
+      const target = event.srcElement ? event.srcElement : event.target;
+      const {className, id, value, innerText} = target;
+      const {classTag} = this._options;
       //主动埋点未命中
       if (!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0) {
         return;
       }
-      let attrs = ac_util_getAllAttr(target);
+      const attrs = ac_util_getAllAttr(target);
 
       this._setAcData(this._options.storeClick, {
         eId: id,
@@ -669,9 +666,9 @@ class VueDataAc {
    *  初始化请求劫持
    * */
   _initXhrErrAc() {
-    let _nativeAjaxOpen = XMLHttpRequest.prototype.open;
-    let _nativeAjaxSend = XMLHttpRequest.prototype.send;
-    let _nativeAjaxonReady = XMLHttpRequest.onreadystatechange;
+    const _nativeAjaxOpen = XMLHttpRequest.prototype.open;
+    const _nativeAjaxSend = XMLHttpRequest.prototype.send;
+    const _nativeAjaxonReady = XMLHttpRequest.onreadystatechange;
     this._proxyXhrObj = {
       open: function () {
         this._ac_method = (arguments[0] || [])[0];
@@ -698,21 +695,20 @@ class VueDataAc {
   }
 
   _formatXhrErrorData(xhr) {
-    let _ajax = xhr;
-    let {method, send_time = 0, post_data = {}, readyState} = _ajax;
+    const _ajax = xhr;
+    const {method, send_time = 0, post_data = {}, readyState} = _ajax;
 
     if (readyState === 4) {
-      let {status, statusText, response, responseURL} = _ajax;
-      let ready_time = ac_util_getTime().timeStamp;
-      let requestTime = ready_time - (send_time || ready_time);
-      let {openXhrTimeOut, storeReqErr, customXhrErrCode, openXhrQuery} = _VueDataAc._options;
+      const {status, statusText, response, responseURL} = _ajax;
+      const ready_time = ac_util_getTime().timeStamp;
+      const requestTime = ready_time - (send_time || ready_time);
+      const {openXhrTimeOut, storeReqErr, customXhrErrCode, openXhrQuery} = _VueDataAc._options;
 
-      let isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
-      let isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
-      let isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (`${response && response.code}` === customXhrErrCode));
+      const isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
+      const isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
+      const isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (`${response && response.code}` === customXhrErrCode));
 
       if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
-
         _VueDataAc._setAcData(storeReqErr, {
           responseURL,
           method,
@@ -725,7 +721,6 @@ class VueDataAc {
           response: ('' + response).substr(0, 100),
           query: openXhrQuery ? post_data : ''
         });
-
       }
     }
   }
@@ -735,8 +730,8 @@ class VueDataAc {
    * */
   _initPerformance() {
     if (window.performance) {
-      let performance = window.performance || {};
-      let _timing = performance.timing;
+      const performance = window.performance || {};
+      const _timing = performance.timing;
 
       if (!ac_util_isNullOrEmpty(_timing)) {
         var loadAcData = {
@@ -765,14 +760,13 @@ class VueDataAc {
         : "";
       const propsData = vm.$options && vm.$options.propsData;
 
-
       this._setAcData(this._options.storeVueErr, {
         componentName,
         fileName,
         propsData,
         info,
         msg: error.message || '',
-        stack: ac_util_formatVueErrStack(error),
+        stack: ac_util_formatVueErrStack(error)
       });
     });
   }
@@ -790,7 +784,7 @@ class VueDataAc {
         return false;
       }
 
-      let codeErrData = {
+      const codeErrData = {
         msg: msg,
         line: line,
         col: col
@@ -799,13 +793,14 @@ class VueDataAc {
 
       //屏蔽关闭网页时的Network Error
       setTimeout(() => {
-        if (!!err && !!err.stack) {
+        if (err && err.stack) {
           //可以直接使用堆栈信息
           codeErrData.err = err.stack.toString();
-        } else if (!!arguments.callee) {
+        } else if (arguments.callee) {
           //尝试通过callee获取异常堆栈
           let errmsg = [];
-          let f = arguments.callee.caller, c = 3;//防止堆栈信息过大
+          let f = arguments.callee.caller;
+          let c = 3;//防止堆栈信息过大
           while (f && (--c > 0)) {
             errmsg.push(f.toString());
             if (f === f.caller) {
@@ -821,7 +816,6 @@ class VueDataAc {
         this._setAcData(this._options.storeCodeErr, codeErrData);
       }, 0);
     };
-
   }
 
   /**
@@ -831,11 +825,12 @@ class VueDataAc {
     window.addEventListener('error', (event) => {
       const eventType = [].toString.call(event, event);
       if (eventType === "[object Event]") {
-        let theTag = event.target || event.srcElement || event.originalTarget || {};
-        let {tagName, outerHTML = '', href, src, currentSrc, localName} = theTag;
-        tagName = tagName || localName;
+        const theTag = event.target || event.srcElement || event.originalTarget || {};
+        const { href, src, currentSrc, localName} = theTag;
+        const tagName = theTag.tagName || localName;
+        let outerHTML = theTag.outerHTML;
 
-        let resourceUri = href || src;
+        const resourceUri = href || src;
 
         if (tagName === "IMG" && !ac_util_isNullOrEmpty(theTag.onerror)) {
           //存在行内的 error事件  终止执行
@@ -865,7 +860,7 @@ class VueDataAc {
   _initPromiseErrAc() {
     window.addEventListener('unhandledrejection', (event) => {
       this._setAcData(this._options.storePrmseErr, {
-        reason: event.reason || "unknown",
+        reason: event.reason || "unknown"
       });
       // 如果想要阻止继续抛出，即会在控制台显示 `Uncaught(in promise) Error` 的话，调用以下函数
       event.preventDefault();
@@ -877,15 +872,15 @@ class VueDataAc {
    * options，当前采集的对象
    * */
   _setAcData(options, data) {
-    let _Ac = {
+    const _Ac = {
       uuid: this._uuid,
       t: this._userToken
     };
     switch (options) {
       case this._options.storePage: {
-        let {toPath, toParams, fromPath, formParams} = data;
-        let pageInTime = this._pageInTime;
-        let nowTime = ac_util_getTime().timeStamp;
+        const {toPath, toParams, fromPath, formParams} = data;
+        const pageInTime = this._pageInTime;
+        const nowTime = ac_util_getTime().timeStamp;
         this._pageInTime = nowTime;
 
         _Ac['acData'] = {
@@ -901,7 +896,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeInput: {
-        let {eId, className, val, attrs} = data;
+        const {eId, className, val, attrs} = data;
         _Ac['acData'] = {
           type: this._options.storeInput,
           path: window.location.href,
@@ -914,7 +909,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeClick: {
-        let {eId, className, val, attrs} = data;
+        const {eId, className, val, attrs} = data;
         _Ac['acData'] = {
           type: this._options.storeClick,
           path: window.location.href,
@@ -927,7 +922,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeReqErr: {
-        let {
+        const {
           responseURL, method,
           isHttpErr, isCustomErr,
           readyState, status, statusText,
@@ -950,7 +945,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeVueErr: {
-        let {componentName, fileName, propsData, info, msg, stack} = data;
+        const {componentName, fileName, propsData, info, msg, stack} = data;
         _Ac['acData'] = {
           type: this._options.storeVueErr,
           path: window.location.href,
@@ -965,7 +960,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeCodeErr: {
-        let {msg, line, col, err} = data;
+        const {msg, line, col, err} = data;
         _Ac['acData'] = {
           type: this._options.storeCodeErr,
           path: window.location.href,
@@ -978,7 +973,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeSourceErr: {
-        let {tagName, outerHTML, resourceUri, currentSrc} = data;
+        const {tagName, outerHTML, resourceUri, currentSrc} = data;
         _Ac['acData'] = {
           type: this._options.storeSourceErr,
           path: window.location.href,
@@ -986,12 +981,12 @@ class VueDataAc {
           fileName: currentSrc,
           resourceUri,
           tagName,
-          outerHTML,
+          outerHTML
         };
       }
         break;
       case this._options.storePrmseErr: {
-        let {reason} = data;
+        const {reason} = data;
         _Ac['acData'] = {
           type: this._options.storePrmseErr,
           path: window.location.href,
@@ -1001,7 +996,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeCustom: {
-        let {cusKey, cusVal} = data;
+        const {cusKey, cusVal} = data;
         _Ac['acData'] = {
           type: this._options.storeCustom,
           path: window.location.href,
@@ -1012,7 +1007,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeTiming: {
-        let {WT, TCP, ONL, ALLRT, TTFB, DNS} = data;
+        const {WT, TCP, ONL, ALLRT, TTFB, DNS} = data;
         _Ac['acData'] = {
           type: this._options.storeTiming,
           path: window.location.href,
@@ -1027,7 +1022,7 @@ class VueDataAc {
       }
         break;
       case this._options.storeCompErr:{
-        let {componentsTimes} = data;
+        const {componentsTimes} = data;
         _Ac['acData'] = {
           type: this._options.storeCompErr,
           path: window.location.href,
@@ -1065,7 +1060,7 @@ class VueDataAc {
    * 自定义数据上报
    * */
   setCustomAc(data) {
-    let {cusKey = 'custom', cusVal = ''} = data;
+    const {cusKey = 'custom', cusVal = ''} = data;
     this._setAcData(this._options.storeCustom, {
       cusKey,
       cusVal
@@ -1082,7 +1077,7 @@ class VueDataAc {
       return;
     }
 
-    let reqData = JSON.stringify(this._acData);
+    const reqData = JSON.stringify(this._acData);
 
     if (this._options.useImgSend) {
       //图片上报
@@ -1113,7 +1108,7 @@ class VueDataAc {
    * 更新Options
    * */
   updateOptions(options) {
-    let newOptions = ac_util_mergeOption(options, this._options);
+    const newOptions = ac_util_mergeOption(options, this._options);
     if(ac_util_checkOptions(newOptions)){
       this._options = newOptions;
     }
@@ -1121,6 +1116,6 @@ class VueDataAc {
 }
 
 VueDataAc.install = (Vue, options) => install(Vue, options, VueDataAc);
-VueDataAc.version = '2.0.1';
+VueDataAc.version = '2.0.5';
 
 export default VueDataAc;

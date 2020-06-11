@@ -1,8 +1,153 @@
 /*!
-  * vue-dataAc v2.0.1
+  * vue-dataAc v2.0.5
   * (c) 2020 adminV
   * @license MIT
   */
+/**
+ * 暴露插件接口
+ * */
+function install(Vue, options, VueDataAc) {
+  if (install.installed) { return }
+  install.installed = true;
+
+  Vue.mixin({
+    watch: {
+      $route: function $route(to, from) {
+        /**
+         *  路由变化进行页面访问的采集
+         * */
+        this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._mixinRouterWatch(to, from);
+      }
+    },
+    beforeCreate: function beforeMount(){
+      /**
+       * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
+       * 我们希望对每个组件进行监控生命周期耗时
+       * */
+      if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        this.$vueDataAc._mixinComponentsPerformanceStart(this);
+      }
+    },
+    beforeDestroy: function beforeDestroy() {
+      /**
+       * 根元素移除时手动上报，以免累计条数不满足 sizeLimit
+       * */
+      if (this.$vueDataAc && this.$vueDataAc.installed && this._uid === this.$root._uid) {
+        this.$vueDataAc && this.$vueDataAc.postAcData();
+      }
+    },
+    /**
+     * 在组件渲染完成后，尝试进行事件劫持
+     * mounted 不会保证所有的子组件也都一起被挂载
+     * 所以使用 vm.$nextTick
+     * */
+    mounted: function mounted() {
+      if(this.$vueDataAc && this.$vueDataAc.installed){
+        //input 时间监听
+        if(this.$vueDataAc._options.openInput){
+          this.$vueDataAc._componentLoadCount++;
+          this.$nextTick(function () {
+            --this.$vueDataAc._componentLoadCount === 0 && this.$vueDataAc._mixinInputEvent(this);
+          });
+        }
+
+        //组件性能监控
+        if(this.$vueDataAc._options.openComponent){
+          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+        }
+      }
+    }
+  });
+
+  Vue.prototype.$vueDataAc = new VueDataAc(options, Vue);
+}
+
+/**
+ * 全局配置
+ * */
+var BASEOPTIONS = {
+  storeVer     : '2.0.5',  //Vue 版本dataAc
+  /**
+   *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
+   * */
+  storeInput     : "ACINPUT",    //输入框行为采集标识
+  storePage      : "ACPAGE",     //页面访问信息采集标识
+  storeClick     : "ACCLIK",     //点击事件采集标识
+  storeReqErr    : "ACRERR",     //请求异常采集标识
+  storeTiming    : "ACTIME",     //页面性能采集标识
+  storeCodeErr   : "ACCERR",     //代码异常采集标识
+  storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
+  storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）
+  storePrmseErr  : "ACPRERR",    //promise抛出异常 (2.0新增）
+  storeCompErr   : "ACCOMP",     //Vue组件性能监控 (2.0新增）
+  storeVueErr    : "ACVUERR",    //Vue异常监控 (2.0新增）
+
+  /**
+   *  全局开关，用来修改采集内容
+   * */
+  userSha      : 'vue_ac_userSha',   //用户标识存储key，有冲突可修改
+  useImgSend      : true,     //默认使用图片上报数据, false为xhr请求接口上报
+  useStorage      : true,     //是否使用storage作为存储载体, 设置为 false 时使用cookie,
+  maxDays         : 365,      //如果使用cookie作为存储载体，此项生效，配置cookie存储时间，默认一年
+  openInput       : true,     //是否开启输入数据采集
+  openCodeErr     : true,     //是否开启代码异常采集
+  openClick       : true,     //是否开启点击数据采集
+  openXhrQuery    : true,     //是否采集接口异常时的参数params
+  openXhrHock     : true,     //是否开启xhr异常采集
+  openPerformance : true,     //是否开启页面性能采集
+  openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
+  openVueErr      : true,     //是否开启Vue异常监控 (2.0新增）
+  openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
+  openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
+
+  /**
+   * 因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢，有几率是因为客户硬件问题导致
+   * 所以需要做数据采样统计后才能得出结论
+   * */
+  openComponent   : true,     //是否开启组件性能采集 (2.0新增）
+  maxComponentLoadTime : 1000,//组件渲染时间阈值，大于此时间采集信息 (2.0新增）
+
+  /**
+   * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
+   * 所以请求超时的上报需要做采样统计后才能得出结论
+   * 所以不算是异常或警告级别，应该算通知级别
+   * */
+  openXhrTimeOut  : true,     //是否开启请求超时上报 (2.0新增）
+  maxRequestTime  : 10000,    //请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 (2.0新增）
+  customXhrErrCode: '',   //支持自定义响应code，当接口响应中的code为指定内容时上报异常
+
+  /**
+   * 输入行为采集相关配置，通过以下配置修改要监控的输入框,
+   * 设置 input 采集全量输入框，也可以通过修改 selector 配置实现主动埋点
+   * 设置 selector 为 `input.isjs-ac` 为主动埋点，只会采集class为isjs-ac的输入框
+   * ignoreInputType 存在的目的是为了从安全角度排除 type 为 password 的输入框
+   * 有更好方案请提给我  Thanks♪(･ω･)ﾉ
+   * */
+  selector        : 'input',     //通过控制输入框的选择器来限定监听范围,使用document.querySelector进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html
+  ignoreInputType : ['password', 'file'],   //忽略的输入框type，不建议采集密码输入框内容
+
+  /**
+   *  点击行为采集相关配置，通过 classTag 进行主动埋点和自动埋点的切换：
+   *  classTag 配置为 'isjs-ac' 只会采集 class 包含 isjs-ac 的元素
+   *  classTag 配置为 '' 会采集所有被点击的元素，当然也会导致数据量大。
+   * */
+  classTag     : '',      //主动埋点标识, 自动埋点时请配置空字符串
+
+  /**
+   * 以下内容为可配置信息，影响插件逻辑功能
+   * */
+  imageUrl     : "http://open.isjs.cn/admin/ac.png",   //《建议》 图片上报地址（通过1*1px图片接收上报信息）
+  postUrl      : "http://open.isjs.cn/logStash/push",       // 数据上报接口
+
+  /**
+   * 对上报频率的限制项 (2.0新增）
+   * */
+  openReducer: false,   //是否开启节流,用于限制上报频率
+  sizeLimit: 20,        //操作数据超过指定条目时自动上报
+  lifeReport: false,    //开启懒惰上报，路由变化时统一上报
+  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
+};
+
 /**
  * 判断是否为空
  * */
@@ -90,8 +235,8 @@ function ac_util_getUuid(len, radix) {
   if ( radix === void 0 ) radix = 16;
 //uuid长度以及进制
   var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-  var uuid = [], i;
-  for (i = 0; i < len; i++) { uuid[i] = chars[0 | Math.random() * radix]; }
+  var uuid = [];
+  for (var i = 0; i < len; i++) { uuid[i] = chars[0 | Math.random() * radix]; }
   return uuid.join('');
 }
 
@@ -112,12 +257,10 @@ function ac_util_getTime() {
  * */
 function ac_util_mergeOption(userOpt, baseOpt) {
   var newOpt = {};
-  var key;
   var keys = Object.keys(baseOpt);
 
   for (var i = 0; i < keys.length; i++) {
-    key = keys[i];
-    newOpt[key] = ac_util_isDef(userOpt[key]) ? userOpt[key] : baseOpt[key];
+    newOpt[keys[i]] = ac_util_isDef(userOpt[keys[i]]) ? userOpt[keys[i]] : baseOpt[keys[i]];
   }
 
   return newOpt;
@@ -164,7 +307,7 @@ function ac_util_checkOptions(options) {
   }
   //存储配置
   if (options['useStorage']) {
-    if (typeof window.localStorage == 'undefined') {
+    if (typeof window.localStorage === 'undefined') {
       ac_util_warn("--------当前容器不支持Storage存储：useStorage------");
       return false;
     }
@@ -236,151 +379,6 @@ function ac_util_formatVueErrStack(error) {
   if (stack.indexOf(msg) < 0) { stack = msg + "@" + stack; }
   return stack;
 }
-
-/**
- * 暴露插件接口
- * */
-function install(Vue, options, VueDataAc) {
-  if (install.installed) { return }
-  install.installed = true;
-
-  Vue.mixin({
-    watch: {
-      $route: function $route(to, from) {
-        /**
-         *  路由变化进行页面访问的采集
-         * */
-        this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._mixinRouterWatch(to, from);
-      }
-    },
-    beforeCreate: function beforeMount(){
-      /**
-       * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
-       * 我们希望对每个组件进行监控生命周期耗时
-       * */
-      if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
-        this.$vueDataAc._mixinComponentsPerformanceStart(this);
-      }
-    },
-    beforeDestroy: function beforeDestroy() {
-      /**
-       * 根元素移除时手动上报，以免累计条数不满足 sizeLimit
-       * */
-      if (this.$vueDataAc && this.$vueDataAc.installed && this._uid === this.$root._uid) {
-        this.$vueDataAc && this.$vueDataAc.postAcData();
-      }
-    },
-    /**
-     * 在组件渲染完成后，尝试进行事件劫持
-     * mounted 不会保证所有的子组件也都一起被挂载
-     * 所以使用 vm.$nextTick
-     * */
-    mounted: function mounted() {
-      if(this.$vueDataAc && this.$vueDataAc.installed){
-        //input 时间监听
-        if(this.$vueDataAc._options.openInput){
-          this.$vueDataAc._componentLoadCount++;
-          this.$nextTick(function () {
-            --this.$vueDataAc._componentLoadCount === 0 && this.$vueDataAc._mixinInputEvent(this);
-          });
-        }
-
-        //组件性能监控
-        if(this.$vueDataAc._options.openComponent){
-          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
-        }
-      }
-    }
-  });
-
-  Vue.prototype.$vueDataAc = new VueDataAc(options, Vue);
-}
-
-/**
- * 全局配置
- * */
-var BASEOPTIONS = {
-  storeVer     : '2.0.1',  //Vue 版本dataAc
-  /**
-   *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
-   * */
-  storeInput     : "ACINPUT",    //输入框行为采集标识
-  storePage      : "ACPAGE",     //页面访问信息采集标识
-  storeClick     : "ACCLIK",     //点击事件采集标识
-  storeReqErr    : "ACRERR",     //请求异常采集标识
-  storeTiming    : "ACTIME",     //页面性能采集标识
-  storeCodeErr   : "ACCERR",     //代码异常采集标识
-  storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
-  storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）
-  storePrmseErr  : "ACPRERR",    //promise抛出异常 (2.0新增）
-  storeCompErr   : "ACCOMP",     //Vue组件性能监控 (2.0新增）
-  storeVueErr    : "ACVUERR",    //Vue异常监控 (2.0新增）
-
-  /**
-   *  全局开关，用来修改采集内容
-   * */
-  userSha      : 'vue_ac_userSha',   //用户标识存储key，有冲突可修改
-  useImgSend      : true,     //默认使用图片上报数据, false为xhr请求接口上报
-  useStorage      : true,     //是否使用storage作为存储载体, 设置为 false 时使用cookie,
-  maxDays         : 365,      //如果使用cookie作为存储载体，此项生效，配置cookie存储时间，默认一年
-  openInput       : true,     //是否开启输入数据采集
-  openCodeErr     : true,     //是否开启代码异常采集
-  openClick       : true,     //是否开启点击数据采集
-  openXhrQuery    : true,     //是否采集接口异常时的参数params
-  openXhrHock     : true,     //是否开启xhr异常采集
-  openPerformance : true,     //是否开启页面性能采集
-  openPage        : true,     //是否开启页面访问信息采集 (2.0新增）
-  openVueErr      : true,     //是否开启Vue异常监控 (2.0新增）
-  openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
-  openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
-
-  /**
-   * 因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢，有几率是因为客户硬件问题导致
-   * 所以需要做数据采样统计后才能得出结论
-   * */
-  openComponent   : true,     //是否开启组件性能采集 (2.0新增）
-  maxComponentLoadTime : 1000,//组件渲染时间阈值，大于此时间采集信息 (2.0新增）
-
-  /**
-   * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
-   * 所以请求超时的上报需要做采样统计后才能得出结论
-   * 所以不算是异常或警告级别，应该算通知级别
-   * */
-  openXhrTimeOut  : true,     //是否开启请求超时上报 (2.0新增）
-  maxRequestTime  : 10000,    //请求时间阈值，请求到响应大于此时间，会上报异常，openXhrTimeOut 为 false 时不生效 (2.0新增）
-  customXhrErrCode: '',   //支持自定义响应code，当接口响应中的code为指定内容时上报异常
-
-  /**
-   * 输入行为采集相关配置，通过以下配置修改要监控的输入框,
-   * 设置 input 采集全量输入框，也可以通过修改 selector 配置实现主动埋点
-   * 设置 selector 为 `input.isjs-ac` 为主动埋点，只会采集class为isjs-ac的输入框
-   * ignoreInputType 存在的目的是为了从安全角度排除 type 为 password 的输入框
-   * 有更好方案请提给我  Thanks♪(･ω･)ﾉ
-   * */
-  selector        : 'input',     //通过控制输入框的选择器来限定监听范围,使用document.querySelector进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html
-  ignoreInputType : ['password', 'file'],   //忽略的输入框type，不建议采集密码输入框内容
-
-  /**
-   *  点击行为采集相关配置，通过 classTag 进行主动埋点和自动埋点的切换：
-   *  classTag 配置为 'isjs-ac' 只会采集 class 包含 isjs-ac 的元素
-   *  classTag 配置为 '' 会采集所有被点击的元素，当然也会导致数据量大。
-   * */
-  classTag     : '',      //主动埋点标识, 自动埋点时请配置空字符串
-
-  /**
-   * 以下内容为可配置信息，影响插件逻辑功能
-   * */
-  imageUrl     : "http://open.isjs.cn/admin/ac.png",   //《建议》 图片上报地址（通过1*1px图片接收上报信息）
-  postUrl      : "http://open.isjs.cn/logStash/push",       // 数据上报接口
-
-  /**
-   * 对上报频率的限制项 (2.0新增）
-   * */
-  openReducer: false,   //是否开启节流,用于限制上报频率
-  sizeLimit: 20,        //操作数据超过指定条目时自动上报
-  lifeReport: false,    //开启懒惰上报，路由变化时统一上报
-  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
-};
 
 /**
  * 原生事件涉及到移除与绑定，所以缓存VueDataAc
@@ -739,7 +737,6 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr) {
     var isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (("" + (response && response.code)) === customXhrErrCode));
 
     if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
-
       _VueDataAc._setAcData(storeReqErr, {
         responseURL: responseURL,
         method: method,
@@ -752,7 +749,6 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr) {
         response: ('' + response).substr(0, 100),
         query: openXhrQuery ? post_data : ''
       });
-
     }
   }
 };
@@ -796,14 +792,13 @@ VueDataAc.prototype._initVueErrAc = function _initVueErrAc () {
       : "";
     var propsData = vm.$options && vm.$options.propsData;
 
-
     this$1._setAcData(this$1._options.storeVueErr, {
       componentName: componentName,
       fileName: fileName,
       propsData: propsData,
       info: info,
       msg: error.message || '',
-      stack: ac_util_formatVueErrStack(error),
+      stack: ac_util_formatVueErrStack(error)
     });
   });
 };
@@ -833,13 +828,14 @@ VueDataAc.prototype._initCodeErrAc = function _initCodeErrAc () {
 
     //屏蔽关闭网页时的Network Error
     setTimeout(function () {
-      if (!!err && !!err.stack) {
+      if (err && err.stack) {
         //可以直接使用堆栈信息
         codeErrData.err = err.stack.toString();
-      } else if (!!arguments$1.callee) {
+      } else if (arguments$1.callee) {
         //尝试通过callee获取异常堆栈
         var errmsg = [];
-        var f = arguments$1.callee.caller, c = 3;//防止堆栈信息过大
+        var f = arguments$1.callee.caller;
+        var c = 3;//防止堆栈信息过大
         while (f && (--c > 0)) {
           errmsg.push(f.toString());
           if (f === f.caller) {
@@ -855,7 +851,6 @@ VueDataAc.prototype._initCodeErrAc = function _initCodeErrAc () {
       this$1._setAcData(this$1._options.storeCodeErr, codeErrData);
     }, 0);
   };
-
 };
 
 /**
@@ -868,13 +863,12 @@ VueDataAc.prototype._initSourceErrAc = function _initSourceErrAc () {
     var eventType = [].toString.call(event, event);
     if (eventType === "[object Event]") {
       var theTag = event.target || event.srcElement || event.originalTarget || {};
-      var tagName = theTag.tagName;
-        var outerHTML = theTag.outerHTML; if ( outerHTML === void 0 ) outerHTML = '';
-        var href = theTag.href;
+      var href = theTag.href;
         var src = theTag.src;
         var currentSrc = theTag.currentSrc;
         var localName = theTag.localName;
-      tagName = tagName || localName;
+      var tagName = theTag.tagName || localName;
+      var outerHTML = theTag.outerHTML;
 
       var resourceUri = href || src;
 
@@ -908,7 +902,7 @@ VueDataAc.prototype._initPromiseErrAc = function _initPromiseErrAc () {
 
   window.addEventListener('unhandledrejection', function (event) {
     this$1._setAcData(this$1._options.storePrmseErr, {
-      reason: event.reason || "unknown",
+      reason: event.reason || "unknown"
     });
     // 如果想要阻止继续抛出，即会在控制台显示 `Uncaught(in promise) Error` 的话，调用以下函数
     event.preventDefault();
@@ -1055,7 +1049,7 @@ VueDataAc.prototype._setAcData = function _setAcData (options, data) {
         fileName: currentSrc,
         resourceUri: resourceUri,
         tagName: tagName,
-        outerHTML: outerHTML,
+        outerHTML: outerHTML
       };
     }
       break;
@@ -1196,6 +1190,6 @@ VueDataAc.prototype.updateOptions = function updateOptions (options) {
 };
 
 VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
-VueDataAc.version = '2.0.1';
+VueDataAc.version = '2.0.5';
 
 export default VueDataAc;

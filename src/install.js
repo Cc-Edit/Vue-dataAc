@@ -1,5 +1,3 @@
-import {ac_util_isDef} from './util/util'
-
 /**
  * 暴露插件接口
  * */
