@@ -35,7 +35,13 @@ export const BASEOPTIONS = {
   openVueErr      : true,     //是否开启Vue异常监控 (2.0新增）
   openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
   openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
+
+  /**
+   * 因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢，有几率是因为客户硬件问题导致
+   * 所以需要做数据采样统计后才能得出结论
+   * */
   openComponent   : true,     //是否开启组件性能采集 (2.0新增）
+
 
   /**
    * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致

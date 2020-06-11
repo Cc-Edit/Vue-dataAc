@@ -13,14 +13,23 @@ export function install(Vue, options, VueDataAc) {
         /**
          *  路由变化进行页面访问的采集
          * */
-        this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
+        this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._mixinRouterWatch(to, from);
+      }
+    },
+    beforeCreate: function beforeMount(){
+      /**
+       * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
+       * 我们希望对每个组件进行监控生命周期耗时
+       * */
+      if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        this.$vueDataAc._mixinComponentsPerformanceStart(this)
       }
     },
     beforeDestroy() {
       /**
        * 根元素移除时手动上报，以免累计条数不满足 sizeLimit
        * */
-      if (this && this.$root && this._uid === this.$root._uid) {
+      if (this.$vueDataAc && this.$vueDataAc.installed && this._uid === this.$root._uid) {
         this.$vueDataAc && this.$vueDataAc.postAcData();
       }
     },
@@ -30,10 +39,20 @@ export function install(Vue, options, VueDataAc) {
      * 所以使用 vm.$nextTick
      * */
     mounted() {
-      this.$vueDataAc._componentCount++;
-      this.$vueDataAc && this.$vueDataAc._options.openInput && this.$nextTick(function () {
-        --this.$vueDataAc._componentCount === 0 && this.$vueDataAc._mixinMounted(this);
-      });
+      if(this.$vueDataAc && this.$vueDataAc.installed){
+        //input 时间监听
+        if(this.$vueDataAc._options.openInput){
+          this.$vueDataAc._componentLoadCount++;
+          this.$nextTick(function () {
+            --this.$vueDataAc._componentLoadCount === 0 && this.$vueDataAc._mixinInputEvent(this);
+          });
+        }
+
+        //组件性能监控
+        if(this.$vueDataAc._options.openComponent){
+          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+        }
+      }
     }
   })
 

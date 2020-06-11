@@ -138,9 +138,10 @@
       ac_util_warn("--------配置项异常：不能为空------");
       return false;
     }
-    var notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr',
-      'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrData',
-      'openXhrHock', 'openPerformance', 'openPage'];
+    var notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr', 'storeCustom',
+      'storeSourceErr', 'storePrmseErr', 'storeCompErr', 'storeVueErr',
+      'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrQuery',
+      'openXhrHock', 'openPerformance', 'openPage', 'openVueErr', 'openSourceErr', 'openPromiseErr', 'openComponent', 'openXhrTimeOut'];
     notEmpty.map(function (key) {
       if (ac_util_isNullOrEmpty(options[key])) {
         ac_util_warn(("--------配置项【" + key + "】不能为空------"));
@@ -255,14 +256,23 @@
           /**
            *  路由变化进行页面访问的采集
            * */
-          this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
+          this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._mixinRouterWatch(to, from);
+        }
+      },
+      beforeCreate: function beforeMount(){
+        /**
+         * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
+         * 我们希望对每个组件进行监控生命周期耗时
+         * */
+        if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+          this.$vueDataAc._mixinComponentsPerformanceStart(this);
         }
       },
       beforeDestroy: function beforeDestroy() {
         /**
          * 根元素移除时手动上报，以免累计条数不满足 sizeLimit
          * */
-        if (this && this.$root && this._uid === this.$root._uid) {
+        if (this.$vueDataAc && this.$vueDataAc.installed && this._uid === this.$root._uid) {
           this.$vueDataAc && this.$vueDataAc.postAcData();
         }
       },
@@ -272,10 +282,20 @@
        * 所以使用 vm.$nextTick
        * */
       mounted: function mounted() {
-        this.$vueDataAc._componentCount++;
-        this.$vueDataAc && this.$vueDataAc._options.openInput && this.$nextTick(function () {
-          --this.$vueDataAc._componentCount === 0 && this.$vueDataAc._mixinMounted(this);
-        });
+        if(this.$vueDataAc && this.$vueDataAc.installed){
+          //input 时间监听
+          if(this.$vueDataAc._options.openInput){
+            this.$vueDataAc._componentLoadCount++;
+            this.$nextTick(function () {
+              --this.$vueDataAc._componentLoadCount === 0 && this.$vueDataAc._mixinInputEvent(this);
+            });
+          }
+
+          //组件性能监控
+          if(this.$vueDataAc._options.openComponent){
+            this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+          }
+        }
       }
     });
 
@@ -319,7 +339,13 @@
     openVueErr      : true,     //是否开启Vue异常监控 (2.0新增）
     openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
     openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
+
+    /**
+     * 因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢，有几率是因为客户硬件问题导致
+     * 所以需要做数据采样统计后才能得出结论
+     * */
     openComponent   : true,     //是否开启组件性能采集 (2.0新增）
+
 
     /**
      * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
@@ -373,9 +399,10 @@
 
     var newOptions = ac_util_mergeOption(options, BASEOPTIONS);
     if(!ac_util_checkOptions(newOptions)){
+      this.installed = false;
       return
     }
-
+    this.installed = true;
     this._options = newOptions;
     this._vue_ = Vue;
     _VueDataAc = this;
@@ -389,10 +416,12 @@
     this._acData = [];
     this._proxyXhrObj = {};   //代理xhr
     this._inputCacheData = {};//缓存输入框输入信息
+    this._componentsTime = {};//缓存组件加载时间
     this._lastRouterStr = ''; //防止路由重复采集
     this._userToken = '';     //关联后台token
     this._pageInTime = 0;     //防止路由重复采集
-    this._componentCount = 0; //保证所有组件渲染完成
+    this._componentLoadCount = 0; //保证所有组件渲染完成
+    this._componentTimeCount = 0; //保证所有组件渲染完成
     this._init();
   };
 
@@ -435,11 +464,16 @@
       this._initClickAc();
     }
 
-
+    /**
+     * xhr代理初始化
+     * */
     if (this._options.openXhrQuery) {
       this._initXhrErrAc();
     }
 
+    /**
+     * 性能上报初始化
+     * */
     if (this._options.openPerformance) {
       this._initPerformance();
     }
@@ -450,7 +484,7 @@
    *用来绑定全局代理事件，当根元素渲染完成后绑定
    *@param VueRoot 根元素
    * */
-  VueDataAc.prototype._mixinMounted = function _mixinMounted (VueRoot) {
+  VueDataAc.prototype._mixinInputEvent = function _mixinInputEvent (VueRoot) {
     var ref = this._options;
       var ignoreInputType = ref.ignoreInputType;
       var selector = ref.selector;
@@ -468,6 +502,66 @@
         selector$1.addEventListener("input", this._formatInputEvent);
         selector$1.addEventListener("blur", this._formatBlurEvent);
       }
+    }
+  };
+
+  /**
+   *混入vue生命周期 beforeCreate
+   *用来监控组件渲染性能
+   *@param Component 组件
+   * */
+  VueDataAc.prototype._mixinComponentsPerformanceStart = function _mixinComponentsPerformanceStart (Component){
+    var $children = Component.$children;
+      var name = Component.name;
+
+    //没有name的组件不做采集，找不到唯一标识
+    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
+      return;
+    }
+
+    //没有子节点，认为是单一元素，不做采集
+    if($children.length < 1){
+      return;
+    }
+
+    Component.prototype.$_vueAc_bc_time = ac_util_getTime().timeStamp;
+    Component.$vueDataAc._componentTimeCount++;
+  };
+
+  /**
+   *混入vue生命周期 Mounted
+   *用来监控组件渲染性能
+   *@param Component 组件
+   * */
+  VueDataAc.prototype._mixinComponentsPerformanceEnd = function _mixinComponentsPerformanceEnd (Component){
+    var createdTime = Component.$_vueAc_bc_time;
+    var $children = Component.$children;
+      var name = Component.name;
+
+    //没有name的组件不做采集，找不到唯一标识
+    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
+      return;
+    }
+
+    //没有子节点，认为是单一元素，不做采集
+    if($children.length < 1){
+      return;
+    }
+
+    var nowTime = ac_util_getTime().timeStamp;
+    var componentTimes = Component.$vueDataAc._componentsTime[name] || [];
+    componentTimes.push(parseInt(nowTime - createdTime));
+    Component.$vueDataAc._componentsTime[name] = componentTimes;
+
+    console.log( Component.$vueDataAc._componentsTime);
+
+    var isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
+    if(isLoaded){
+      var componentsTimes = JSON.parse(JSON.stringify(Component.$vueDataAc._componentsTime));
+      Component.$vueDataAc._componentsTime = {};
+      this._setAcData(Component.$vueDataAc._options.storeCompErr, {
+        componentsTimes: componentsTimes
+      });
     }
   };
 
@@ -875,7 +969,6 @@
           type: this._options.storeInput,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           eId: eId,
           className: className,
           val: val,
@@ -892,7 +985,6 @@
           type: this._options.storeClick,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           eId: eId$1,
           className: className$1,
           val: val$1,
@@ -915,7 +1007,6 @@
           type: this._options.storeReqErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
           responseURL: responseURL,
           method: method,
@@ -939,7 +1030,6 @@
           type: this._options.storeVueErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           componentName: componentName,
           fileName: fileName,
           propsData: propsData,
@@ -958,7 +1048,6 @@
           type: this._options.storeCodeErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           msg: msg$1,
           line: line,
           col: col,
@@ -975,7 +1064,6 @@
           type: this._options.storeSourceErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           fileName: currentSrc,
           resourceUri: resourceUri,
           tagName: tagName,
@@ -989,7 +1077,6 @@
           type: this._options.storePrmseErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           reason: reason
         };
       }
@@ -1001,7 +1088,6 @@
           type: this._options.storeCustom,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           cusKey: cusKey,
           cusVal: cusVal
         };
@@ -1019,7 +1105,6 @@
           type: this._options.storeTiming,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           WT: WT,
           TCP: TCP,
           ONL: ONL,
@@ -1027,6 +1112,16 @@
           TTFB: TTFB,
           DNS: DNS,
           DR: DR,
+        };
+      }
+        break;
+      case this._options.storeCompErr:{
+        var componentsTimes = data.componentsTimes;
+        _Ac['acData'] = {
+          type: this._options.storeCompErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          componentsTimes: componentsTimes
         };
       }
         break;

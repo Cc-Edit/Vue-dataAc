@@ -129,9 +129,10 @@ function ac_util_checkOptions(options) {
     ac_util_warn(`--------配置项异常：不能为空------`);
     return false;
   }
-  const notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr',
-    'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrData',
-    'openXhrHock', 'openPerformance', 'openPage'];
+  const notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr', 'storeCustom',
+    'storeSourceErr', 'storePrmseErr', 'storeCompErr', 'storeVueErr',
+    'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrQuery',
+    'openXhrHock', 'openPerformance', 'openPage', 'openVueErr', 'openSourceErr', 'openPromiseErr', 'openComponent', 'openXhrTimeOut'];
   notEmpty.map(key => {
     if (ac_util_isNullOrEmpty(options[key])) {
       ac_util_warn(`--------配置项【${key}】不能为空------`);
@@ -244,14 +245,23 @@ function install(Vue, options, VueDataAc) {
         /**
          *  路由变化进行页面访问的采集
          * */
-        this.$vueDataAc && this.$vueDataAc._mixinRouterWatch(to, from);
+        this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._mixinRouterWatch(to, from);
+      }
+    },
+    beforeCreate: function beforeMount(){
+      /**
+       * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
+       * 我们希望对每个组件进行监控生命周期耗时
+       * */
+      if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        this.$vueDataAc._mixinComponentsPerformanceStart(this);
       }
     },
     beforeDestroy() {
       /**
        * 根元素移除时手动上报，以免累计条数不满足 sizeLimit
        * */
-      if (this && this.$root && this._uid === this.$root._uid) {
+      if (this.$vueDataAc && this.$vueDataAc.installed && this._uid === this.$root._uid) {
         this.$vueDataAc && this.$vueDataAc.postAcData();
       }
     },
@@ -261,10 +271,20 @@ function install(Vue, options, VueDataAc) {
      * 所以使用 vm.$nextTick
      * */
     mounted() {
-      this.$vueDataAc._componentCount++;
-      this.$vueDataAc && this.$vueDataAc._options.openInput && this.$nextTick(function () {
-        --this.$vueDataAc._componentCount === 0 && this.$vueDataAc._mixinMounted(this);
-      });
+      if(this.$vueDataAc && this.$vueDataAc.installed){
+        //input 时间监听
+        if(this.$vueDataAc._options.openInput){
+          this.$vueDataAc._componentLoadCount++;
+          this.$nextTick(function () {
+            --this.$vueDataAc._componentLoadCount === 0 && this.$vueDataAc._mixinInputEvent(this);
+          });
+        }
+
+        //组件性能监控
+        if(this.$vueDataAc._options.openComponent){
+          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+        }
+      }
     }
   });
 
@@ -308,7 +328,13 @@ const BASEOPTIONS = {
   openVueErr      : true,     //是否开启Vue异常监控 (2.0新增）
   openSourceErr   : true,     //是否开启资源加载异常采集 (2.0新增）
   openPromiseErr  : true,     //是否开启promise异常采集 (2.0新增）
+
+  /**
+   * 因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢，有几率是因为客户硬件问题导致
+   * 所以需要做数据采样统计后才能得出结论
+   * */
   openComponent   : true,     //是否开启组件性能采集 (2.0新增）
+
 
   /**
    * 我们认为请求时间过长也是一种异常，有几率是因为客户网络问题导致
@@ -365,9 +391,10 @@ class VueDataAc {
   constructor(options = {}, Vue = {}) {
     let newOptions = ac_util_mergeOption(options, BASEOPTIONS);
     if(!ac_util_checkOptions(newOptions)){
+      this.installed = false;
       return
     }
-
+    this.installed = true;
     this._options = newOptions;
     this._vue_ = Vue;
     _VueDataAc = this;
@@ -381,10 +408,12 @@ class VueDataAc {
     this._acData = [];
     this._proxyXhrObj = {};     //代理xhr
     this._inputCacheData = {};  //缓存输入框输入信息
+    this._componentsTime = {};  //缓存组件加载时间
     this._lastRouterStr = '';   //防止路由重复采集
     this._userToken = '';       //关联后台token
     this._pageInTime = 0;       //防止路由重复采集
-    this._componentCount = 0;   //保证所有组件渲染完成
+    this._componentLoadCount = 0;   //保证所有组件渲染完成
+    this._componentTimeCount = 0;   //保证所有组件渲染完成
     this._init();
   }
 
@@ -427,11 +456,16 @@ class VueDataAc {
       this._initClickAc();
     }
 
-
+    /**
+     * xhr代理初始化
+     * */
     if (this._options.openXhrQuery) {
       this._initXhrErrAc();
     }
 
+    /**
+     * 性能上报初始化
+     * */
     if (this._options.openPerformance) {
       this._initPerformance();
     }
@@ -442,7 +476,7 @@ class VueDataAc {
    *  用来绑定全局代理事件，当根元素渲染完成后绑定
    *  @param VueRoot 根元素
    * */
-  _mixinMounted(VueRoot) {
+  _mixinInputEvent(VueRoot) {
     let {ignoreInputType, selector} = this._options;
     let _ACIDoms = document.querySelectorAll(selector);
     for (let i = 0, len = _ACIDoms.length; i < len; i++) {
@@ -458,6 +492,64 @@ class VueDataAc {
         selector.addEventListener("input", this._formatInputEvent);
         selector.addEventListener("blur", this._formatBlurEvent);
       }
+    }
+  }
+
+  /**
+   *  混入vue生命周期 beforeCreate
+   *  用来监控组件渲染性能
+   *  @param Component 组件
+   * */
+  _mixinComponentsPerformanceStart(Component){
+    let {$children, name} = Component;
+
+    //没有name的组件不做采集，找不到唯一标识
+    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
+      return;
+    }
+
+    //没有子节点，认为是单一元素，不做采集
+    if($children.length < 1){
+      return;
+    }
+
+    Component.prototype.$_vueAc_bc_time = ac_util_getTime().timeStamp;
+    Component.$vueDataAc._componentTimeCount++;
+  }
+
+  /**
+   *  混入vue生命周期 Mounted
+   *  用来监控组件渲染性能
+   *  @param Component 组件
+   * */
+  _mixinComponentsPerformanceEnd(Component){
+    let createdTime = Component.$_vueAc_bc_time;
+    let {$children, name} = Component;
+
+    //没有name的组件不做采集，找不到唯一标识
+    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
+      return;
+    }
+
+    //没有子节点，认为是单一元素，不做采集
+    if($children.length < 1){
+      return;
+    }
+
+    let nowTime = ac_util_getTime().timeStamp;
+    let componentTimes = Component.$vueDataAc._componentsTime[name] || [];
+    componentTimes.push(parseInt(nowTime - createdTime));
+    Component.$vueDataAc._componentsTime[name] = componentTimes;
+
+    console.log( Component.$vueDataAc._componentsTime);
+
+    let isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
+    if(isLoaded){
+      let componentsTimes = JSON.parse(JSON.stringify(Component.$vueDataAc._componentsTime));
+      Component.$vueDataAc._componentsTime = {};
+      this._setAcData(Component.$vueDataAc._options.storeCompErr, {
+        componentsTimes
+      });
     }
   }
 
@@ -818,7 +910,6 @@ class VueDataAc {
           type: this._options.storeInput,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           eId,
           className,
           val,
@@ -832,7 +923,6 @@ class VueDataAc {
           type: this._options.storeClick,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           eId,
           className,
           val,
@@ -851,7 +941,6 @@ class VueDataAc {
           type: this._options.storeReqErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           errSubType: isHttpErr ? 'http' : (isCustomErr ? 'custom' : 'time'),
           responseURL,
           method,
@@ -870,7 +959,6 @@ class VueDataAc {
           type: this._options.storeVueErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           componentName,
           fileName,
           propsData,
@@ -886,7 +974,6 @@ class VueDataAc {
           type: this._options.storeCodeErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           msg,
           line,
           col,
@@ -900,7 +987,6 @@ class VueDataAc {
           type: this._options.storeSourceErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           fileName: currentSrc,
           resourceUri,
           tagName,
@@ -914,7 +1000,6 @@ class VueDataAc {
           type: this._options.storePrmseErr,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           reason: reason
         };
       }
@@ -925,7 +1010,6 @@ class VueDataAc {
           type: this._options.storeCustom,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           cusKey,
           cusVal
         };
@@ -937,7 +1021,6 @@ class VueDataAc {
           type: this._options.storeTiming,
           path: window.location.href,
           sTme: ac_util_getTime().timeStamp,
-          ua: navigator.userAgent,
           WT,
           TCP,
           ONL,
@@ -945,6 +1028,16 @@ class VueDataAc {
           TTFB,
           DNS,
           DR,
+        };
+      }
+        break;
+      case this._options.storeCompErr:{
+        let {componentsTimes} = data;
+        _Ac['acData'] = {
+          type: this._options.storeCompErr,
+          path: window.location.href,
+          sTme: ac_util_getTime().timeStamp,
+          componentsTimes
         };
       }
         break;

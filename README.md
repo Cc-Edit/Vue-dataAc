@@ -148,7 +148,6 @@
              "line"    : "301",  		            //代码行数
              "col"     : "13",  		            //代码列下标
              "err"     : "error message",           //错误信息
-             "ua"      : "ios/chrome 44.44"         //浏览器信息
          }
 }
 ```
@@ -167,7 +166,6 @@
              "resourceUri" : "http://isjs.cn/js/test.js",   //资源地址
              "tagName"     : "script",  		            //标签类型
              "outerHTML"   : "<script ...>",                //标签内容
-             "ua"          : "ios/chrome 44.44"             //浏览器信息
          }
 }
 ```
@@ -182,7 +180,6 @@
             "type"        : "ACPRERR",     		         //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
             "sTme"        : "1591760073422",	         //事件上报时间
-            "ua"          : "ios/chrome 44.44"           //浏览器信息 
             "reason"      : "reason"                     //异常说明
          }
 }
@@ -204,7 +201,6 @@
             "type"        : "ACCUSTOM",     		     //上报数据类型：资源加载异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
             "sTme"        : "1591760073422",	         //事件上报时间
-            "ua"          : "ios/chrome 44.44"           //浏览器信息 
             "cusKey"      : "click-button-001"           //自定义事件key，用户定义
             "cusVal"      ："1"                          //自定义事件值，用户定义
          }
@@ -220,7 +216,6 @@
             "type"          : "ACVUERR",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
-            "ua"            : "ios/chrome 44.44"         //浏览器信息 
             "componentName" : "Button"                   //组件名
             "fileName"      : "button.js"                //组件文件
             "propsData"     : "{}"                       //组件props
@@ -240,7 +235,6 @@
             "type"          : "ACCLIK",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
-            "ua"            : "ios/chrome 44.44"         //浏览器信息 
             "eId"           : ""                         //元素id属性
             "className"     : "login-form"               //点击元素class属性
             "val"           : "标题"                      //元素value或者innertext
@@ -259,7 +253,6 @@
             "type"          : "ACINPUT",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
-            "ua"            : "ios/chrome 44.44"         //浏览器信息 
             "eId"           : ""                         //元素id属性
             "className"     : "van-field__control"       //元素class属性
             "val"           : "0:111,638:11,395:1,327:,1742:5,214:55,207:555,175:5555"     //时间:当前值，用逗号分隔，体现时间变化
@@ -278,7 +271,6 @@
             "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
-            "ua"            : "ios/chrome 44.44"         //浏览器信息 
             "errSubType"    : "http/time/custom"         //异常类型：【time: 请求时间过长】【custom: 自定义code】【http:请求错误】
             "responseURL"   : "/static/push"             //请求接口
             "method"        : "GET"                      //请求方式
@@ -302,7 +294,6 @@
             "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
-            "ua"            : "ios/chrome 44.44"         //浏览器信息 
             "WT"            : 1000                       //白屏时间
             "TCP"           : 1000                       //TCP连接耗时
             "ONL"           : 1000                       //执行onload事件耗时
@@ -334,15 +325,15 @@
     - [x] 接口上报  
     - [x] 手动上报  
     
-- [ ] 页面性能上报  
+- [x] 页面性能上报  
     - [x] performance  
-    - [ ] 组件性能上报  
+    - [x] 组件性能上报  
     
 - [x] 留存  
     - [x] 访问时间  
     - [x] 访问间隔  
     
-- [ ] 开关  
+- [x] 开关  
     - [x] openPage 页面访问信息采集开关  
     - [x] openSourceErr 资源加载异常采集  
     - [x] openPromiseErr promise异常采集  
@@ -355,12 +346,18 @@
     - [x] openXhrQuery 是否采集接口异常时的参数params     
     - [x] openXhrHock 是否开启xhr异常采集    
     - [x] openPerformance 是否开启页面性能采集  
-    - [ ] openComponent 组件性能采集     
+    - [x] openComponent 组件性能采集     
        
     
 - [x] npm自动发布  
 - [x] 后端日志关联机制  
 - [ ] demo  
+- [ ] 文章
 
     
-    
+## Q&A
+1. 我需要采集用户行为吗？
+2. 我需要监控页面异常吗？
+3. 我需要采集页面性能&组件性能吗？
+4. 数据采集后如何进行整理分析？
+5. 如何将前端日志与后台日志关联起来？

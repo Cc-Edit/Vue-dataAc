@@ -137,9 +137,10 @@ export function ac_util_checkOptions(options) {
     ac_util_warn(`--------配置项异常：不能为空------`);
     return false;
   }
-  const notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr',
-    'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrData',
-    'openXhrHock', 'openPerformance', 'openPage']
+  const notEmpty = ['storeInput', 'storePage', 'storeClick', 'storeReqErr', 'storeTiming', 'storeCodeErr', 'storeCustom',
+    'storeSourceErr', 'storePrmseErr', 'storeCompErr', 'storeVueErr',
+    'userSha', 'useImgSend', 'useStorage', 'maxDays', 'openInput', 'openCodeErr', 'openClick', 'openXhrQuery',
+    'openXhrHock', 'openPerformance', 'openPage', 'openVueErr', 'openSourceErr', 'openPromiseErr', 'openComponent', 'openXhrTimeOut']
   notEmpty.map(key => {
     if (ac_util_isNullOrEmpty(options[key])) {
       ac_util_warn(`--------配置项【${key}】不能为空------`)
