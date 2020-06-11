@@ -1181,6 +1181,7 @@ VueDataAc.prototype.postAcData = function postAcData () {
 VueDataAc.prototype.setUserToken = function setUserToken (value) {
   this._userToken = value;
 };
+
 /**
  * 更新Options
  * */
