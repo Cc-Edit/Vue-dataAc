@@ -13,9 +13,28 @@
 
 ## 快速开始
 
+**安装**
 ```
-    npm install vue-dataac
-    
+    npm install vue-dataac --save
+```
+
+**ES6**
+```
+    import VueDataAc from 'vue-dataac'
+```
+
+**CommonJS**
+```
+    var VueDataAc =  require('vue-dataac');
+```
+
+**直接引用**
+```
+<script src="../node_modules/vue-dataac/dist/vue-dataAc.min.js"></script>
+```
+
+**Vue Cli**
+```    
     import Vue from 'vue'
     import VueDataAc from 'vue-dataac'
     
@@ -313,6 +332,7 @@
     - [x] promise异常  
     - [x] Vue异常  
     - [x] 请求异常(慢请求，超时，错误)  
+    - [ ] axios异常
     
 - [x] 用户行为监控  
     - [x] 点击事件  
