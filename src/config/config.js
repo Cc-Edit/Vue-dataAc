@@ -10,7 +10,7 @@ export const BASEOPTIONS = {
   storePage      : "ACPAGE",     //页面采集标识
   storeClick     : "ACCLIK",     //点击事件采集标识
   storeReqErr    : "ACRERR",     //请求异常采集标识
-  storeTiming    : "ACTIME",     //页面时间采集标识
+  storeTiming    : "ACTIME",     //页面性能采集标识
   storeCodeErr   : "ACCERR",     //代码异常采集标识
   storeCustom    : "ACCUSTOM",   //自定义事件采集标识 (2.0新增）
   storeSourceErr : "ACSCERR",    //资源加载异常采集标识 (2.0新增）

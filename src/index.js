@@ -300,7 +300,25 @@ export default class VueDataAc {
   /**
    *  初始化页面性能
    * */
-  _initPerformance(){}
+  _initPerformance(){
+    if (window.performance) {
+      let performance = window.performance || {};
+      let _timing = performance.timing;
+
+      if (!ac_util_isNullOrEmpty(_timing)) {
+        var loadAcData = {
+          WT: _timing.responseStart - _timing.navigationStart, //白屏时间
+          TCP: _timing.connectEnd - _timing.connectStart, //TCP连接耗时
+          ONL: _timing.loadEventEnd - _timing.loadEventStart, //执行onload事件耗时
+          ALLRT: _timing.responseEnd - _timing.requestStart, //所有请求耗时
+          TTFB: _timing.responseStart - _timing.navigationStart, //TTFB 即 Time To First Byte,读取页面第一个字节的时间
+          DNS: _timing.domainLookupEnd - _timing.domainLookupStart, //DNS查询时间
+          DR: _timing.domComplete - _timing.responseEnd //dom ready时间，脚本加载完成时间
+        };
+        this._setAcData(this._options.storeTiming, loadAcData)
+      }
+    }
+  }
 
   /**
    *  初始化Vue异常监控
@@ -453,31 +471,23 @@ export default class VueDataAc {
         break;
       case this._options.storeInput:
         {
-          let { eId, className, val, attrs} = data;
           _Ac['acData'] = {
             type: this._options.storeInput,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
-            eId,
-            className,
-            val,
-            attrs
+            ...data
           };
         }
         break;
       case this._options.storeClick:
         {
-          let { eId, className, val, attrs} = data;
           _Ac['acData'] = {
             type: this._options.storeClick,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
-            eId,
-            className,
-            val,
-            attrs
+            ...data
           };
         }
         break;
@@ -523,16 +533,12 @@ export default class VueDataAc {
         break;
       case this._options.storeCodeErr:
         {
-          let { msg, line, col, err } = data;
           _Ac['acData'] = {
             type: this._options.storeCodeErr,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
-            msg,
-            line,
-            col,
-            err
+            ...data
           };
         }
         break;
@@ -553,32 +559,35 @@ export default class VueDataAc {
         break;
       case this._options.storePrmseErr:
         {
-          let { reason } = data;
           _Ac['acData'] = {
             type: this._options.storePrmseErr,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
-            reason: reason
+            ...data
           };
         }
         break;
       case this._options.storeCustom:
         {
-          let { cusKey, cusVal } = data;
           _Ac['acData'] = {
             type: this._options.storeCustom,
             path: window.location.href,
             sTme: ac_util_getTime().timeStamp,
             ua: navigator.userAgent,
-            cusKey,
-            cusVal
+            ...data
           };
         }
         break;
       case this._options.storeTiming:
         {
-
+          _Ac['acData'] = {
+            type: this._options.storeCustom,
+            path: window.location.href,
+            sTme: ac_util_getTime().timeStamp,
+            ua: navigator.userAgent,
+            ...data
+          };
         }
         break;
       default:
