@@ -507,16 +507,10 @@ VueDataAc.prototype._mixinInputEvent = function _mixinInputEvent (VueRoot) {
  *@param Component 组件
  * */
 VueDataAc.prototype._mixinComponentsPerformanceStart = function _mixinComponentsPerformanceStart (Component){
-  var $children = Component.$children;
-    var name = Component.name;
-
-  //没有name的组件不做采集，找不到唯一标识
-  if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
-    return;
-  }
-
-  //没有子节点，认为是单一元素，不做采集
-  if($children.length < 1){
+  var $vnode = Component.$vnode; if ( $vnode === void 0 ) $vnode = {};
+  var tag = $vnode.tag;
+  //没有tag的组件不做采集，找不到唯一标识
+  if(ac_util_isNullOrEmpty(tag)){
     return;
   }
 
@@ -531,23 +525,18 @@ VueDataAc.prototype._mixinComponentsPerformanceStart = function _mixinComponents
  * */
 VueDataAc.prototype._mixinComponentsPerformanceEnd = function _mixinComponentsPerformanceEnd (Component){
   var createdTime = Component.$_vueAc_bc_time;
-  var $children = Component.$children;
-    var name = Component.name;
+  var $vnode = Component.$vnode; if ( $vnode === void 0 ) $vnode = {};
+  var tag = $vnode.tag;
 
-  //没有name的组件不做采集，找不到唯一标识
-  if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
-    return;
-  }
-
-  //没有子节点，认为是单一元素，不做采集
-  if($children.length < 1){
+  //没有tag的组件不做采集，找不到唯一标识
+  if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(tag)){
     return;
   }
 
   var nowTime = ac_util_getTime().timeStamp;
-  var componentTimes = Component.$vueDataAc._componentsTime[name] || [];
+  var componentTimes = Component.$vueDataAc._componentsTime[tag] || [];
   componentTimes.push(parseInt(nowTime - createdTime));
-  Component.$vueDataAc._componentsTime[name] = componentTimes;
+  Component.$vueDataAc._componentsTime[tag] = componentTimes;
 
   console.log( Component.$vueDataAc._componentsTime);
 

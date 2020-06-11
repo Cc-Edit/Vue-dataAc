@@ -139,19 +139,14 @@ export default class VueDataAc {
    *  @param Component 组件
    * */
   _mixinComponentsPerformanceStart(Component){
-    let {$children, name} = Component;
-
-    //没有name的组件不做采集，找不到唯一标识
-    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
+    let {$vnode = {}} = Component;
+    let tag = $vnode.tag;
+    //没有tag的组件不做采集，找不到唯一标识
+    if(ac_util_isNullOrEmpty(tag)){
       return;
     }
 
-    //没有子节点，认为是单一元素，不做采集
-    if($children.length < 1){
-      return;
-    }
-
-    Component.prototype.$_vueAc_bc_time = ac_util_getTime().timeStamp;
+    Component.$_vueAc_bc_time = ac_util_getTime().timeStamp;
     Component.$vueDataAc._componentTimeCount++;
   }
 
@@ -162,22 +157,18 @@ export default class VueDataAc {
    * */
   _mixinComponentsPerformanceEnd(Component){
     let createdTime = Component.$_vueAc_bc_time;
-    let {$children, name} = Component;
+    let {$vnode = {}} = Component;
+    let tag = $vnode.tag;
 
-    //没有name的组件不做采集，找不到唯一标识
-    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(name)){
-      return;
-    }
-
-    //没有子节点，认为是单一元素，不做采集
-    if($children.length < 1){
+    //没有tag的组件不做采集，找不到唯一标识
+    if(ac_util_isNullOrEmpty(createdTime) || ac_util_isNullOrEmpty(tag)){
       return;
     }
 
     let nowTime = ac_util_getTime().timeStamp;
-    let componentTimes = Component.$vueDataAc._componentsTime[name] || [];
+    let componentTimes = Component.$vueDataAc._componentsTime[tag] || [];
     componentTimes.push(parseInt(nowTime - createdTime))
-    Component.$vueDataAc._componentsTime[name] = componentTimes;
+    Component.$vueDataAc._componentsTime[tag] = componentTimes;
 
     console.log( Component.$vueDataAc._componentsTime)
 
