@@ -6,7 +6,7 @@
     欢迎关注我的公众号: **js前端架构**
 | 欢迎关注我的公众号: **js前端架构** | 赞助+  | 
 | :------------: |:---------------:| 
-|![js前端架构](http://www.isjs.cn/wp-content/uploads/2013/06/2018_07_25_1136562613-1.png "关注我哟")|![打赏](http://www.isjs.cn/wp-content/uploads/2020/06/WechatIMG68.jpeg "感谢")|
+|![js前端架构](http://www.isjs.cn/wp-content/uploads/2013/06/2018_07_25_1136562613-1.png "关注我哟")|![打赏](http://www.isjs.cn/wp-content/uploads/2020/06/Wechat-z.png "感谢")|
 
 
 ## 快速开始
