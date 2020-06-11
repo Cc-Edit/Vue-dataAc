@@ -332,6 +332,11 @@ var BASEOPTIONS = {
   manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
 };
 
+/**
+ * 原生事件涉及到移除与绑定，所以缓存VueDataAc
+ * */
+var _VueDataAc;
+
 var VueDataAc = function VueDataAc (options, Vue) {
   if ( options === void 0 ) options = {};
   if ( Vue === void 0 ) Vue = {};
@@ -340,6 +345,7 @@ var VueDataAc = function VueDataAc (options, Vue) {
   ac_util_checkOptions(newOptions);
   this._options = newOptions;
   this._vue_ = Vue;
+  _VueDataAc = this;
 
   this._uuid = ac_util_getStorage(this._options, this._options.userSha);
   if(ac_util_isNullOrEmpty(this._uuid)){
@@ -354,6 +360,7 @@ var VueDataAc = function VueDataAc (options, Vue) {
   this._pageInTime = 0; //防止路由重复采集
   this._componentCount = 0; //保证所有组件渲染完成
   this._init();
+
 };
 /**
  * 页面初始化
@@ -453,7 +460,7 @@ VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
     inputKey = id + "-" + className;
   }
 
-  var cacheData = this._inputCacheData[inputKey];
+  var cacheData = _VueDataAc._inputCacheData[inputKey];
   if(ac_util_isNullOrEmpty(cacheData) || ac_util_isEmptyObject(cacheData)){
     cacheData = {
       value: ("0:" + _value),
@@ -465,8 +472,7 @@ VueDataAc.prototype._formatInputEvent = function _formatInputEvent (e){
       timeStamp : _now
     };
   }
-
-  this._inputCacheData[inputKey] = cacheData;
+  _VueDataAc._inputCacheData[inputKey] = cacheData;
 };
 /**
  * 失焦事件
@@ -487,10 +493,11 @@ VueDataAc.prototype._formatBlurEvent = function _formatBlurEvent (e){
     inputKey = id + "-" + className;
   }
 
-  var cacheData = this._inputCacheData[inputKey];
-  this._inputCacheData[inputKey] = null;
+  var cacheData = _VueDataAc._inputCacheData[inputKey];
+  if(ac_util_isNullOrEmpty(cacheData)) { return; }
 
-  this._setAcData(this._options.storeInput, {
+  _VueDataAc._inputCacheData[inputKey] = null;
+  _VueDataAc._setAcData(_VueDataAc._options.storeInput, {
     eId: id,
     className: className,
     val: cacheData.value,
