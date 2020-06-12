@@ -38,9 +38,7 @@ function buildEntry({input, output}) {
       // console.log(bundle)
       const code = bundle.output[0].code
       if (isProd) {
-        const minified =
-          (banner ? banner + '\n' : '') +
-          terser.minify(code, {
+        const minified = terser.minify(code, {
             toplevel: true,
             output: {
               ascii_only: true
