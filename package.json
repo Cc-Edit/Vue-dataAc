@@ -3,16 +3,6 @@
   "version": "2.0.5",
   "description": "Vue 用户行为采集，异常数据采集，Vue组件性能监控，前端异常采集",
   "homepage": "https://github.com/adminV/Vue-dataAc",
-  "keywords": [
-    "vue report",
-    "vue monitor",
-    "用户行为采集",
-    "异常数据采集",
-    "组件性能监控",
-    "前端异常",
-    "js异常",
-    "js监控"
-  ],
   "author": "adminV",
   "license": "MIT",
   "main": "dist/vue-dataAc.common.js",
@@ -21,7 +11,9 @@
     "example": "example"
   },
   "scripts": {
-    "build": "node build/build.js"
+    "build": "npm run dist",
+    "dist": "node build/build.js",
+    "flow": "flow check"
   },
   "repository": {
     "type": "git",
@@ -32,9 +24,20 @@
     "rollup": "^2.15.0",
     "rollup-plugin-buble": "^0.19.8",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-eslint": "^7.0.0",
     "rollup-plugin-flow-no-whitespace": "^1.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "terser": "^4.7.0"
-  }
+  },
+  "keywords": [
+    "vue report",
+    "vue monitor",
+    "用户行为采集",
+    "异常数据采集",
+    "组件性能监控",
+    "前端异常",
+    "js异常",
+    "js监控"
+  ]
 }
