@@ -27,9 +27,9 @@ export function install(Vue, options, VueDataAc) {
         this.$vueDataAc._mixinComponentsPerformanceStart(this)
       }
       /**
-       *  未使用vue-router的情况下，上报当前url
+       *  上报当前页面url
        * */
-      if(this._uid === this.$root._uid && ac_util_isNullOrEmpty(this.$router)){
+      if(this._uid === this.$root._uid){
         if(this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openPage){
           this.$vueDataAc._mixinRouterWatch(null, null, false);
         }
