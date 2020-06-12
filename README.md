@@ -18,6 +18,19 @@
     npm install vue-dataac --save
 ```
 
+**Vue Cli**
+```    
+   import Vue from 'vue'
+   import VueDataAc from 'vue-dataac'
+
+   Vue.use(VueDataAc, {
+       // imageUrl: 'http://open.isjs.cn/admin/ac.png'
+       // or
+       useImgSend: false,
+       postUrl: 'http://open.isjs.cn/logStash/push'
+    });
+```
+
 **ES6**
 ```
     import VueDataAc from 'vue-dataac'
@@ -31,16 +44,6 @@
 **直接引用**
 ```
     <script src="../node_modules/vue-dataac/dist/vue-dataAc.min.js"></script>
-```
-
-**Vue Cli**
-```    
-    import Vue from 'vue'
-    import VueDataAc from 'vue-dataac'
-    
-    Vue.use(VueDataAc, {
-        ...options
-    })
 ```
 
 
