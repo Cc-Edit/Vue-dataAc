@@ -61,7 +61,22 @@ export function install(Vue, options, VueDataAc) {
           this.$vueDataAc._mixinComponentsPerformanceEnd(this);
         }
       }
-    }
+    },
+    beforeUpdate() {
+      /**
+       * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
+       * 我们希望对每个组件进行监控生命周期耗时
+       * */
+      if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        this.$vueDataAc._mixinComponentsPerformanceStart(this)
+      }
+    },
+    updated() {
+      if(this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        //组件性能监控
+        this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+      }
+    },
   })
 
   Vue.prototype.$vueDataAc = new VueDataAc(options, Vue);

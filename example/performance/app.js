@@ -3,7 +3,10 @@
  * VueDataAc 配置
  * */
 var OPTIONS = {
-  useImgSend: false
+  useImgSend: false,
+  openClick: false,
+  openInput: false,
+  maxComponentLoadTime: 50
 }
 Vue.use(VueDataAc, OPTIONS)
 
@@ -15,10 +18,7 @@ var app = new Vue({
   el: '#app',
   data: {
     menuData: window.__menuData__ || [],
-    inputValue: '',
-    inputPassword: '',
-    desc: '',
-    phone: 'apple',
+    arrayData:[]
   },
   computed: {},
   watch: {},
