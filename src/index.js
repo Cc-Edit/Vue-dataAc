@@ -255,26 +255,48 @@ export default class VueDataAc {
   /**
    *  混入vue watch 用来监控路由变化
    * */
-  _mixinRouterWatch(to = {}, from = {}) {
-    const toPath = to.fullPath || to.path || to.name;
-    const toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
-    const fromPath = from.fullPath || from.path || from.name;
-    const formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
-    if (this._lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`) {
-      return
+  _mixinRouterWatch(to = {}, from = {}, isVueRouter) {
+    let toPath = '';
+    let toParams = {};
+    let fromPath = '';
+    let formParams = {};
+    let _lastRouterStr = '';
+
+    if(isVueRouter){
+      toPath = to.fullPath || to.path || to.name;
+      toParams = ac_util_isEmptyObject(to.params) ? to.query : to.params;
+      fromPath = from.fullPath || from.path || from.name;
+      formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
+      _lastRouterStr = this._lastRouterStr;
+    }else{
+      _lastRouterStr = ac_util_getStorage(this._options, `_vueac_${this._options.storePage}`) || ''
+      toPath = window.location.href;
+      toParams = { search: window.location.search }
+      fromPath = _lastRouterStr;
+      formParams = {}
     }
 
-    if (!ac_util_isNullOrEmpty(toPath) && !ac_util_isNullOrEmpty(fromPath)) {
+    //该情况认为是根页面渲染，留给页面级信息上报
+    if (isVueRouter && ac_util_isNullOrEmpty(toPath) || ac_util_isNullOrEmpty(fromPath)) {
+      return;
+    }
+
+    if (_lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`) {
+      return
+    }else{
       this._lastRouterStr = `${toPath}-${JSON.stringify(toParams)}`;
-      this._setAcData(this._options.storePage, {
-        toPath,
-        toParams,
-        fromPath,
-        formParams
-      })
-      if(!this._options.manualReport && this._options.lifeReport){
-        this.postAcData && this.postAcData();
-      }
+      ac_util_setStorage(this._options,`_vueac_${this._options.storePage}`, `${toPath}-${JSON.stringify(toParams)}`)
+    }
+
+
+    this._setAcData(this._options.storePage, {
+      toPath,
+      toParams,
+      fromPath,
+      formParams
+    })
+    if(!this._options.manualReport && this._options.lifeReport){
+      this.postAcData && this.postAcData();
     }
   }
 

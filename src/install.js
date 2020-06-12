@@ -1,6 +1,8 @@
 /**
  * 暴露插件接口
  * */
+import {ac_util_isNullOrEmpty} from "./util/util";
+
 export function install(Vue, options, VueDataAc) {
   if (install.installed) return
   install.installed = true
@@ -11,7 +13,9 @@ export function install(Vue, options, VueDataAc) {
         /**
          *  路由变化进行页面访问的采集
          * */
-        this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._mixinRouterWatch(to, from);
+        if(this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openPage){
+          this.$vueDataAc._mixinRouterWatch(to, from, true);
+        }
       }
     },
     beforeCreate: function beforeMount(){
@@ -21,6 +25,14 @@ export function install(Vue, options, VueDataAc) {
        * */
       if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
         this.$vueDataAc._mixinComponentsPerformanceStart(this)
+      }
+      /**
+       *  未使用vue-router的情况下，上报当前url
+       * */
+      if(this._uid === this.$root._uid && ac_util_isNullOrEmpty(this.$router)){
+        if(this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openPage){
+          this.$vueDataAc._mixinRouterWatch(null, null, false);
+        }
       }
     },
     beforeDestroy() {
