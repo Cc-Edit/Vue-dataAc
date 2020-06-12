@@ -3,7 +3,8 @@
  * VueDataAc 配置
  * */
 var OPTIONS = {
-  useImgSend: false
+  useImgSend: false,
+  openClick: false
 }
 Vue.use(VueDataAc, OPTIONS)
 
@@ -14,11 +15,7 @@ Vue.use(VueDataAc, OPTIONS)
 var app = new Vue({
   el: '#app',
   data: {
-    menuData: window.__menuData__ || [],
-    inputValue: '',
-    inputPassword: '',
-    desc: '',
-    phone: 'apple',
+    menuData: window.__menuData__ || []
   },
   computed: {},
   watch: {},
@@ -26,11 +23,8 @@ var app = new Vue({
     /**
      * 自定义事件上报
      * */
-    customEvent: function(){
-      this.$vueDataAc.setCustomAc({
-        cusKey: 'clickAnyButton',
-        cusVal: 'click button ...'
-      })
+    codeErrEvent: function(){
+      var a = b+1;
     }
   },
   components: {},
