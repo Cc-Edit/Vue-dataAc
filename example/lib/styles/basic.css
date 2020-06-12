@@ -148,7 +148,7 @@ input {
   padding: 10px;
   box-sizing: border-box;
   margin: 66px 16px 16px;
-  overflow: hidden;
+  overflow: scroll;
   border-radius: 10px;
   background: rgb(255, 255, 255);
 }
@@ -166,6 +166,9 @@ input {
 }
 .ivu-col {
   margin-bottom: 10px;
+}
+.ivu-card{
+  margin-bottom: 15px;
 }
 .dataac-subText{
   color: #666;

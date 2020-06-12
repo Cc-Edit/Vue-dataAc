@@ -80,7 +80,7 @@
                 连续输入时，会持续记录输入信息，失焦时上报数据 <br/>
                 通过修改 openInput 打开/关闭 此功能 <br/>
                 通过修改 selector 为 `input,textarea` 采集两种元素的输入信息 <br/>
-                通过修改 ignoreInputType 对指定类型的输入框忽略采集，此处我们忽略了password类型的输入框
+                通过修改 ignoreInputType 对指定类型的输入框忽略采集，此处我们忽略了 password 类型的输入框
               </span>
             </p>
           </Card>
@@ -95,12 +95,18 @@
                   <i-Button type="text">Text</i-Button>
                 </i-Col>
                 <i-Col span="20" >
-
+                  <Page :total="100" />
                 </i-Col>
               </Row>
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
-                <br/>
+                此处为全量采集示例<br/>
+                全量采集情况下页面上所有点击元素都可以采集<br/>
+                但是要注意，此处为了减少上报的脏数据，会从事件触发元素向上递归<br/>
+                直到找到一个有 class 或者 id 属性的元素，我们称之有效元素<br/>
+                最终上报该有效元素，找不到有效元素则不上报<br/>
+                向上递归停止的条件有两种，优先判断递归次数是否大于 maxHelpfulCount<br/>
+                其次判断是否递归到了 document 根元素
               </span>
             </p>
           </Card>
@@ -109,11 +115,14 @@
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-
+                  <i-Button type="info" @click="customEvent">点击上报自定义事件</i-Button>
                 </i-Col>
               </Row>
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
+                某些业务场景下，用户的操作来自于非主动操作<br/>
+                例如当用户处于某个状态，处于某个业务节点，查看到了某个内容，接口请求处于某种异常等等<br/>
+                支持在这些自定义场景下调用 setCustomAc 方法进行自定义上报，可以自定义上报 key 和 value
                 <br/>
               </span>
             </p>
@@ -123,11 +132,20 @@
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-
+                  <i-Button type="info" ghost to="/home">home</i-Button>
+                  <i-Button type="info" ghost to="/login">login</i-Button>
+                  <i-Button type="info" ghost to="/user?uuid=123">user</i-Button>
+                </i-Col>
+                <i-Col span="10" >
+                  <router-view></router-view>
                 </i-Col>
               </Row>
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
+                路由切换采集生效在使用 VueRouter 的前提下，因为我们监控 $route 的变化<br/>
+                但是当 url 发生变换的场景下，从 A 页面跳转到相同域的 B 页面，我们同样也有一套监控生效<br/>
+                所以哪怕你的项目里没有使用 VueRouter 是多页面的场景，也是可以采集到页面访问（ACPAGE）信息的 <br/>
+                你可以点击左侧不同 demo 链接查看另一种数据
                 <br/>
               </span>
             </p>
