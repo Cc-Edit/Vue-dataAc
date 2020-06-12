@@ -141,7 +141,8 @@ const BASEOPTIONS = {
    *  classTag 配置为 'isjs-ac' 只会采集 class 包含 isjs-ac 的元素
    *  classTag 配置为 '' 会采集所有被点击的元素，当然也会导致数据量大。
    * */
-  classTag     : '',      //主动埋点标识, 自动埋点时请配置空字符串
+  classTag     : '',          //主动埋点标识, 自动埋点时请配置空字符串
+  maxHelpfulCount     : 5,    //为了使上报数据准确，我们会递归父元素，找到一个有样式的祖先元素，此项配置递归次数
 
   /**
    * 以下内容为可配置信息，影响插件逻辑功能
@@ -173,6 +174,47 @@ function ac_util_isEmptyObject(obj) {
     return false;
   }
   return true;
+}
+
+/**
+ * 获取有效点击元素，埋点采集只上报埋点元素
+ * 全量采集找有ID或class的元素
+ * */
+function ac_util_getHelpfulElement(target, options, length = 0){
+  //向上遍历到document，此次点击失效
+  if (Object.prototype.toString.call(target) === Object.prototype.toString.call(document)){
+    return null;
+  }
+  const parentNode = target && target.parentNode;
+  const {className = '', id} = target;
+  const {classTag, maxHelpfulCount} = options;
+  //主动埋点
+  if (!ac_util_isNullOrEmpty(classTag)) {
+    //未命中
+    if(className.indexOf(classTag) < 0){
+      if(ac_util_isNullOrEmpty(parentNode)){
+        return null;
+      }else {
+        return ac_util_getHelpfulElement(parentNode, options, ++length)
+      }
+    }else {
+        return target
+    }
+  }else {
+    //全量采集
+    if(length > maxHelpfulCount){
+      return null;
+    }
+    if (ac_util_isNullOrEmpty(className) && ac_util_isNullOrEmpty(id)) {
+      if(ac_util_isNullOrEmpty(parentNode)){
+        return null;
+      }else {
+        return ac_util_getHelpfulElement(parentNode, options, ++length)
+      }
+    }else {
+      return target
+    }
+  }
 }
 
 /**
@@ -676,13 +718,10 @@ class VueDataAc {
     document.addEventListener("click", (e) => {
       const event = window.event || e;
       const target = event.srcElement ? event.srcElement : event.target;
-      const {className, id, value, innerText} = target;
-      const {classTag} = this._options;
-      //主动埋点未命中
-      if (!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0) {
-        return;
-      }
-      const attrs = ac_util_getAllAttr(target);
+      const helpfulElement = ac_util_getHelpfulElement(target, this._options);
+      const {className, id, value, innerText} = helpfulElement;
+
+      const attrs = ac_util_getAllAttr(helpfulElement);
 
       this._setAcData(this._options.storeClick, {
         eId: id,
