@@ -34,7 +34,7 @@
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-                  <i-Button type="info" @click="codeErrEvent">点击按钮执行语法错误代码</i-Button>
+                  <i-Button type="info" @click="window.CodeErr()">点击按钮执行语法错误代码</i-Button>
                 </i-Col>
               </Row>
               <Divider dashed orientation="left">说明：</Divider>
@@ -48,12 +48,14 @@
       </Layout>
     </Layout>
   </div>
-
+</div>
   <script type="text/javascript" src="../lib/menu.js"></script>
   <script type="text/javascript" src="../lib/vue.min.js"></script>
   <script type="text/javascript" src="../lib/axios.min.js"></script>
   <script type="text/javascript" src="../lib/iview.min.js"></script>
   <script type="text/javascript" src="../lib/vue-dataAc.js"></script>
   <script type="text/javascript" src="./app.js"></script>
+
+
 </body>
 </html>

@@ -24,11 +24,14 @@ var app = new Vue({
      * 自定义事件上报
      * */
     codeErrEvent: function(){
-      var a = b+1;
+      window.CodeErr()
     }
   },
   components: {},
   created: function(){
+    (function () {
+      var a = aaa + 1;
+    })()
   },
   mounted: function(){},
 })
