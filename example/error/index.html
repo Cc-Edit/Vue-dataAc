@@ -40,6 +40,22 @@
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
                 监控代码异常，尽可能在项目中启用 eslint 语法检查，避免简单错误上线<br/>
+                vue已经代理了大部分异常，所以此处上报的是Vue异常
+                <br/>
+              </span>
+            </p>
+          </Card>
+          <Card :bordered="false">
+            <p slot="title">promise 异常</p>
+            <p class="dataac-cardContent">
+              <Row type="flex" justify="space-between" >
+                <i-Col span="10" >
+                  <i-Button type="info" @click="promiseErr">点击按钮执行 promise 异常代码</i-Button>
+                </i-Col>
+              </Row>
+              <Divider dashed orientation="left">说明：</Divider>
+              <span class="dataac-subText">
+                promise 中的 reject() 没有被正常处理时抛出异常<br/>
                 <br/>
               </span>
             </p>
@@ -55,7 +71,5 @@
   <script type="text/javascript" src="../lib/iview.min.js"></script>
   <script type="text/javascript" src="../lib/vue-dataAc.js"></script>
   <script type="text/javascript" src="./app.js"></script>
-
-
 </body>
 </html>

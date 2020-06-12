@@ -20,18 +20,15 @@ var app = new Vue({
   computed: {},
   watch: {},
   methods: {
-    /**
-     * 自定义事件上报
-     * */
-    codeErrEvent: function(){
-      window.CodeErr()
+    promiseErr: function(){
+      new Promise(function (resolve,reject) {
+        reject();
+      })
     }
   },
   components: {},
   created: function(){
-    (function () {
-      var a = aaa + 1;
-    })()
+    throw new DOMException()
   },
   mounted: function(){},
 })
