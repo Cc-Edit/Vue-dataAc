@@ -31,6 +31,7 @@ var app = new Vue({
   router,
   el: '#app',
   data: {
+    menuData: window.__menuData__ || [],
     inputValue: '',
     inputPassword: '',
     desc: '',

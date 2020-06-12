@@ -169,6 +169,10 @@ input {
 }
 .ivu-card{
   margin-bottom: 15px;
+  background-color: #f6f6f6 !important;
+}
+.ivu-card pre{
+  overflow: scroll;
 }
 .dataac-subText{
   color: #666;

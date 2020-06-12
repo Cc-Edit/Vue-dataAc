@@ -15,41 +15,9 @@
           <p class="dataac-menuLogo">
             功能列表
           </p>
-          <menu-item name="0">
-            <Icon type="ios-document-outline"></Icon>
-            <span>文档</span>
-          </menu-item>
-          <menu-item name="1">
-            <Icon type="ios-body-outline"></Icon>
-            <span>行为监控Demo</span>
-          </menu-item>
-          <menu-item name="2">
-            <Icon type="ios-bug-outline" ></Icon>
-            <span>异常监控Demo</span>
-          </menu-item>
-          <menu-item name="3">
-            <Icon type="ios-pulse-outline" ></Icon>
-            <span>性能监控Demo</span>
-          </menu-item>
-          <menu-item name="4">
-            <Icon type="ios-pin-outline" ></Icon>
-            <span>主动埋点Demo</span>
-          </menu-item>
-          <menu-item name="5">
-            <Icon type="ios-send-outline" ></Icon>
-            <span>图片数据上报Demo</span>
-          </menu-item>
-          <menu-item name="6">
-            <Icon type="ios-send-outline" ></Icon>
-            <span>上报节流Demo-1</span>
-          </menu-item>
-          <menu-item name="7">
-            <Icon type="ios-send-outline" ></Icon>
-            <span>上报节流Demo-2</span>
-          </menu-item>
-          <menu-item name="8">
-            <Icon type="ios-send-outline" ></Icon>
-            <span>关联登录信息Demo</span>
+          <menu-item :name="item.name" v-for="(item, index) in menuData" :key="index" @click.native="window.location.href =  window.location.origin + item.path">
+            <Icon :type="item.icon"></Icon>
+            <span>{{item.text}}</span>
           </menu-item>
         </i-Menu>
       </Sider>
@@ -155,6 +123,7 @@
     </Layout>
   </div>
 
+  <script type="text/javascript" src="../lib/menu.js"></script>
   <script type="text/javascript" src="../lib/vue.min.js"></script>
   <script type="text/javascript" src="../lib/vue-router.min.js"></script>
   <script type="text/javascript" src="../lib/axios.min.js"></script>

@@ -50,8 +50,8 @@
 ## demo:
 | 功能 | demo地址  | 数据分析展示 | 
 | :------------ |:---------------| :---------------|
-| js页面引入方式使用 | String | 'ACINPUT' |
-| Vue单文件方式使用 | String | 'ACINPUT' |
+| 文档 | '/example/document/index.html' | 'ACINPUT' |
+| 行为采集 | '/example/basic/index.html' | 'ACINPUT' |
 | 全量采集 | String | 'ACINPUT' |
 | 埋点采集 | String | 'ACINPUT' |
 | 埋点采集 | String | 'ACINPUT' |
@@ -108,10 +108,10 @@
 | selector | String | 'input' | 所有input输入框（全量采集） | :smile: | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
 | selector | String | 'input.isjs-ac' | 所有class包含isjs-ac的input输入框（埋点采集） | :smile: | 通过控制选择器来限定监听范围,使用document.querySelectorAll进行选择，值参考：https://www.runoob.com/cssref/css-selectors.html | 1.0.0 |
 | ignoreInputType | Array | `['password', 'file']` | type不是password和file的输入框 | :smile: | --- | 1.0.0 |
-| ignoreInputType | Array | `[]` | 所有输入框 | :smile: | --- | 1.0.0 |
-| classTag | String | '' | 所有元素（全量采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
+| ignoreInputType | Array | `[]` | 所有输入框 | :smile: | --- | 2.0.0 |
+| classTag | String | '' | 所有可点击元素（全量采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
 | classTag | String | 'isjs-ac' | 只会采集 class 包含 isjs-ac 元素的点击（埋点采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
-| maxHelpfulCount | Number | 5 | 全量采集场景下，为了使上报数据准确，我们会递归父元素，找到一个有class或id的祖先元素，此项配置递归次数 | :neutral_face: | 页面层次较深情况下，建议保留配置，以减少性能损耗 | 1.0.0 |
+| maxHelpfulCount | Number | 5 | 全量采集场景下，为了使上报数据准确，我们会递归父元素，找到一个有class或id的祖先元素，此项配置递归次数 | :neutral_face: | 页面层次较深情况下，建议保留配置，以减少性能损耗 | 2.0.0 |
 
 ### 4. 数据上报配置
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
@@ -135,7 +135,7 @@
     
 #### 3. vue.$vueDataAc.setUserToken(userToken: String)
     用于关联用户后台标记，利用用户登录后的userid，sessionId
-    目的是将前后台日志打通，方便查找
+    目的是将前后台日志打通，方便查找模拟用户
        
  
 ## 上报数据格式：
@@ -159,58 +159,58 @@
     }
 ```
 
-### 2. 代码异常
+### 2. 代码异常数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                 //用户标识
-        "t"   : "",                                 //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",
         "acData" : {
              "type"    : "ACCERR",     		        //上报数据类型：代码异常
-             "path"    : "www.domain.com/w/w/w/",   //事件发生页面的url
+             "path"    : "www.domain.com/w/w/w/", //事件发生页面的url
              "sTme"    : "1591760073422",	        //事件上报时间
-             "msg"     : "script error",            //异常摘要
-             "line"    : "301",  		            //代码行数
-             "col"     : "13",  		            //代码列下标
-             "err"     : "error message",           //错误信息
+             "msg"     : "script error",          //异常摘要
+             "line"    : "301",  		              //代码行数
+             "col"     : "13",  		              //代码列下标
+             "err"     : "error message",         //错误信息
          }
 }
 ```
 
-### 3. 资源加载异常
+### 3. 资源加载异常数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                         //用户标识
-        "t"   : "",                                         //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",                                         
         "acData" : {
-             "type"        : "ACSCERR",     		        //上报数据类型：资源加载异常
+             "type"        : "ACSCERR",     		            //上报数据类型：资源加载异常
              "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
-             "sTme"        : "1591760073422",	            //事件上报时间
+             "sTme"        : "1591760073422",	              //事件上报时间
              "fileName"    : "test.js",                     //文件名
              "resourceUri" : "http://isjs.cn/js/test.js",   //资源地址
-             "tagName"     : "script",  		            //标签类型
-             "outerHTML"   : "<script ...>",                //标签内容
-         }
+             "tagName"     : "script",  		                //标签类型
+             "outerHTML"   : "script ...",                  //标签内容
+          }
 }
 ```
 
 ### 4. Promise 异常数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
-        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",                                      
         "acData" : {
-            "type"        : "ACPRERR",     		         //上报数据类型：资源加载异常
+            "type"        : "ACPRERR",     		           //上报数据类型：Promise 异常
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
-            "sTme"        : "1591760073422",	         //事件上报时间
+            "sTme"        : "1591760073422",	           //事件上报时间
             "reason"      : "reason"                     //异常说明
          }
 }
 ```
 
-### 5. 自定义事件
+### 5. 自定义事件数据
 
 ```
   //自定义事件上报
@@ -219,26 +219,26 @@
     cusVal: "1"
   })  
 
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
-        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",                                      
         "acData" : {
-            "type"        : "ACCUSTOM",     		     //上报数据类型：资源加载异常
+            "type"        : "ACCUSTOM",     		         //上报数据类型：自定义事件
             "path"        : "www.domain.com/w/w/w/",     //事件发生页面地址
-            "sTme"        : "1591760073422",	         //事件上报时间
+            "sTme"        : "1591760073422",	           //事件上报时间
             "cusKey"      : "click-button-001"           //自定义事件key，用户定义
             "cusVal"      ："1"                          //自定义事件值，用户定义
          }
 }
 ```
-### 6. Vue异常监控
+### 6. Vue异常监控数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
-        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",                                      
         "acData" : {
-            "type"          : "ACVUERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACVUERR",     		         //上报数据类型：Vue异常监控
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "componentName" : "Button"                   //组件名
@@ -250,14 +250,14 @@
          }
 }
 ```
-### 7. 点击事件监控
+### 7. 点击事件监控数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACCLIK",     		     //上报数据类型：资源加载异常
+            "type"          : "ACCLIK",     		         //上报数据类型：点击事件监控
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "eId"           : ""                         //元素id属性
@@ -268,14 +268,14 @@
 }
 ```
 
-### 8. input输入事件监控
+### 8. input输入事件监控数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
         "acData" : {
-            "type"          : "ACINPUT",     		     //上报数据类型：资源加载异常
+            "type"          : "ACINPUT",     		         //上报数据类型：input输入事件监控
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "eId"           : ""                         //元素id属性
@@ -289,11 +289,11 @@
 ### 9. 接口异常数据（包含 请求时间过长/自定义code/请求错误）
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
-        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",
         "acData" : {
-            "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACRERR",     		         //上报数据类型：接口异常
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "errSubType"    : "http/time/custom"         //异常类型：【time: 请求时间过长】【custom: 自定义code】【http:请求错误】
@@ -309,14 +309,14 @@
 }
 ```
 
-### 10. 页面性能监控
+### 10. 页面性能监控数据
 
 ```
- {
+{
         "uuid": "F6A6C801B7197603",                      //用户标识
-        "t"   : "",                                      //后端 用户标识/登录标识 默认为空，通过setUserToken设置
+        "t"   : "",
         "acData" : {
-            "type"          : "ACRERR",     		     //上报数据类型：资源加载异常
+            "type"          : "ACRERR",     		         //上报数据类型：页面性能监控
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "WT"            : 1000                       //白屏时间
