@@ -415,14 +415,14 @@ function ac_util_ajax(options = {}) {
  * */
 function ac_util_formatVueErrStack(error) {
   const msg = error.toString();
-  let stack = error.stack
+  let stack = error.stack ? error.stack
     .replace(/\n/gi, "") // 去掉换行
     .replace(/\bat\b/gi, "@")
     .replace(/\?[^:]+/gi, "")
     .replace(/^\s*|\s*$/g, "")
     .split("@") // 以@分割信息
     .slice(0, 5) //只取5条
-    .join("&&");
+    .join("&&") : '';
   if (stack.indexOf(msg) < 0) stack = msg + "@" + stack;
   return stack;
 }

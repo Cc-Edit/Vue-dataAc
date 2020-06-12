@@ -27,8 +27,6 @@ var app = new Vue({
     }
   },
   components: {},
-  created: function(){
-    throw new DOMException()
-  },
+  created: function(){},
   mounted: function(){},
 })
