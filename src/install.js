@@ -1,8 +1,6 @@
 /**
  * 暴露插件接口
  * */
-import {ac_util_isNullOrEmpty} from "./util/util";
-
 export function install(Vue, options, VueDataAc) {
   if (install.installed) return
   install.installed = true
