@@ -63,8 +63,27 @@ function install(Vue, options, VueDataAc) {
 
         //组件性能监控
         if(this.$vueDataAc._options.openComponent){
-          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+          this.$nextTick(function(){
+            this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+          });
         }
+      }
+    },
+    beforeUpdate: function beforeUpdate() {
+      /**
+       * 组件性能监控，可能因为某些场景下的数据异常，导致组件不能正常渲染或者渲染慢
+       * 我们希望对每个组件进行监控生命周期耗时
+       * */
+      if (this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        this.$vueDataAc._mixinComponentsPerformanceStart(this);
+      }
+    },
+    updated: function updated() {
+      if(this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
+        //组件性能监控
+        this.$nextTick(function(){
+          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+        });
       }
     }
   });
@@ -587,24 +606,21 @@ VueDataAc.prototype._mixinComponentsPerformanceEnd = function _mixinComponentsPe
 
   var nowTime = ac_util_getTime().timeStamp;
   var loadTime = parseInt(nowTime - createdTime);
-  if(loadTime < Component.$vueDataAc._options.maxComponentLoadTime){
-    return;
+
+  if(loadTime >= Component.$vueDataAc._options.maxComponentLoadTime){
+    if(ac_util_isNullOrEmpty(Component.$vueDataAc._componentsTime[tag])){
+      Component.$vueDataAc._componentsTime[tag] = [];
+    }
+    Component.$vueDataAc._componentsTime[tag].push(loadTime);
   }
 
   var isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
-  var componentsTimes = Component.$vueDataAc._componentsTime;
-  var thisTime = componentsTimes[tag] || [];
 
-  thisTime.push(loadTime);
-  componentsTimes[tag] = thisTime;
-
-  if(isLoaded){
-    Component.$vueDataAc._componentsTime = {};
+  if(isLoaded && !ac_util_isEmptyObject(Component.$vueDataAc._componentsTime)){
     this._setAcData(Component.$vueDataAc._options.storeCompErr, {
-      componentsTimes: componentsTimes
+      componentsTimes: Component.$vueDataAc._componentsTime
     });
-  }else {
-    Component.$vueDataAc._componentsTime = componentsTimes;
+    Component.$vueDataAc._componentsTime = {};
   }
 };
 

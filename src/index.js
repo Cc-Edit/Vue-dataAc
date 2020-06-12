@@ -167,24 +167,21 @@ export default class VueDataAc {
 
     const nowTime = ac_util_getTime().timeStamp;
     const loadTime = parseInt(nowTime - createdTime);
-    if(loadTime < Component.$vueDataAc._options.maxComponentLoadTime){
-      return;
+
+    if(loadTime >= Component.$vueDataAc._options.maxComponentLoadTime){
+      if(ac_util_isNullOrEmpty(Component.$vueDataAc._componentsTime[tag])){
+        Component.$vueDataAc._componentsTime[tag] = [];
+      }
+      Component.$vueDataAc._componentsTime[tag].push(loadTime);
     }
 
     const isLoaded = (--Component.$vueDataAc._componentTimeCount === 0);
-    const componentsTimes = Component.$vueDataAc._componentsTime;
-    const thisTime = componentsTimes[tag] || [];
 
-    thisTime.push(loadTime)
-    componentsTimes[tag] = thisTime;
-
-    if(isLoaded){
-      Component.$vueDataAc._componentsTime = {};
+    if(isLoaded && !ac_util_isEmptyObject(Component.$vueDataAc._componentsTime)){
       this._setAcData(Component.$vueDataAc._options.storeCompErr, {
-        componentsTimes
+        componentsTimes: Component.$vueDataAc._componentsTime
       })
-    }else{
-      Component.$vueDataAc._componentsTime = componentsTimes;
+      Component.$vueDataAc._componentsTime = {};
     }
   }
 

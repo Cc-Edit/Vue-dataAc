@@ -58,7 +58,9 @@ export function install(Vue, options, VueDataAc) {
 
         //组件性能监控
         if(this.$vueDataAc._options.openComponent){
-          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+          this.$nextTick(function(){
+            this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+          })
         }
       }
     },
@@ -74,9 +76,11 @@ export function install(Vue, options, VueDataAc) {
     updated() {
       if(this.$vueDataAc && this.$vueDataAc.installed && this.$vueDataAc._options.openComponent){
         //组件性能监控
-        this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+        this.$nextTick(function(){
+          this.$vueDataAc._mixinComponentsPerformanceEnd(this);
+        })
       }
-    },
+    }
   })
 
   Vue.prototype.$vueDataAc = new VueDataAc(options, Vue);

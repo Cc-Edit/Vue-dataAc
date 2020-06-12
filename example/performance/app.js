@@ -6,7 +6,7 @@ var OPTIONS = {
   useImgSend: false,
   openClick: false,
   openInput: false,
-  maxComponentLoadTime: 50
+  maxComponentLoadTime: 500
 }
 Vue.use(VueDataAc, OPTIONS)
 
@@ -18,19 +18,14 @@ var app = new Vue({
   el: '#app',
   data: {
     menuData: window.__menuData__ || [],
-    arrayData:[]
+    arrayData:[],
+    asyncArrayData:[],
   },
   computed: {},
   watch: {},
   methods: {
-    /**
-     * 自定义事件上报
-     * */
-    customEvent: function(){
-      this.$vueDataAc.setCustomAc({
-        cusKey: 'clickAnyButton',
-        cusVal: 'click button ...'
-      })
+    genBigData: function(){
+      this.asyncArrayData = new Array(100000).keys()
     }
   },
   components: {},

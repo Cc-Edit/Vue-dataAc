@@ -46,7 +46,7 @@
             </p>
           </Card>
           <Card :bordered="false">
-            <p slot="title">Vue 组件性能</p>
+            <p slot="title">Vue 首次渲染组件性能</p>
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <div style="width: 100%;height: 100px;overflow: scroll">
@@ -55,13 +55,31 @@
                 </span>
                 </div>
               </Row>
+              <Divider dashed orientation="left">说明：</Divider>
+              <span class="dataac-subText">
+                Vue 组件性能监控，目的是发现由于真实数据超预期导致的组件渲染慢问题<br/>
+                分别监控了首次渲染和异步更新数据导致的渲染慢<br/>
+                此处示例中我们将 maxComponentLoadTime 设置为 500 毫秒，方便触发上报
+              </span>
+            </p>
+          </Card>
+          <Card :bordered="false">
+            <p slot="title">Vue 组件更新数据性能</p>
+            <p class="dataac-cardContent">
+              <Row type="flex" justify="space-between" >
+                <i-Col span="10" >
+                  <i-Button type="info" @click="genBigData">点击对组件进行大数据更新</i-Button>
+                </i-Col>
+                <div style="width: 100%;height: 100px;overflow: scroll">
+                  <i v-for="(item, i) in asyncArrayData" :key="i">
+                    {{i}}
+                  </i>
+                </div>
+              </Row>
 
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
-                组件<br/>
-                通过修改 openInput 打开/关闭 此功能 <br/>
-                通过修改 selector 为 `input,textarea` 采集两种元素的输入信息 <br/>
-                通过修改 ignoreInputType 对指定类型的输入框忽略采集，此处我们忽略了 password 类型的输入框
+                当组件通过异步数据进行渲染时，同样监控组件渲染耗时
               </span>
             </p>
           </Card>
