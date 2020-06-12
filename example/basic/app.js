@@ -1,17 +1,22 @@
-Vue.use(VueDataAc)
+var OPTIONS = {
+
+}
+Vue.use(VueDataAc, OPTIONS)
 /**
  * 默认实例
  * */
 var app = new Vue({
   el: '#app',
   data: {
-    message: 'Hello Vue!'
+    isCollapsed: false
+  },
+  computed: {
+
   },
   watch: {},
   methods: {},
   components: {},
   created: function(){
-    debugger
   },
   mounted: function(){},
 })

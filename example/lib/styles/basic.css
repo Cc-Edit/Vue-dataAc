@@ -99,3 +99,68 @@ input[type=tel]::placeholder {
 input {
   appearance: none;
 }
+
+.layout-con{
+  height: 100%;
+  width: 100%;
+}
+.menu-item span{
+  display: inline-block;
+  overflow: hidden;
+  width: 69px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  transition: width .2s ease .2s;
+}
+.menu-item i{
+  transform: translateX(0px);
+  transition: font-size .2s ease, transform .2s ease;
+  vertical-align: middle;
+  font-size: 16px;
+}
+.collapsed-menu span{
+  width: 0px;
+  transition: width .2s ease;
+}
+.collapsed-menu i{
+  transform: translateX(5px);
+  transition: font-size .2s ease .2s, transform .2s ease .2s;
+  vertical-align: middle;
+  font-size: 22px;
+}
+.dataac-headLayout{
+  max-height: 100vh;
+  height: 100vh;
+  box-sizing: border-box;
+}
+.dataAc-header{
+  height: 50px;
+  text-align: center;
+  background: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px 2px;
+  position: absolute;
+  left: 200px;
+  right: 0;
+  z-index: 3;
+}
+.dataAc-content{
+  padding: 10px;
+  box-sizing: border-box;
+  margin: 66px 16px 16px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgb(255, 255, 255);
+}
+.dataAc-layout{
+  height: 100vh;
+  overflow: hidden;
+}
+.dataac-menuLogo{
+  height: 60px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #eee;
+  text-align: center;
+  line-height: 60px;
+}
