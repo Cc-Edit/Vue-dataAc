@@ -50,11 +50,15 @@
 ## demo:
 | 功能 | demo地址  | 数据分析展示 | 
 | :------------ |:---------------| :---------------|
-| 文档 | '/example/document/index.html' | 'ACINPUT' |
-| 行为采集 | '/example/basic/index.html' | 'ACINPUT' |
-| 全量采集 | String | 'ACINPUT' |
-| 埋点采集 | String | 'ACINPUT' |
-| 埋点采集 | String | 'ACINPUT' |
+| 文档 | '/example/document/index.html' | '' |
+| 行为监控Demo | '/example/basic/index.html' | '' |
+| 异常监控Demo | '/example/error/index.html' | '' |
+| 性能监控Demo | '/example/performance/index.html' | '' |
+| 主动埋点Demo | '/example/appoint/index.html' | '' |
+| 图片数据上报Demo | '/example/imgreport/index.html' | '' |
+| 上报节流Demo(sizeLimit) | '/example/reportsize/index.html' | '' |
+| 上报节流Demo(lifeReport) | '/example/reportlife/index.html' | '' |
+| 关联登录信息Demo | '/example/token/index.html' | '' |
 
 
 ## 文档：
