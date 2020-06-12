@@ -11,7 +11,7 @@
   <div class="layout">
     <Layout class="dataac-headLayout" >
       <Sider>
-        <i-Menu active-name="1" theme="dark" width="auto" >
+        <i-Menu active-name="2" theme="dark" width="auto" >
           <p class="dataac-menuLogo">
             功能列表
           </p>
@@ -23,32 +23,21 @@
       </Sider>
       <Layout class="dataAc-layout">
         <Header class="dataAc-header">
-          <h3 :style="{height: '50px',lineHeight: '50px', fontWeight:'bold'}">Vue DataAc Demo</h3>
+          <h3 :style="{height: '50px',lineHeight: '50px', fontWeight:'bold'}">Vue-dataAc</h3>
         </Header>
         <Content class="dataAc-content">
           <Card :bordered="false">
-            <p slot="title">输入框信息采集</p>
+            <p slot="title">代码异常采集</p>
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-                  <i-Input v-model="inputValue" placeholder="输入框采集..." style="width: 300px"></i-Input>
-                </i-Col>
-                <i-Col span="10" >
-                  <i-Input type="password" v-model="inputPassword" placeholder="密码输入框">
-                    <Icon type="ios-lock-outline" slot="prepend"></Icon>
-                  </i-Input>
-                </i-Col>
-                <i-Col span="10" >
-                    <i-Input v-model="desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea..."></i-Input>
+                  <i-Button type="info" @click="customEvent">点击按钮执行语法错误代码</i-Button>
                 </i-Col>
               </Row>
-
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
-                连续输入时，会持续记录输入信息，失焦时上报数据 <br/>
-                通过修改 openInput 打开/关闭 此功能 <br/>
-                通过修改 selector 为 `input,textarea` 采集两种元素的输入信息 <br/>
-                通过修改 ignoreInputType 对指定类型的输入框忽略采集，此处我们忽略了 password 类型的输入框
+                监控代码异常，尽可能在项目中启用 eslint 语法检查，避免简单错误上线<br/>
+                <br/>
               </span>
             </p>
           </Card>
