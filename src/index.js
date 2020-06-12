@@ -2,6 +2,7 @@ import {install} from './install'
 import {BASEOPTIONS} from './config/config'
 import {
   ac_util_formatVueErrStack,
+  ac_util_getHelpfulElement,
   ac_util_isNullOrEmpty,
   ac_util_isEmptyObject,
   ac_util_mergeOption,
@@ -306,13 +307,10 @@ export default class VueDataAc {
     document.addEventListener("click", (e) => {
       const event = window.event || e;
       const target = event.srcElement ? event.srcElement : event.target;
-      const {className, id, value, innerText} = target;
-      const {classTag} = this._options;
-      //主动埋点未命中
-      if (!ac_util_isNullOrEmpty(classTag) && className.indexOf(classTag) < 0) {
-        return;
-      }
-      const attrs = ac_util_getAllAttr(target);
+      const helpfulElement = ac_util_getHelpfulElement(target, this._options)
+      const {className, id, value, innerText} = helpfulElement;
+
+      const attrs = ac_util_getAllAttr(helpfulElement);
 
       this._setAcData(this._options.storeClick, {
         eId: id,

@@ -67,7 +67,8 @@ export const BASEOPTIONS = {
    *  classTag 配置为 'isjs-ac' 只会采集 class 包含 isjs-ac 的元素
    *  classTag 配置为 '' 会采集所有被点击的元素，当然也会导致数据量大。
    * */
-  classTag     : '',      //主动埋点标识, 自动埋点时请配置空字符串
+  classTag     : '',          //主动埋点标识, 自动埋点时请配置空字符串
+  maxHelpfulCount     : 5,    //为了使上报数据准确，我们会递归父元素，找到一个有样式的祖先元素，此项配置递归次数
 
   /**
    * 以下内容为可配置信息，影响插件逻辑功能

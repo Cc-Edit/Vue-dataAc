@@ -16,6 +16,47 @@ export function ac_util_isEmptyObject(obj) {
 }
 
 /**
+ * 获取有效点击元素，埋点采集只上报埋点元素
+ * 全量采集找有ID或class的元素
+ * */
+export function ac_util_getHelpfulElement(target, options, length = 0){
+  //向上遍历到document，此次点击失效
+  if (Object.prototype.toString.call(target) === Object.prototype.toString.call(document)){
+    return null;
+  }
+  const parentNode = target && target.parentNode;
+  const {className = '', id} = target;
+  const {classTag, maxHelpfulCount} = options;
+  //主动埋点
+  if (!ac_util_isNullOrEmpty(classTag)) {
+    //未命中
+    if(className.indexOf(classTag) < 0){
+      if(ac_util_isNullOrEmpty(parentNode)){
+        return null;
+      }else{
+        return ac_util_getHelpfulElement(parentNode, options, ++length)
+      }
+    }else{
+        return target
+    }
+  }else{
+    //全量采集
+    if(length > maxHelpfulCount){
+      return null;
+    }
+    if (ac_util_isNullOrEmpty(className) && ac_util_isNullOrEmpty(id)) {
+      if(ac_util_isNullOrEmpty(parentNode)){
+        return null;
+      }else{
+        return ac_util_getHelpfulElement(parentNode, options, ++length)
+      }
+    }else{
+      return target
+    }
+  }
+}
+
+/**
  * 获取元素所有属性
  * */
 export function ac_util_getAllAttr(elem) {

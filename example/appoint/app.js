@@ -1,6 +1,5 @@
 var OPTIONS = {
-  useImgSend: false,
-  selector: 'input,textArea',
+  useImgSend: false
 }
 Vue.use(VueDataAc, OPTIONS)
 /**
@@ -9,12 +8,11 @@ Vue.use(VueDataAc, OPTIONS)
 var app = new Vue({
   el: '#app',
   data: {
-    inputValue: '',
-    inputPassword: '',
-    desc: '',
-    phone: 'apple',
+    isCollapsed: false
   },
-  computed: {},
+  computed: {
+
+  },
   watch: {},
   methods: {},
   components: {},

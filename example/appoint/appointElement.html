@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basic Examples</title>
+  <link rel="stylesheet" href="../lib/styles/basic.css">
+  <link rel="stylesheet" href="../lib/styles/iview.css">
+</head>
+<body>
+  <div id="app">
+    <div class="layout">
+      <Layout class="dataac-headLayout" >
+        <Sider>
+          <i-Menu active-name="1" theme="dark" width="auto" >
+            <p class="dataac-menuLogo">
+              功能列表
+            </p>
+            <menu-item name="1">
+              <Icon type="ios-body-outline"></Icon>
+              <span>行为监控</span>
+            </menu-item>
+            <menu-item name="2">
+              <Icon type="ios-bug-outline" ></Icon>
+              <span>异常监控</span>
+            </menu-item>
+            <menu-item name="3">
+              <Icon type="ios-pulse-outline" ></Icon>
+              <span>性能监控</span>
+            </menu-item>
+            <menu-item name="4">
+              <Icon type="ios-settings"></Icon>
+              <span>自定义数据</span>
+            </menu-item>
+            <menu-item name="5">
+              <Icon type="ios-pin-outline" ></Icon>
+              <span>主动埋点Demo</span>
+            </menu-item>
+            <menu-item name="6">
+              <Icon type="ios-send-outline" ></Icon>
+              <span>数据上报</span>
+            </menu-item>
+          </i-Menu>
+        </Sider>
+        <Layout class="dataAc-layout">
+          <Header class="dataAc-header">
+            <h3 :style="{height: '50px',lineHeight: '50px', fontWeight:'bold'}">Vue DataAc Demo</h3>
+          </Header>
+          <Content class="dataAc-content">
+            <Card :bordered="false">
+              <p slot="title">输入框信息采集</p>
+              <p>
+                <Input v-model="inputValue" placeholder="输入框采集..." style="width: 300px" />
+                <Divider>说明：</Divider>
+                <span>连续输入时，会持续记录输入信息，失焦时上报数据</span>
+              </p>
+            </Card>
+          </Content>
+        </Layout>
+      </Layout>
+  </div>
+
+  <script type="text/javascript" src="../lib/vue.min.js"></script>
+  <script type="text/javascript" src="../lib/vue-router.min.js"></script>
+  <script type="text/javascript" src="../lib/axios.min.js"></script>
+  <script type="text/javascript" src="../lib/iview.min.js"></script>
+  <script type="text/javascript" src="../lib/vue-dataAc.js"></script>
+  <script type="text/javascript" src="./app.js"></script>
+</body>
+</html>
