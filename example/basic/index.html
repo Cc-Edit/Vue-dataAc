@@ -97,14 +97,20 @@
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-                  <i-Input v-model="inputValue" placeholder="输入框采集..." style="width: 300px"></i-Input>
+                  <label>输入框采集</label>
+
+                  <i-Input v-model="inputValue" placeholder="..." style="width: 300px">
+                    <Icon type="ios-at-outline" slot="prepend"></Icon>
+                  </i-Input>
                 </i-Col>
                 <i-Col span="10" >
-                  <i-Input type="password" v-model="inputPassword" placeholder="密码输入框">
+                  <label>密码输入框采集</label>
+                  <i-Input type="password" v-model="inputPassword" placeholder="...">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                   </i-Input>
                 </i-Col>
                 <i-Col span="10" >
+                  <label>textarea 采集</label>
                     <i-Input v-model="desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea..."></i-Input>
                 </i-Col>
               </Row>

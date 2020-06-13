@@ -97,22 +97,26 @@
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-                  <i-Input class="ac_input" v-model="inputValue" placeholder="输入框（已埋点）" ></i-Input>
+                  <label>输入框（已埋点）</label>
+                  <i-Input class="ac_input" v-model="inputValue" placeholder="" ></i-Input>
                 </i-Col>
                 <i-Col span="10" >
-                  <i-Input v-model="inputValue2" placeholder="输入框（未埋点）" ></i-Input>
+                  <label>输入框（未埋点）</label>
+                  <i-Input v-model="inputValue2" placeholder="" ></i-Input>
                 </i-Col>
                 <i-Col span="10" >
-                  <i-Input type="password" v-model="inputPassword" placeholder="密码输入框（未埋点）">
+                  <label>密码输入框（未埋点）</label>
+                  <i-Input type="password" v-model="inputPassword" placeholder="">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                   </i-Input>
                 </i-Col>
                 <i-Col span="10" >
-                  <i-Input class="ac_input" v-model="desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea（已埋点）..."></i-Input>
+                  <label>textarea（已埋点）</label>
+                  <i-Input class="ac_input" v-model="desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea ..."></i-Input>
                 </i-Col>
-
                 <i-Col span="10" >
-                  <i-Input v-model="desc1" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea（未埋点）..."></i-Input>
+                  <label>textarea（未埋点）</label>
+                  <i-Input v-model="desc1" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea ..."></i-Input>
                 </i-Col>
               </Row>
 
