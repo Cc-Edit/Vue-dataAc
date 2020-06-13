@@ -50,14 +50,14 @@
 ## demo:
 | 功能 | demo地址  | 数据分析展示 | 
 | :------------ |:---------------| :---------------|
-| 文档 | '/example/document/index.html' | '' |
-| 行为监控Demo | '/example/basic/index.html' | '' |
-| 异常监控Demo | '/example/error/index.html' | '' |
-| 性能监控Demo | '/example/performance/index.html' | '' |
-| 主动埋点Demo | '/example/appoint/index.html' | '' |
-| 图片数据上报Demo | '/example/imgreport/index.html' | '' |
-| 上报节流Demo(sizeLimit) | '/example/reportsize/index.html' | '' |
-| 关联登录信息Demo | '/example/token/index.html' | '' |
+| 文档 | 'http://data.isjs.cn/index.html' | '' |
+| 行为监控Demo | 'http://data.isjs.cn/basic/index.html' | '' |
+| 异常监控Demo | 'http://data.isjs.cn/error/index.html' | '' |
+| 性能监控Demo | 'http://data.isjs.cn/performance/index.html' | '' |
+| 主动埋点Demo | 'http://data.isjs.cn/appoint/index.html' | '' |
+| 图片数据上报Demo | 'http://data.isjs.cn/imgreport/index.html' | '' |
+| 上报节流Demo(sizeLimit) | 'http://data.isjs.cn/reportsize/index.html' | '' |
+| 关联登录信息Demo | 'http://data.isjs.cn/token/index.html' | '' |
 
 
 ## 文档：
