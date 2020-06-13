@@ -391,7 +391,7 @@ var app = new Vue({
         b: 'Boolean',
         c: 'false',
         d: '可以',
-        e: '是否开启节流,用于限制上报频率，开启后sizeLimit，lifeReport，manualReport生效',
+        e: '是否开启节流,用于限制上报频率，开启后sizeLimit，manualReport生效',
         f: '2.0.0'
       },
       {
@@ -400,14 +400,6 @@ var app = new Vue({
         c: '20',
         d: '可以',
         e: '采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 ',
-        f: '2.0.0'
-      },
-      {
-        a: 'lifeReport',
-        b: 'Boolean',
-        c: 'false',
-        d: '可以',
-        e: '开启懒惰上报，路由变化时统一上报，依赖 openReducer == true, 优先级：2 ',
         f: '2.0.0'
       },
       {

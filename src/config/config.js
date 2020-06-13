@@ -81,6 +81,5 @@ export const BASEOPTIONS = {
    * */
   openReducer: false,   //是否开启节流,用于限制上报频率
   sizeLimit: 20,        //操作数据超过指定条目时自动上报
-  lifeReport: false,    //开启懒惰上报，路由变化时统一上报
-  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
+  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 sizeLimit 配置失效
 }

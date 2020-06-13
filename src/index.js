@@ -292,7 +292,8 @@ export default class VueDataAc {
       fromPath,
       formParams
     })
-    if(!this._options.manualReport && this._options.lifeReport){
+
+    if(this._options.openReducer && !this._options.manualReport){
       this.postAcData && this.postAcData();
     }
   }
@@ -727,7 +728,7 @@ export default class VueDataAc {
   /**
    *  数据上报, 可以根据实际场景进行上报优化：
    *  默认当事件触发就会自动上报，频率为一个事件1次上报
-   *  如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
+   *  如果频率过大，可以使用 openReducer， sizeLimit，manualReport进行节流
    * */
   postAcData() {
     if (ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0) {

@@ -174,8 +174,7 @@ var BASEOPTIONS = {
    * */
   openReducer: false,   //是否开启节流,用于限制上报频率
   sizeLimit: 20,        //操作数据超过指定条目时自动上报
-  lifeReport: false,    //开启懒惰上报，路由变化时统一上报
-  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
+  manualReport: false   //手动上报，需要手动执行postAcData(),开启后 sizeLimit 配置失效
 };
 
 /**
@@ -742,7 +741,8 @@ VueDataAc.prototype._mixinRouterWatch = function _mixinRouterWatch (to, from, is
     fromPath: fromPath,
     formParams: formParams
   });
-  if(!this._options.manualReport && this._options.lifeReport){
+
+  if(this._options.openReducer && !this._options.manualReport){
     this.postAcData && this.postAcData();
   }
 };
@@ -1239,7 +1239,7 @@ VueDataAc.prototype.setCustomAc = function setCustomAc (data) {
 /**
  *数据上报, 可以根据实际场景进行上报优化：
  *默认当事件触发就会自动上报，频率为一个事件1次上报
- *如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
+ *如果频率过大，可以使用 openReducer， sizeLimit，manualReport进行节流
  * */
 VueDataAc.prototype.postAcData = function postAcData () {
   if (ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0) {

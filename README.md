@@ -57,7 +57,6 @@
 | 主动埋点Demo | '/example/appoint/index.html' | '' |
 | 图片数据上报Demo | '/example/imgreport/index.html' | '' |
 | 上报节流Demo(sizeLimit) | '/example/reportsize/index.html' | '' |
-| 上报节流Demo(lifeReport) | '/example/reportlife/index.html' | '' |
 | 关联登录信息Demo | '/example/token/index.html' | '' |
 
 
@@ -122,9 +121,8 @@
 | :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|
 | imageUrl | String | 'http://open.isjs.cn/admin/ac.png' | :smile: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
 | postUrl | String | 'http://open.isjs.cn/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
-| openReducer | Boolean | false | :smile: | 是否开启节流,用于限制上报频率，开启后sizeLimit，lifeReport，manualReport生效 | 2.0.0 |
+| openReducer | Boolean | false | :smile: | 是否开启节流,用于限制上报频率，开启后sizeLimit，manualReport生效 | 2.0.0 |
 | sizeLimit | Number | 20 | :smile: | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
-| lifeReport | Boolean | false | :smile: | 开启懒惰上报，路由变化时统一上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
 | manualReport | Boolean | false | :smile: | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
 
 

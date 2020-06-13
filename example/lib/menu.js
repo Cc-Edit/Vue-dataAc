@@ -42,12 +42,6 @@ window.__menuData__ = [
     path: '/example/reportsize/index.html'
   },
   {
-    name: '7',
-    icon: 'ios-send-outline',
-    text: '上报节流Demo-2',
-    path: '/example/reportlife/index.html'
-  },
-  {
     name: '8',
     icon: 'ios-send-outline',
     text: '关联登录信息Demo',
