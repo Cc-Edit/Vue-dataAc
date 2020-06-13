@@ -154,7 +154,7 @@ window.__docData__ = [
       {
         name: '0-8-8',
         icon: 'md-list-box',
-        text: 'input输入事件监控数据',
+        text: '输入事件监控数据',
         path: '#dataSource8'
       },
       {
