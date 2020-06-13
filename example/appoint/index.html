@@ -14,7 +14,7 @@
   <div class="layout">
     <Layout class="dataac-headLayout" >
       <Sider>
-        <i-Menu active-name="1" theme="dark" width="auto" >
+        <i-Menu active-name="4" theme="dark" width="auto" >
           <p class="dataac-menuLogo">
             功能列表
           </p>
@@ -30,28 +30,33 @@
         </Header>
         <Content class="dataAc-content">
           <Card :bordered="false">
-            <p slot="title">输入框信息采集</p>
+            <p slot="title">输入框埋点采集</p>
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="10" >
-                  <i-Input v-model="inputValue" placeholder="输入框采集..." style="width: 300px"></i-Input>
+                  <i-Input class="ac_input" v-model="inputValue" placeholder="输入框（已埋点）" ></i-Input>
                 </i-Col>
                 <i-Col span="10" >
-                  <i-Input type="password" v-model="inputPassword" placeholder="密码输入框">
+                  <i-Input v-model="inputValue2" placeholder="输入框（未埋点）" ></i-Input>
+                </i-Col>
+                <i-Col span="10" >
+                  <i-Input type="password" v-model="inputPassword" placeholder="密码输入框（未埋点）">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                   </i-Input>
                 </i-Col>
                 <i-Col span="10" >
-                    <i-Input v-model="desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea..."></i-Input>
+                  <i-Input class="ac_input" v-model="desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea（已埋点）..."></i-Input>
+                </i-Col>
+
+                <i-Col span="10" >
+                  <i-Input v-model="desc1" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="textarea（未埋点）..."></i-Input>
                 </i-Col>
               </Row>
 
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
-                连续输入时，会持续记录输入信息，失焦时上报数据 <br/>
-                通过修改 openInput 打开/关闭 此功能 <br/>
-                通过修改 selector 为 `input,textarea` 采集两种元素的输入信息 <br/>
-                通过修改 ignoreInputType 对指定类型的输入框忽略采集，此处我们忽略了 password 类型的输入框
+                主动埋点采集，需要对采集项目增加指定 class，并通过 selector 配置传递该 class 值<br/>
+                很多Ui库组件库都对原生元素做了封装，所以此处的 selector 根据实际场景进行配置
               </span>
             </p>
           </Card>
@@ -60,64 +65,19 @@
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >
                 <i-Col span="20" >
-                  <i-Button>Default</i-Button>
-                  <i-Button type="primary">Primary</i-Button>
-                  <i-Button type="dashed">Dashed</i-Button>
-                  <i-Button type="text">Text</i-Button>
+                  <i-Button class="ac_click">已埋点按钮</i-Button>
+                  <i-Button type="primary">未埋点按钮</i-Button>
+                  <i-Button type="dashed">未埋点按钮</i-Button>
+                  <i-Button type="text">未埋点按钮</i-Button>
                 </i-Col>
                 <i-Col span="20" >
-                  <Page :total="100" />
+                  <Icon class="ac_click" type="ios-basket" ></Icon>已埋点icon
                 </i-Col>
               </Row>
               <Divider dashed orientation="left">说明：</Divider>
               <span class="dataac-subText">
-                此处为全量采集示例<br/>
-                全量采集情况下页面上所有点击元素都可以采集<br/>
-                但是要注意，此处为了减少上报的脏数据，会从事件触发元素向上递归<br/>
-                直到找到一个有 class 或者 id 属性的元素，我们称之有效元素<br/>
-                最终上报该有效元素，找不到有效元素则不上报<br/>
-                向上递归停止的条件有两种，优先判断递归次数是否大于 maxHelpfulCount<br/>
-                其次判断是否递归到了 document 根元素
-              </span>
-            </p>
-          </Card>
-          <Card :bordered="false">
-            <p slot="title">自定义事件采集</p>
-            <p class="dataac-cardContent">
-              <Row type="flex" justify="space-between" >
-                <i-Col span="10" >
-                  <i-Button type="info" @click="customEvent">点击上报自定义事件</i-Button>
-                </i-Col>
-              </Row>
-              <Divider dashed orientation="left">说明：</Divider>
-              <span class="dataac-subText">
-                某些业务场景下，用户的操作来自于非主动操作<br/>
-                例如当用户处于某个状态，处于某个业务节点，查看到了某个内容，接口请求处于某种异常等等<br/>
-                支持在这些自定义场景下调用 setCustomAc 方法进行自定义上报，可以自定义上报 key 和 value
-                <br/>
-              </span>
-            </p>
-          </Card>
-          <Card :bordered="false">
-            <p slot="title">路由切换采集</p>
-            <p class="dataac-cardContent">
-              <Row type="flex" justify="space-between" >
-                <i-Col span="10" >
-                  <i-Button type="info" ghost to="/home">home</i-Button>
-                  <i-Button type="info" ghost to="/login">login</i-Button>
-                  <i-Button type="info" ghost to="/user?uuid=123">user</i-Button>
-                </i-Col>
-                <i-Col span="10" >
-                  <router-view></router-view>
-                </i-Col>
-              </Row>
-              <Divider dashed orientation="left">说明：</Divider>
-              <span class="dataac-subText">
-                路由切换采集生效在使用 VueRouter 的前提下，因为我们监控 $route 的变化<br/>
-                但是当 url 发生变换的场景下，从 A 页面跳转到相同域的 B 页面，我们同样也有一套监控生效<br/>
-                所以哪怕你的项目里没有使用 VueRouter 是多页面的场景，也是可以采集到页面访问（ACPAGE）信息的 <br/>
-                你可以点击左侧不同 demo 链接查看另一种数据
-                <br/>
+                主动埋点采集，需要对指定的元素增加指定 class, 并配置对应的 classTag <br/>
+                要注意，主动埋点的情况下 maxHelpfulCount 同样生效，避免递归带来的性能问题
               </span>
             </p>
           </Card>
@@ -128,7 +88,6 @@
 
   <script type="text/javascript" src="../lib/menu.js"></script>
   <script type="text/javascript" src="../lib/vue.min.js"></script>
-  <script type="text/javascript" src="../lib/vue-router.min.js"></script>
   <script type="text/javascript" src="../lib/axios.min.js"></script>
   <script type="text/javascript" src="../lib/iview.min.js"></script>
   <script type="text/javascript" src="../lib/vue-dataAc.js"></script>

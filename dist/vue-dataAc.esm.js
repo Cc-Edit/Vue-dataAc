@@ -218,7 +218,11 @@ function ac_util_getHelpfulElement(target, options, length){
       if(ac_util_isNullOrEmpty(parentNode)){
         return null;
       }else {
-        return ac_util_getHelpfulElement(parentNode, options, ++length)
+        if(length > maxHelpfulCount){
+          return null;
+        }else {
+          return ac_util_getHelpfulElement(parentNode, options, ++length)
+        }
       }
     }else {
         return target
@@ -753,19 +757,20 @@ VueDataAc.prototype._initClickAc = function _initClickAc () {
     var event = window.event || e;
     var target = event.srcElement ? event.srcElement : event.target;
     var helpfulElement = ac_util_getHelpfulElement(target, this$1._options);
-    var className = helpfulElement.className;
-      var id = helpfulElement.id;
-      var value = helpfulElement.value;
-      var innerText = helpfulElement.innerText;
 
-    var attrs = ac_util_getAllAttr(helpfulElement);
-
-    this$1._setAcData(this$1._options.storeClick, {
-      eId: id,
-      className: className,
-      val: (value || innerText).substr(0, 20),
-      attrs: attrs
-    });
+    if(!ac_util_isNullOrEmpty(helpfulElement)){
+      var className = helpfulElement.className;
+        var id = helpfulElement.id;
+        var value = helpfulElement.value;
+        var innerText = helpfulElement.innerText;
+      var attrs = ac_util_getAllAttr(helpfulElement);
+      this$1._setAcData(this$1._options.storeClick, {
+        eId: id,
+        className: className,
+        val: (value || innerText).substr(0, 20),
+        attrs: attrs
+      });
+    }
   });
 };
 

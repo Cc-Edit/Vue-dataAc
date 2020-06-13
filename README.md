@@ -115,7 +115,7 @@
 | ignoreInputType | Array | `[]` | 所有输入框 | :smile: | --- | 2.0.0 |
 | classTag | String | '' | 所有可点击元素（全量采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
 | classTag | String | 'isjs-ac' | 只会采集 class 包含 isjs-ac 元素的点击（埋点采集） | :smile: | 点击事件埋点标识, 自动埋点时请配置空字符串| 1.0.0 |
-| maxHelpfulCount | Number | 5 | 全量采集场景下，为了使上报数据准确，我们会递归父元素，找到一个有class或id的祖先元素，此项配置递归次数 | :neutral_face: | 页面层次较深情况下，建议保留配置，以减少性能损耗 | 2.0.0 |
+| maxHelpfulCount | Number | 5 | 全量采集和埋点采集场景下，为了使上报数据准确，我们会递归父元素，找到一个有class或id的祖先元素，此项配置递归次数 | :neutral_face: | 页面层次较深情况下，建议保留配置，以减少性能损耗 | 2.0.0 |
 
 ### 4. 数据上报配置
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
@@ -381,7 +381,7 @@
 - [x] npm自动发布  
 - [x] 后端日志关联机制  
 - [x] eslint  
-- [ ] docs
+- [x] docs
 - [ ] demo
 - [ ] 文章
 

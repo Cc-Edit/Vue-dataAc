@@ -34,7 +34,11 @@ export function ac_util_getHelpfulElement(target, options, length = 0){
       if(ac_util_isNullOrEmpty(parentNode)){
         return null;
       }else{
-        return ac_util_getHelpfulElement(parentNode, options, ++length)
+        if(length > maxHelpfulCount){
+          return null;
+        }else{
+          return ac_util_getHelpfulElement(parentNode, options, ++length)
+        }
       }
     }else{
         return target

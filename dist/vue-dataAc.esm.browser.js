@@ -214,7 +214,11 @@ function ac_util_getHelpfulElement(target, options, length = 0){
       if(ac_util_isNullOrEmpty(parentNode)){
         return null;
       }else {
-        return ac_util_getHelpfulElement(parentNode, options, ++length)
+        if(length > maxHelpfulCount){
+          return null;
+        }else {
+          return ac_util_getHelpfulElement(parentNode, options, ++length)
+        }
       }
     }else {
         return target
@@ -735,16 +739,17 @@ class VueDataAc {
       const event = window.event || e;
       const target = event.srcElement ? event.srcElement : event.target;
       const helpfulElement = ac_util_getHelpfulElement(target, this._options);
-      const {className, id, value, innerText} = helpfulElement;
 
-      const attrs = ac_util_getAllAttr(helpfulElement);
-
-      this._setAcData(this._options.storeClick, {
-        eId: id,
-        className: className,
-        val: (value || innerText).substr(0, 20),
-        attrs
-      });
+      if(!ac_util_isNullOrEmpty(helpfulElement)){
+        const {className, id, value, innerText} = helpfulElement;
+        const attrs = ac_util_getAllAttr(helpfulElement);
+        this._setAcData(this._options.storeClick, {
+          eId: id,
+          className: className,
+          val: (value || innerText).substr(0, 20),
+          attrs
+        });
+      }
     });
   }
 
