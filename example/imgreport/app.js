@@ -3,8 +3,8 @@
  * VueDataAc 配置
  * */
 var OPTIONS = {
-  useImgSend: false,
-  selector: 'input,textArea',
+  imageUrl: 'http://open.isjs.cn/admin/ac.png',
+  openClick: false
 }
 Vue.use(VueDataAc, OPTIONS)
 

@@ -52,6 +52,12 @@ window.__menuData__ = [
     icon: 'ios-send-outline',
     text: '关联登录信息Demo',
     path: '/example/token/index.html'
+  },
+  {
+    name: '8',
+    icon: 'md-bulb',
+    text: '动态修改配置',
+    path: '/example/asyncOption/index.html'
   }
 ]
 window.__docData__ = [
@@ -176,5 +182,5 @@ window.__docData__ = [
     icon: 'ios-chatbubbles-outline',
     text: '解决方案',
     path: '#QA'
-  },
+  }
 ]
