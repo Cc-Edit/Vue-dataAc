@@ -123,6 +123,7 @@
 | postUrl | String | 'http://open.isjs.cn/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
 | openReducer | Boolean | false | :smile: | 是否开启节流,用于限制上报频率，开启后sizeLimit，manualReport生效 | 2.0.0 |
 | sizeLimit | Number | 20 | :smile: | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
+| cacheEventStorage | String | 'ac_cache_data' | :smile: | 开启节流后数据本地存储key | 2.0.0 |
 | manualReport | Boolean | false | :smile: | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
 
 

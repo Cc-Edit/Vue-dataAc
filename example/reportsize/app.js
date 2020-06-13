@@ -4,7 +4,10 @@
  * */
 var OPTIONS = {
   useImgSend: false,
+
   openReducer: true,
+  sizeLimit: 5,
+
   selector: '.ac_input input, .ac_input textarea', //主动输入埋点
   classTag: 'ac_click', //主动点击埋点
   maxHelpfulCount: 6, //点击查找递归次数

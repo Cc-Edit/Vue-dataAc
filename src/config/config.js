@@ -81,5 +81,6 @@ export const BASEOPTIONS = {
    * */
   openReducer: false,   //是否开启节流,用于限制上报频率
   sizeLimit: 20,        //操作数据超过指定条目时自动上报
+  cacheEventStorage: 'ac_cache_data',        //开启节流后数据存储key
   manualReport: false   //手动上报，需要手动执行postAcData(),开启后 sizeLimit 配置失效
 }

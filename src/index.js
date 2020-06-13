@@ -9,6 +9,7 @@ import {
   ac_util_checkOptions,
   ac_util_getAllAttr,
   ac_util_getStorage,
+  ac_util_delStorage,
   ac_util_setStorage,
   ac_util_getUuid,
   ac_util_getTime,
@@ -43,7 +44,8 @@ export default class VueDataAc {
       ac_util_setStorage(this._options, this._options.userSha, this._uuid);
     }
 
-    this._acData = [];
+    const cacheEventData = ac_util_getStorage(this._options, this._options.cacheEventStorage);
+    this._acData = ac_util_isNullOrEmpty(cacheEventData) ? [] : JSON.parse(cacheEventData);
     this._proxyXhrObj = {};     //代理xhr
     this._inputCacheData = {};  //缓存输入框输入信息
     this._componentsTime = {};  //缓存组件加载时间
@@ -694,6 +696,7 @@ export default class VueDataAc {
     }
     this._acData.push(_Ac);
     if (this._options.openReducer) {
+      ac_util_setStorage(this._options, this._options.cacheEventStorage, JSON.stringify(this._acData))
       if (!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit) {
         if (this._vue_ && this._vue_.$nextTick) {
           this._vue_.$nextTick(() => {
@@ -754,6 +757,7 @@ export default class VueDataAc {
      * 上报完成，清空数据
      * */
     this._acData = [];
+    ac_util_delStorage(this._options, this._options.cacheEventStorage)
   }
 
   /**

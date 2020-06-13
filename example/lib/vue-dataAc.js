@@ -180,8 +180,8 @@
      * */
     openReducer: false,   //是否开启节流,用于限制上报频率
     sizeLimit: 20,        //操作数据超过指定条目时自动上报
-    lifeReport: false,    //开启懒惰上报，路由变化时统一上报
-    manualReport: false   //手动上报，需要手动执行postAcData(),开启后 lifeReport，sizeLimit配置失效
+    cacheEventStorage: 'ac_cache_data',        //开启节流后数据存储key
+    manualReport: false   //手动上报，需要手动执行postAcData(),开启后 sizeLimit 配置失效
   };
 
   /**
@@ -307,6 +307,19 @@
       } else {
         return null;
       }
+    }
+  }
+
+  /**
+   * 存储删除
+   * @param name * 存储key
+   * @param options 配置信息
+   * */
+  function ac_util_delStorage(options, name) {
+    if (options.useStorage) {
+      window.localStorage.removeItem(name);
+    } else {
+      ac_util_setStorage(options, name, '', -1);
     }
   }
 
@@ -490,7 +503,8 @@
       ac_util_setStorage(this._options, this._options.userSha, this._uuid);
     }
 
-    this._acData = [];
+    var cacheEventData = ac_util_getStorage(this._options, this._options.cacheEventStorage);
+    this._acData = ac_util_isNullOrEmpty(cacheEventData) ? [] : JSON.parse(cacheEventData);
     this._proxyXhrObj = {};   //代理xhr
     this._inputCacheData = {};//缓存输入框输入信息
     this._componentsTime = {};//缓存组件加载时间
@@ -748,7 +762,8 @@
       fromPath: fromPath,
       formParams: formParams
     });
-    if(!this._options.manualReport && this._options.lifeReport){
+
+    if(this._options.openReducer && !this._options.manualReport){
       this.postAcData && this.postAcData();
     }
   };
@@ -1210,6 +1225,7 @@
     }
     this._acData.push(_Ac);
     if (this._options.openReducer) {
+      ac_util_setStorage(this._options, this._options.cacheEventStorage, JSON.stringify(this._acData));
       if (!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit) {
         if (this._vue_ && this._vue_.$nextTick) {
           this._vue_.$nextTick(function () {
@@ -1245,7 +1261,7 @@
   /**
    *数据上报, 可以根据实际场景进行上报优化：
    *默认当事件触发就会自动上报，频率为一个事件1次上报
-   *如果频率过大，可以使用 openReducer， sizeLimit，lifeReport, manualReport进行节流
+   *如果频率过大，可以使用 openReducer， sizeLimit，manualReport进行节流
    * */
   VueDataAc.prototype.postAcData = function postAcData () {
     if (ac_util_isNullOrEmpty(this._acData) || this._acData.length === 0) {
@@ -1271,6 +1287,7 @@
      * 上报完成，清空数据
      * */
     this._acData = [];
+    ac_util_delStorage(this._options, this._options.cacheEventStorage);
   };
 
   /**

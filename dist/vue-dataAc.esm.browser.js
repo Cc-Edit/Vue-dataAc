@@ -174,6 +174,7 @@ const BASEOPTIONS = {
    * */
   openReducer: false,   //是否开启节流,用于限制上报频率
   sizeLimit: 20,        //操作数据超过指定条目时自动上报
+  cacheEventStorage: 'ac_cache_data',        //开启节流后数据存储key
   manualReport: false   //手动上报，需要手动执行postAcData(),开启后 sizeLimit 配置失效
 };
 
@@ -296,6 +297,19 @@ function ac_util_getStorage(options, name) {
     } else {
       return null;
     }
+  }
+}
+
+/**
+ * 存储删除
+ * @param name * 存储key
+ * @param options 配置信息
+ * */
+function ac_util_delStorage(options, name) {
+  if (options.useStorage) {
+    window.localStorage.removeItem(name);
+  } else {
+    ac_util_setStorage(options, name, '', -1);
   }
 }
 
@@ -476,7 +490,8 @@ class VueDataAc {
       ac_util_setStorage(this._options, this._options.userSha, this._uuid);
     }
 
-    this._acData = [];
+    const cacheEventData = ac_util_getStorage(this._options, this._options.cacheEventStorage);
+    this._acData = ac_util_isNullOrEmpty(cacheEventData) ? [] : JSON.parse(cacheEventData);
     this._proxyXhrObj = {};     //代理xhr
     this._inputCacheData = {};  //缓存输入框输入信息
     this._componentsTime = {};  //缓存组件加载时间
@@ -1127,6 +1142,7 @@ class VueDataAc {
     }
     this._acData.push(_Ac);
     if (this._options.openReducer) {
+      ac_util_setStorage(this._options, this._options.cacheEventStorage, JSON.stringify(this._acData));
       if (!this._options.manualReport && this._options.sizeLimit && this._acData.length >= this._options.sizeLimit) {
         if (this._vue_ && this._vue_.$nextTick) {
           this._vue_.$nextTick(() => {
@@ -1187,6 +1203,7 @@ class VueDataAc {
      * 上报完成，清空数据
      * */
     this._acData = [];
+    ac_util_delStorage(this._options, this._options.cacheEventStorage);
   }
 
   /**

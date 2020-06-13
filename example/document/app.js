@@ -403,6 +403,14 @@ var app = new Vue({
         f: '2.0.0'
       },
       {
+        a: 'cacheEventStorage',
+        b: 'String',
+        c: '\'ac_cache_data\'',
+        d: '可以',
+        e: '开启节流后数据本地存储key',
+        f: '2.0.0'
+      },
+      {
         a: 'manualReport',
         b: 'Boolean',
         c: 'false',

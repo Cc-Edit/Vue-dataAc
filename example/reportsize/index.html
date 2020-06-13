@@ -93,12 +93,13 @@
         </Header>
         <Content class="dataAc-content">
           <Card :bordered="false">
-            <p slot="title">通过配置 lifeReport 节流</p>
+            <p slot="title">通过配置 openReducer 节流</p>
             <p class="dataac-cardContent">
               <span class="dataac-subText">
                 前面的例子中大家发现如果上报的功能都打开，上报频率会非常高<br/>
-                为了解决这个问题，我们加了节流配置，lifeReport 是其中一种<br/>
-                lifeReport 开关打开后，所有的上报会进入队列，当页面路由变化时才会上报
+                为了解决这个问题，我们加了节流配置 openReducer <br/>
+                当打开节流后，所有数据会存储到本地，cacheEventStorage 是本地存储的key <br/>
+                不实时上报数据，只在缓存的事件条目超过 sizeLimit 配置的数量时会上报数据 <br/>
               </span>
             </p>
           </Card>

@@ -38,7 +38,7 @@ window.__menuData__ = [
   {
     name: '6',
     icon: 'ios-send-outline',
-    text: '上报节流Demo-1',
+    text: '上报节流Demo',
     path: '/example/reportsize/index.html'
   },
   {
