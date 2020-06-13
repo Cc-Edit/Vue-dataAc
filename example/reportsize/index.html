@@ -98,8 +98,11 @@
               <span class="dataac-subText">
                 前面的例子中大家发现如果上报的功能都打开，上报频率会非常高<br/>
                 为了解决这个问题，我们加了节流配置 openReducer <br/>
-                当打开节流后，所有数据会存储到本地，cacheEventStorage 是本地存储的key <br/>
-                不实时上报数据，只在缓存的事件条目超过 sizeLimit 配置的数量时会上报数据 <br/>
+                当打开节流后，所有数据会存储到本地，这么做的目的是保证页面刷新数据不丢失<br/>
+                可以通过修改 cacheEventStorage 来改变本地存储的key <br/>
+                开启节流后不实时上报数据，只在下列场景上报数据： <br/>
+                1. 缓存的事件条目超过 sizeLimit 配置的数量<br/>
+                2. vue router路由变化时<br/>
               </span>
             </p>
           </Card>
