@@ -33,7 +33,7 @@ var app = new Vue({
   },
   mounted: function(){
     //控制loading层
-    document.getElementById('app') && document.getElementById('app').style.display = 'block';
-    document.getElementById('load') && document.getElementById('load').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('load').style.display = 'none';
   },
 })
