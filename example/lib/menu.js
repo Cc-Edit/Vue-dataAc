@@ -56,6 +56,12 @@ window.__menuData__ = [
 ]
 window.__docData__ = [
   {
+    name: '0-0',
+    icon: 'logo-github',
+    text: '支持一下',
+    path: '#github'
+  },
+  {
     name: '0-1',
     icon: 'md-list-box',
     text: '标识类配置',
@@ -164,6 +170,11 @@ window.__docData__ = [
         path: '#dataSource10'
       }
     ]
-  }
-
+  },
+  {
+    name: '0-9',
+    icon: 'ios-chatbubbles-outline',
+    text: '解决方案',
+    path: '#QA'
+  },
 ]

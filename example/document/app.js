@@ -22,6 +22,11 @@ var app = new Vue({
   data: {
     menuData: menuData,
     subMenu: subMenu,
+    columns: [
+      {title: '公众号', key: 'a'},
+      {title: '打赏', key: 'b'}
+    ],
+    data: [],
     columns1:[
       {title: '配置项', key: 'a'},
       {title: '类型', key: 'b'},

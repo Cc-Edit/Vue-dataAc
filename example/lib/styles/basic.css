@@ -151,7 +151,7 @@ input {
   z-index: 10;
 }
 .dataAc-document{
-  padding: 0 10px;
+  padding: 10px;
   margin-top: 60px;
   box-sizing: border-box;
   overflow: scroll;
@@ -196,4 +196,8 @@ input {
 }
 .ivu-menu-item span, .ivu-menu-submenu-title span{
   color: #dbfdfb;
+}
+.dataac-logo{
+  width: 100%;
+  display: inline-block;
 }

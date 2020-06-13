@@ -52,6 +52,27 @@
           <h3 :style="{height: '50px',lineHeight: '50px', fontWeight:'bold'}">Vue DataAc Document</h3>
         </Header>
         <Content class="dataAc-document">
+          <Card :bordered="false" id="github">
+            <p slot="title">支持一下</p>
+            <p class="dataac-cardContent">
+              <Row type="flex" justify="space-between" >
+                <i-Col span="10" >
+                  <img class="dataac-logo" src="http://www.isjs.cn/wp-content/uploads/2013/06/2018_07_25_1136562613-1.png" alt="关注我哟">
+                </i-Col>
+                <i-Col span="10" >
+                  <img class="dataac-logo" src="http://www.isjs.cn/wp-content/uploads/2020/06/Wechat-z.png" alt="感谢">
+                </i-Col>
+                <i-Col span="2" ></i-Col>
+              </Row>
+
+              <i-Button type="warning" ghost icon="logo-github" to="https://github.com/adminV/Vue-dataAc">GitHub:Vue-dataAc</i-Button>
+
+              <Divider dashed orientation="left">说明：</Divider>
+              <span class="dataac-subText">
+                开发不易，希望大家能帮忙点个star，粉一下我的公众号  Thanks♪(･ω･)ﾉ
+              </span>
+            </p>
+          </Card>
           <Card :bordered="false" id="tag">
             <p slot="title">标识类配置，作为数据上报信息的分类标识</p>
             <p class="dataac-cardContent">
@@ -337,7 +358,11 @@
               </pre>
             </p>
           </Card>
-
+          <Card :bordered="false" id="QA">
+            <p slot="title">解决方案</p>
+            <p class="dataac-cardContent">
+            </p>
+          </Card>
         </Content>
       </Layout>
     </Layout>
