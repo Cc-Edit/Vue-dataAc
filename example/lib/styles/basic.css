@@ -134,15 +134,29 @@ input {
   height: 100vh;
   box-sizing: border-box;
 }
+.dataac-sider{
+  max-height: 100vh;
+  height: 100vh;
+  overflow: scroll;
+  padding-bottom: 20px;
+}
 .dataAc-header{
   height: 50px;
   text-align: center;
   background: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px 2px;
   position: absolute;
-  left: 200px;
+  left: 250px;
   right: 0;
-  z-index: 3;
+  z-index: 10;
+}
+.dataAc-document{
+  padding: 0 10px;
+  margin-top: 60px;
+  box-sizing: border-box;
+  overflow: scroll;
+  border-radius: 10px;
+  background: rgb(255, 255, 255);
 }
 .dataAc-content{
   padding: 10px;
@@ -179,4 +193,7 @@ input {
 }
 .dataac-cardContent .ivu-card-head{
   padding: 16px 16px;
+}
+.ivu-menu-item span, .ivu-menu-submenu-title span{
+  color: #dbfdfb;
 }

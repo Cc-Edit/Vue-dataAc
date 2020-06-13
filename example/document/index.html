@@ -13,11 +13,34 @@
 <div id="app">
   <div class="layout">
     <Layout class="dataac-headLayout" >
-      <Sider>
-        <i-Menu active-name="0" theme="dark" width="auto" >
+      <Sider class="dataac-sider"  width="250">
+        <i-Menu active-name="0" theme="dark" width="250" >
           <p class="dataac-menuLogo">
             功能列表
           </p>
+          <Submenu name="0">
+            <div slot="title">
+              <Icon :type="subMenu.icon"></Icon>
+              <span>{{subMenu.text}}</span>
+            </div>
+            <template v-for="(item, index) in subMenu.child" :key="index">
+              <menu-item v-if="!item.child" :name="item.name" :to="item.path">
+                <Icon :type="item.icon"></Icon>
+                <span>{{item.text}}</span>
+              </menu-item>
+              <Submenu v-else :name="item.name">
+                <div slot="title">
+                  <Icon :type="item.icon"></Icon>
+                  <span>{{item.text}}</span>
+                </div>
+                <menu-item :name="subitem.name" v-for="(subitem, subindex) in item.child" :key="subindex" :to="subitem.path">
+                  <Icon :type="subitem.icon"></Icon>
+                  <span>{{subitem.text}}</span>
+                </menu-item>
+              </Submenu>
+            </template>
+
+          </Submenu>
           <menu-item :name="item.name" v-for="(item, index) in menuData" :key="index" @click.native="window.location.href =  window.location.origin + item.path">
             <Icon :type="item.icon"></Icon>
             <span>{{item.text}}</span>
@@ -28,8 +51,8 @@
         <Header class="dataAc-header">
           <h3 :style="{height: '50px',lineHeight: '50px', fontWeight:'bold'}">Vue DataAc Document</h3>
         </Header>
-        <Content class="dataAc-content">
-          <Card :bordered="false">
+        <Content class="dataAc-document">
+          <Card :bordered="false" id="tag">
             <p slot="title">标识类配置，作为数据上报信息的分类标识</p>
             <p class="dataac-cardContent">
               <i-Table border :columns="columns1" :data="data1"></i-Table>
@@ -39,7 +62,7 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="switch">
             <p slot="title">全局开关，用来自定义采集范围</p>
             <p class="dataac-cardContent">
               <i-Table border :columns="columns2" :data="data2"></i-Table>
@@ -54,7 +77,7 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="behavior">
             <p slot="title">行为采集配置</p>
             <p class="dataac-cardContent">
               <i-Table border :columns="columns3" :data="data3"></i-Table>
@@ -67,7 +90,7 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="datareport">
             <p slot="title">数据上报配置</p>
             <p class="dataac-cardContent">
               <i-Table border :columns="columns4" :data="data4"></i-Table>
@@ -80,7 +103,7 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="setCustomAc">
             <p slot="title">vue.$vueDataAc.setCustomAc( {cusKey: String, cusVal: Any} )</p>
             <p class="dataac-cardContent">
               <span class="dataac-subText">
@@ -89,7 +112,7 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="postAcData">
             <p slot="title">vue.$vueDataAc.postAcData()</p>
             <p class="dataac-cardContent">
               <span class="dataac-subText">
@@ -97,7 +120,7 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="setUserToken">
             <p slot="title">vue.$vueDataAc.setUserToken(userToken: String)</p>
             <p class="dataac-cardContent">
               <span class="dataac-subText">
@@ -106,8 +129,8 @@
               </span>
             </p>
           </Card>
-          <Card :bordered="false">
-            <p slot="title">页面访问，路由跳转，等同于PV/UV数据</p>
+          <Card :bordered="false" id="dataSource">
+            <p slot="title" id="dataSource1">页面访问，路由跳转，等同于PV/UV数据</p>
             <p class="dataac-cardContent">
             <pre>
 {
@@ -128,7 +151,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource2">
             <p slot="title">代码异常数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -148,7 +171,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource3">
             <p slot="title">资源加载异常数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -168,7 +191,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource4">
             <p slot="title">Promise 异常数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -185,7 +208,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource5">
             <p slot="title">自定义事件数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -203,7 +226,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource6">
             <p slot="title">Vue异常监控数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -225,7 +248,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource7">
             <p slot="title">点击事件监控数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -245,7 +268,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource8">
             <p slot="title">input输入事件监控数据</p>
             <p class="dataac-cardContent">
             <pre>
@@ -267,7 +290,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource9">
             <p slot="title">接口异常数据（包含 请求时间过长/自定义code/请求错误）</p>
             <p class="dataac-cardContent">
             <pre>
@@ -292,7 +315,7 @@
               </pre>
             </p>
           </Card>
-          <Card :bordered="false">
+          <Card :bordered="false" id="dataSource10">
             <p slot="title">页面性能监控数据</p>
             <p class="dataac-cardContent">
             <pre>

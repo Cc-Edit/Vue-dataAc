@@ -9,12 +9,19 @@ var OPTIONS = {
 Vue.use(VueDataAc, OPTIONS)
 
 /**
+ * 文档目录
+ * */
+var menuData = window.__menuData__ || [];
+var subMenu = menuData.splice(0,1)[0];
+subMenu.child = window.__docData__
+/**
  * 默认实例
  * */
 var app = new Vue({
   el: '#app',
   data: {
-    menuData: window.__menuData__ || [],
+    menuData: menuData,
+    subMenu: subMenu,
     columns1:[
       {title: '配置项', key: 'a'},
       {title: '类型', key: 'b'},
