@@ -93,6 +93,22 @@
         </Header>
         <Content class="dataAc-content">
           <Card :bordered="false">
+            <p slot="title">关联用户信息</p>
+            <p class="dataac-cardContent">
+              <Row type="flex" justify="space-between" >
+                <i-Col span="10" >
+                  <i-Button type="info" @click="setUserToken">设置token</i-Button>
+                </i-Col>
+              </Row>
+              <Divider dashed orientation="left">说明：</Divider>
+              <span class="dataac-subText">
+                当我们监控到用户异常时经常会想到如何复现，所以传递用户信息是一个选择<br/>
+                另外也可以对用户轨迹进行串联，将用户前端后端日志打通，方便定位问题<br/>
+                所以我们提供 setUserToken 方法设置 token 值，该值会跟随每一个事件数据上报到后台
+              </span>
+            </p>
+          </Card>
+          <Card :bordered="false">
             <p slot="title">输入框信息采集</p>
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >

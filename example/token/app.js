@@ -24,13 +24,10 @@ var app = new Vue({
   watch: {},
   methods: {
     /**
-     * 自定义事件上报
+     * 设置用户信息
      * */
-    customEvent: function(){
-      this.$vueDataAc.setCustomAc({
-        cusKey: 'clickAnyButton',
-        cusVal: 'click button ...'
-      })
+    setUserToken: function(){
+      this.$vueDataAc.setUserToken('112233')
     }
   },
   components: {},

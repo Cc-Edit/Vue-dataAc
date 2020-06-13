@@ -766,16 +766,6 @@ export default class VueDataAc {
   setUserToken(value) {
     this._userToken = value;
   }
-
-  /**
-   * 更新Options
-   * */
-  updateOptions(options) {
-    const newOptions = ac_util_mergeOption(options, this._options);
-    if(ac_util_checkOptions(newOptions)){
-      this._options = newOptions;
-    }
-  }
 }
 
 VueDataAc.install = (Vue, options) => install(Vue, options, VueDataAc);

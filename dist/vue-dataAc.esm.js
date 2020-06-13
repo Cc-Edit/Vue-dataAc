@@ -1291,16 +1291,6 @@ VueDataAc.prototype.setUserToken = function setUserToken (value) {
   this._userToken = value;
 };
 
-/**
- * 更新Options
- * */
-VueDataAc.prototype.updateOptions = function updateOptions (options) {
-  var newOptions = ac_util_mergeOption(options, this._options);
-  if(ac_util_checkOptions(newOptions)){
-    this._options = newOptions;
-  }
-};
-
 VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
 VueDataAc.version = '2.0.5';
 
