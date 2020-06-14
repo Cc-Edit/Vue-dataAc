@@ -24,6 +24,15 @@ var app = new Vue({
       new Promise(function (resolve,reject) {
         reject();
       })
+    },
+    sendError: function(){
+      axios.get('/error/log')
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   },
   components: {},

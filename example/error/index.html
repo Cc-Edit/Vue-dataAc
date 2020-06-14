@@ -119,6 +119,21 @@
             </p>
           </Card>
           <Card :bordered="false">
+            <p slot="title">请求异常</p>
+            <p class="dataac-cardContent">
+              <Row type="flex" justify="space-between" >
+                <i-Col span="10" >
+                  <i-Button type="info" @click="sendError">点击按钮发送请求</i-Button>
+                </i-Col>
+                </Row>
+                <Divider dashed orientation="left">说明：</Divider>
+              <span class="dataac-subText">
+                点击按钮会通过 axios 请求一个不存在的地址
+                <br/>
+              </span>
+            </p>
+          </Card>
+          <Card :bordered="false">
             <p slot="title">promise 异常</p>
             <p class="dataac-cardContent">
               <Row type="flex" justify="space-between" >

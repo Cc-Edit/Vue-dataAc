@@ -51,13 +51,13 @@
 | 功能 | demo地址  | 数据分析展示 | 
 | :------------ |:---------------| :---------------|
 | 文档 | 'http://data.isjs.cn/index.html' | '' |
-| 行为监控Demo | 'http://data.isjs.cn/basic/index.html' | '' |
-| 异常监控Demo | 'http://data.isjs.cn/error/index.html' | '' |
-| 性能监控Demo | 'http://data.isjs.cn/performance/index.html' | '' |
-| 主动埋点Demo | 'http://data.isjs.cn/appoint/index.html' | '' |
-| 图片数据上报Demo | 'http://data.isjs.cn/imgreport/index.html' | '' |
-| 上报节流Demo(sizeLimit) | 'http://data.isjs.cn/reportsize/index.html' | '' |
-| 关联登录信息Demo | 'http://data.isjs.cn/token/index.html' | '' |
+| 行为监控Demo | 'http://data.isjs.cn/basic/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 异常监控Demo | 'http://data.isjs.cn/error/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 性能监控Demo | 'http://data.isjs.cn/performance/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 主动埋点Demo | 'http://data.isjs.cn/appoint/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 图片数据上报Demo | 'http://data.isjs.cn/imgreport/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 上报节流Demo(sizeLimit) | 'http://data.isjs.cn/reportsize/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 关联登录信息Demo | 'http://data.isjs.cn/token/index.html' | 'http://data.isjs.cn/log/index.html' |
 
 
 ## 文档：
@@ -319,7 +319,7 @@
         "uuid": "F6A6C801B7197603",                      //用户标识
         "t"   : "",
         "acData" : {
-            "type"          : "ACRERR",     		         //上报数据类型：页面性能监控
+            "type"          : "ACTIME",     		         //上报数据类型：页面性能监控
             "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
             "sTme"          : "1591760073422",	         //事件上报时间
             "WT"            : 1000                       //白屏时间
@@ -328,6 +328,22 @@
             "ALLRT"         : 1000                       //所有请求耗时
             "TTFB"          : 1000                       //TTFB读取页面第一个字节的时间
             "DNS"           : 1000                       //DNS查询时间
+         }
+}
+```
+### 11. Vue组件性能监控数据
+
+```
+{
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",
+        "acData" : {
+            "type"          : "ACCOMP",     		         //上报数据类型：页面性能监控
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件上报时间
+            "componentsTimes" : [                        //渲染超时组件列表
+                '组件名': [1000,1200,1090]   
+            ]
          }
 }
 ```
@@ -381,8 +397,8 @@
 - [x] 后端日志关联机制  
 - [x] eslint  
 - [x] docs
-- [ ] demo
-- [ ] 文章
+- [x] demo
+- [x] 文章
 
     
 ## Q&A

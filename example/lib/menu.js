@@ -6,6 +6,12 @@ window.__menuData__ = [
     path: '/index.html'
   },
   {
+    name: '9',
+    icon: 'ios-easel-outline',
+    text: '后台数据展示',
+    path: '/log/index.html'
+  },
+  {
     name: '1',
     icon: 'ios-body-outline',
     text: '行为监控Demo',
@@ -162,6 +168,12 @@ window.__docData__ = [
         icon: 'md-list-box',
         text: '页面性能监控数据',
         path: '#dataSource10'
+      },
+      {
+        name: '0-8-11',
+        icon: 'md-list-box',
+        text: 'Vue组件渲染异常数据',
+        path: '#dataSource11'
       }
     ]
   },

@@ -181,9 +181,34 @@ input {
 .ivu-col {
   margin-bottom: 10px;
 }
-.ivu-card{
+#app .ivu-card{
   margin-bottom: 15px;
-  background-color: #f6f6f6 !important;
+  background-color: #f6f6f6;
+}
+#app .ivu-card .dataac-info{
+  background-color: #2db7f5;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+#app .ivu-card .dataac-warn{
+  background-color: #ff9900;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+#app .ivu-card .dataac-err{
+  background-color: #ed4014;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+#app .ivu-card .dataac-info .ivu-card-body,
+#app .ivu-card .dataac-err .ivu-card-body,
+#app .ivu-card .dataac-warn .ivu-card-body
+{
+  font-size: 18px;
+  font-weight: bold;
 }
 .ivu-card pre{
   overflow: scroll;
@@ -200,4 +225,13 @@ input {
 .dataac-logo{
   width: 100%;
   display: inline-block;
+}
+.dataAc-emptyData{
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
+.data-lincontent{
+  padding: 10px;
+  word-break: break-all;
 }

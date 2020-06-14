@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta charset="utf-8">
+  <meta name="description" content="vue-dataac 官方文档 Vue 前端监控插件 Vue用户行为监控插件 异常监控插件 https://github.com/adminV/Vue-dataAc">
+  <title>Vue-dataAc 文档</title>
+  <link rel="stylesheet" href="../lib/styles/basic.css">
+  <link rel="stylesheet" href="../lib/styles/iview.css">
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d147583b1d02ef3c79b1a47762c85daa";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</head>
+<body>
+<div id="load">
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #load {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, .3);
+    }
+
+    .loader {
+      margin: 30vh auto 0;
+      font-size: 10px;
+      position: relative;
+      text-indent: -9999em;
+      border-top: 5px solid #666;
+      border-bottom: 5px solid #fff;
+      -webkit-animation: load8 1.1s infinite linear;
+      animation: load8 1.1s infinite linear
+    }
+
+    .loader {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px
+    }
+
+    @-webkit-keyframes load8 {
+      0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes load8 {
+      0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+      }
+    }
+
+    .pCenter {
+      font-size: 18px;
+      color: #fff;
+      text-align: center;
+      text-indent: 0.5em;
+      margin-top: 10px;
+    }
+  </style>
+  <div class="loader"></div>
+  <p class="pCenter">加载中...</p>
+</div>
+<div id="app" style="display: none">
+  <div class="layout">
+    <Layout class="dataac-headLayout" >
+      <Sider>
+        <i-Menu active-name="9" theme="dark" width="auto" >
+          <p class="dataac-menuLogo">
+            功能列表
+          </p>
+          <menu-item :name="item.name" v-for="(item, index) in menuData" :key="index" @click.native="window.location.href =  window.location.origin + item.path">
+            <Icon :type="item.icon"></Icon>
+            <span>{{item.text}}</span>
+          </menu-item>
+        </i-Menu>
+      </Sider>
+      <Layout class="dataAc-layout">
+        <Header class="dataAc-header">
+          <h3 :style="{height: '50px',lineHeight: '50px', fontWeight:'bold'}">用户标识： {{uuid}}</h3>
+        </Header>
+        <Content class="dataAc-content">
+          <p class="dataAc-emptyData" v-if="allLogData.length === 0"> 暂无数据 </p>
+          <template v-else>
+            <Card  style="background-color: #fff" >
+              <p slot="title"> 数据统计： </p>
+              <Row type="flex" justify="space-between" :gutter="10" >
+                <i-Col span="6" >
+                  <Card class="dataac-info" >
+                    用户行为统计：{{userFoot.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-err" >
+                    请求异常统计：{{reqError.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-info" >
+                    页面性能统计：{{pagePer.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-err" >
+                    代码异常统计：{{errCode.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-info" >
+                    自定义事件统计：{{customError.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-warn" >
+                    资源加载异常统计：{{sourceError.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-warn" >
+                    promise异常统计：{{promiseError.length}} 条
+                  </Card>
+                </i-Col>
+                <i-Col span="6" >
+                  <Card class="dataac-warn" >
+                    Vue组件性能统计：{{vueError.length}} 条
+                  </Card>
+                </i-Col>
+              </Row>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> 用户轨迹： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in userFoot" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template v-if="item.type === 'ACPAGE'">
+                        用户【{{item.uuid}}】于 {{item.outTime}}<br/>
+                        <template v-if="item.fromPath">
+                          由 {{item.fromPath}}页面 前往 {{item.toPath}} 页面
+                        </template>
+                        <template v-else>
+                          访问 {{item.toPath}} 页面
+                        </template>
+                      </template>
+                      <template v-else-if="item.type === 'ACCLIK'">
+                        用户【{{item.uuid}}】于 {{item.sTme}} 在 {{item.path}} 页面点击了<br/>
+                        id属性为：{{item.eId}} class属性为：{{item.className}} 内容为：{{item.val}} 的元素
+                      </template>
+                      <template v-else-if="item.type === 'ACINPUT'">
+                        用户【{{item.uuid}}】于 {{item.sTme}} 在 {{item.path}} 页面向<br/>
+                        id属性为：{{item.eId}} class属性为：{{item.className}} 的输入框录入了数据【{{item.val}}】
+                      </template>
+                      <template v-else>
+                        未知数据
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> Vue代码异常信息： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in errCode" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 在 {{item.path}} 页面发生代码异常：<br/>
+                        错误信息：{{item.err}}<br/>
+                        错误摘要：{{item.msg}}<br/>
+                        行数：{{item.line}}<br/>
+                        列数：{{item.col}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> 接口异常信息： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in reqError" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 在 {{item.path}} 页面发生请求异常：<br/>
+                        异常类型：{{item.errSubType === 'time' ? '请求时间过长' : (item.errSubType === 'http'? '请求错误' : '自定义code')}}<br/>
+                        请求接口：{{item.responseURL}}<br/>
+                        状态码：{{item.status}}<br/>
+                        错误描述：{{item.statusText}}<br/>
+                        接口响应：{{item.response}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> 自定义事件信息： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in customError" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 在 {{item.path}} 页面上报了一个自定义事件：<br/>
+                        自定义事件key：{{item.cusKey}}<br/>
+                        自定义事件值：{{item.cusVal}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> 组件渲染异常信息： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in vueError" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 在 {{item.path}} 页面上报了一个组件渲染异常事件：<br/>
+                        组件数据：{{item.componentsTimes}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> 页面加载性能信息： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in pagePer" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 打开了 {{item.path}} 页面：<br/>
+                        白屏时间：{{item.WT}}<br/>
+                        TCP连接耗时：{{item.TCP}}<br/>
+                        执行onload事件耗时：{{item.ONL}}<br/>
+                        所有请求耗时：{{item.ALLRT}}<br/>
+                        TTFB读取页面第一个字节的时间：{{item.TTFB}}<br/>
+                        DNS查询时间：{{item.DNS}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> Promise异常数据： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in promiseError" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 打开 {{item.path}} 页面时发生了 Promise 异常数据<br/>
+                        错误信息：{{item.reason}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+            <Card  style="background-color: #fff;" >
+              <p slot="title"> 资源加载异常数据： </p>
+              <div style="max-height: 600px; overflow: scroll">
+                <Timeline>
+                  <timeline-item v-for="(item, i) in sourceError" :key="i">
+                    <p class="time">{{item.sTme}}</p>
+                    <p class="data-lincontent">
+                      <template >
+                        用户【{{item.uuid}}】于 {{item.sTme}} 打开 {{item.path}} 页面时发生资源加载异常<br/>
+                        资源地址：{{item.resourceUri}}<br/>
+                        tagName：{{item.tagName}}
+                      </template>
+                    </p>
+                  </timeline-item>
+                </Timeline>
+              </div>
+            </Card>
+          </template>
+        </Content>
+      </Layout>
+    </Layout>
+  </div>
+</div>
+  <script type="text/javascript" src="../lib/menu.js"></script>
+  <script type="text/javascript" src="../lib/vue.min.js"></script>
+  <script type="text/javascript" src="../lib/axios.min.js"></script>
+  <script type="text/javascript" src="../lib/iview.min.js"></script>
+  <script type="text/javascript" src="./app.js"></script>
+</body>
+</html>

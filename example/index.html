@@ -431,6 +431,25 @@
               </pre>
             </p>
           </Card>
+          <Card :bordered="false" id="dataSource11">
+            <p slot="title">Vue组件渲染异常数据</p>
+            <p class="dataac-cardContent">
+            <pre>
+{
+        "uuid": "F6A6C801B7197603",                      //用户标识
+        "t"   : "",
+        "acData" : {
+            "type"          : "ACCOMP",     		         //上报数据类型：页面性能监控
+            "path"          : "www.domain.com/w/w/w/",   //事件发生页面地址
+            "sTme"          : "1591760073422",	         //事件上报时间
+            "componentsTimes" : [                        //渲染超时组件列表
+                '组件名': [1000,1200,1090]
+            ]
+         }
+}
+              </pre>
+            </p>
+          </Card>
           <Card :bordered="false" id="QA">
             <p slot="title">解决方案</p>
             <p class="dataac-cardContent">
