@@ -1,5 +1,5 @@
 /*!
-  * vue-dataAc v2.0.6
+  * vue-dataAc v2.0.7
   * (c) 2020 adminV
   * @license MIT
   */
@@ -97,7 +97,7 @@ function install(Vue, options, VueDataAc) {
  * 全局配置
  * */
 var BASEOPTIONS = {
-  storeVer     : '2.0.6',  //Vue 版本dataAc
+  storeVer     : '2.0.7',  //Vue 版本dataAc
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
@@ -846,8 +846,9 @@ VueDataAc.prototype._formatXhrErrorData = function _formatXhrErrorData (xhr) {
     var isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
     var isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
     var isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (("" + (response && response.code)) === customXhrErrCode));
+    var isReportErr = (!ac_util_isNullOrEmpty(responseURL) && responseURL === _VueDataAc._options.postUrl); //避免上报接口异常导致死循环
 
-    if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
+    if (((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) && !isReportErr) {
       _VueDataAc._setAcData(storeReqErr, {
         responseURL: responseURL,
         method: method,
@@ -1294,6 +1295,6 @@ VueDataAc.prototype.setUserToken = function setUserToken (value) {
 };
 
 VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
-VueDataAc.version = '2.0.6';
+VueDataAc.version = '2.0.7';
 
 module.exports = VueDataAc;
