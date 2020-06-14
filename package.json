@@ -14,7 +14,7 @@
     "build": "npm run dist",
     "dist": "node build/build.js",
     "flow": "flow check",
-    "serve": "http-server",
+    "serve": "http-server ./example",
     "test": "jasmine"
   },
   "repository": {

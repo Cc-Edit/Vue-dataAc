@@ -24,10 +24,10 @@
    import VueDataAc from 'vue-dataac'
 
    Vue.use(VueDataAc, {
-       // imageUrl: 'http://open.isjs.cn/admin/ac.png'
+       // imageUrl: 'http://data.isjs.cn/lib/image/ac.png'
        // or
        useImgSend: false,
-       postUrl: 'http://open.isjs.cn/logStash/push'
+       postUrl: 'http://data.isjs.cn/logStash/push'
     });
 ```
 
@@ -119,8 +119,8 @@
 ### 4. 数据上报配置
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
 | :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|
-| imageUrl | String | 'http://open.isjs.cn/admin/ac.png' | :smile: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
-| postUrl | String | 'http://open.isjs.cn/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
+| imageUrl | String | 'http://data.isjs.cn/lib/image/ac.png' | :smile: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
+| postUrl | String | 'http://data.isjs.cn/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
 | openReducer | Boolean | false | :smile: | 是否开启节流,用于限制上报频率，开启后sizeLimit，manualReport生效 | 2.0.0 |
 | sizeLimit | Number | 20 | :smile: | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
 | cacheEventStorage | String | 'ac_cache_data' | :smile: | 开启节流后数据本地存储key | 2.0.0 |

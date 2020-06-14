@@ -1,5 +1,5 @@
 /*!
-  * vue-dataAc v2.0.5
+  * vue-dataAc v2.0.6
   * (c) 2020 adminV
   * @license MIT
   */
@@ -95,7 +95,7 @@ function install(Vue, options, VueDataAc) {
  * 全局配置
  * */
 const BASEOPTIONS = {
-  storeVer     : '2.0.5',  //Vue 版本dataAc
+  storeVer     : '2.0.6',  //Vue 版本dataAc
   /**
    *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
    * */
@@ -166,8 +166,8 @@ const BASEOPTIONS = {
   /**
    * 以下内容为可配置信息，影响插件逻辑功能
    * */
-  imageUrl     : "http://open.isjs.cn/admin/ac.png",   //《建议》 图片上报地址（通过1*1px图片接收上报信息）
-  postUrl      : "http://open.isjs.cn/logStash/push",       // 数据上报接口
+  imageUrl     : "http://data.isjs.cn/lib/image/ac.png",   //《建议》 图片上报地址（通过1*1px图片接收上报信息）
+  postUrl      : "http://data.isjs.cn/logStash/push",       // 数据上报接口
 
   /**
    * 对上报频率的限制项 (2.0新增）
@@ -1215,6 +1215,6 @@ class VueDataAc {
 }
 
 VueDataAc.install = (Vue, options) => install(Vue, options, VueDataAc);
-VueDataAc.version = '2.0.5';
+VueDataAc.version = '2.0.6';
 
 export default VueDataAc;
