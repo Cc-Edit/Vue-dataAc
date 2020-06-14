@@ -367,8 +367,9 @@ export default class VueDataAc {
       const isTimeOut = requestTime > _VueDataAc._options.maxRequestTime;
       const isHttpErr = (!(status >= 200 && status < 208) && (status !== 0 && status !== 302));
       const isCustomErr = (!ac_util_isNullOrEmpty(customXhrErrCode) && (`${response && response.code}` === customXhrErrCode));
+      const isReportErr = (!ac_util_isNullOrEmpty(responseURL) && responseURL === _VueDataAc._options.postUrl); //避免上报接口异常导致死循环
 
-      if ((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) {
+      if (((openXhrTimeOut && isTimeOut) || isHttpErr || isCustomErr) && !isReportErr) {
         _VueDataAc._setAcData(storeReqErr, {
           responseURL,
           method,
