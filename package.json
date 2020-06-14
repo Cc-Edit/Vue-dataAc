@@ -1,6 +1,6 @@
 {
   "name": "vue-dataac",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Vue 用户行为采集，异常数据采集，Vue组件性能监控，前端异常采集",
   "homepage": "https://github.com/adminV/Vue-dataAc",
   "author": "adminV",
