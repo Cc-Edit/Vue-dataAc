@@ -126,7 +126,6 @@
 | cacheEventStorage | String | 'ac_cache_data' | :smile: | 开启节流后数据本地存储key | 2.0.0 |
 | manualReport | Boolean | false | :smile: | 强制手动上报，开启后只能调用postAcData方法上报，依赖 openReducer == true，优先级：1 | 2.0.0 |
 
-
 ### 5. 实例方法
 
 #### 1. vue.$vueDataAc.setCustomAc( {cusKey: String, cusVal: Any} )
