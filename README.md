@@ -2,10 +2,11 @@
    
     
 ## 写在前面
-此插件基于 [dataAcquisition](https://github.com/adminV/dataAcquisition) 进行重构
-基于Vue进行插件开发，新增了很多配置，也对整体的采集监控做了优化，让这一切更优雅更灵活更简单。
-项目初期，难免有一些不同场景下的问题，大家在使用过程中遇到任何问题，或者有不满意的点都可以提交issue上来。
-    
+此插件基于 [dataAcquisition](https://github.com/adminV/dataAcquisition) 进行重构    
+基于Vue进行插件开发，新增了很多配置，也对整体的采集监控做了优化，让这一切更优雅更灵活更简单。    
+项目初期，难免有一些不同场景下的问题，大家在使用过程中遇到任何问题，或者有不满意的点都可以提交issue上来。    
+另外： http://data.isjs.cn/logStash/push 作为测试接口使用，会不定期清空数据，请不要上报真实数据    
+
 | 公众号: **js前端架构** | 打赏 :confetti_ball: | 
 | :------------: |:---------------:| 
 |![js前端架构](http://www.isjs.cn/wp-content/uploads/2013/06/2018_07_25_1136562613-1.png "关注我哟")|![打赏](http://www.isjs.cn/wp-content/uploads/2020/06/Wechat-z.png "感谢")|
@@ -447,3 +448,6 @@
     路由监控，插件会监控你的$route变化，并记录上报。在没有使用vue-router的情况下，只会上报页面的访问信息
     
 ## change log
+### 2.0.9: 
+**bugfix:**
+1. 修复页面刷新数据未上报问题
