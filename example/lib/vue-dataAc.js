@@ -1,5 +1,5 @@
 /*!
-  * vue-dataAc v2.0.7
+  * vue-dataAc v2.0.8
   * (c) 2020 adminV
   * @license MIT
   */
@@ -101,7 +101,7 @@
    * 全局配置
    * */
   var BASEOPTIONS = {
-    storeVer     : '2.0.7',  //Vue 版本dataAc
+    storeVer     : '2.0.8',  //Vue 版本dataAc
     /**
      *  标识类作为数据上报的key，在后台数据分析时进行数据区分，不需要动态配置
      * */
@@ -745,16 +745,12 @@
     }
 
     //该情况认为是根页面渲染，留给页面级信息上报
-    if (isVueRouter && ac_util_isNullOrEmpty(toPath) || ac_util_isNullOrEmpty(fromPath)) {
+    if (isVueRouter && (ac_util_isNullOrEmpty(toPath) || ac_util_isNullOrEmpty(fromPath))) {
       return;
     }
 
-    if (_lastRouterStr === (toPath + "-" + (JSON.stringify(toParams)))) {
-      return
-    }else {
-      this._lastRouterStr = toPath + "-" + (JSON.stringify(toParams));
-      ac_util_setStorage(this._options,("_vueac_" + (this._options.storePage)), (toPath + "-" + (JSON.stringify(toParams))));
-    }
+    this._lastRouterStr = toPath + "-" + (JSON.stringify(toParams));
+    ac_util_setStorage(this._options,("_vueac_" + (this._options.storePage)), (toPath + "-" + (JSON.stringify(toParams))));
 
     this._setAcData(this._options.storePage, {
       toPath: toPath,
@@ -1299,7 +1295,7 @@
   };
 
   VueDataAc.install = function (Vue, options) { return install(Vue, options, VueDataAc); };
-  VueDataAc.version = '2.0.7';
+  VueDataAc.version = '2.0.8';
 
   return VueDataAc;
 

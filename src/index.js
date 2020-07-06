@@ -277,16 +277,12 @@ export default class VueDataAc {
     }
 
     //该情况认为是根页面渲染，留给页面级信息上报
-    if (isVueRouter && ac_util_isNullOrEmpty(toPath) || ac_util_isNullOrEmpty(fromPath)) {
+    if (isVueRouter && (ac_util_isNullOrEmpty(toPath) || ac_util_isNullOrEmpty(fromPath))) {
       return;
     }
 
-    if (_lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`) {
-      return
-    }else{
-      this._lastRouterStr = `${toPath}-${JSON.stringify(toParams)}`;
-      ac_util_setStorage(this._options,`_vueac_${this._options.storePage}`, `${toPath}-${JSON.stringify(toParams)}`)
-    }
+    this._lastRouterStr = `${toPath}-${JSON.stringify(toParams)}`;
+    ac_util_setStorage(this._options,`_vueac_${this._options.storePage}`, `${toPath}-${JSON.stringify(toParams)}`)
 
     this._setAcData(this._options.storePage, {
       toPath,
