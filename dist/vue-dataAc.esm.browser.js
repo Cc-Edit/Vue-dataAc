@@ -714,6 +714,9 @@ class VueDataAc {
       fromPath = from.fullPath || from.path || from.name;
       formParams = ac_util_isEmptyObject(from.params) ? from.query : from.params;
       _lastRouterStr = this._lastRouterStr;
+      if (_lastRouterStr === `${toPath}-${JSON.stringify(toParams)}`) {
+        return
+      }
     }else {
       _lastRouterStr = ac_util_getStorage(this._options, `_vueac_${this._options.storePage}`) || '';
       toPath = window.location.href;
