@@ -1,11 +1,12 @@
 # Vue-dataAc - Vue 数据采集上报插件
 
 ##写在前面
-后端项目参考： [Vue-dataAc-server](https://github.com/Cc-Edit/Vue-dataAc-server)
-此插件基于 [dataAcquisition](https://github.com/Cc-Edit/dataAcquisition) 进行重构    
-基于Vue进行插件开发，新增了很多配置，也对整体的采集监控做了优化，让这一切更优雅更灵活更简单。    
-项目初期，难免有一些不同场景下的问题，大家在使用过程中遇到任何问题，或者有不满意的点都可以提交issue上来。    
-另外： http://data.sisjs.com/logStash/push 作为测试接口使用，会不定期清空数据，请不要上报真实数据    
+
+- 后端项目参考： [Vue-dataAc-server](https://github.com/Cc-Edit/Vue-dataAc-server)   
+- 此插件基于 [dataAcquisition](https://github.com/Cc-Edit/dataAcquisition) 进行重构      
+- 基于Vue进行插件开发，新增了很多配置，也对整体的采集监控做了优化，让这一切更优雅更灵活更简单。      
+- 项目初期，难免有一些不同场景下的问题，大家在使用过程中遇到任何问题，或者有不满意的点都可以提交issue上来。      
+- 另外： http://data.sisjs.com/logStash/push 作为测试接口使用，会不定期清空数据，请不要上报真实数据      
 
 |                                     学习讨论小组🍻                                      |                                                 打赏（赠送学习资料：[webNote](https://github.com/Cc-Edit/webNote)） :confetti_ball:                                                 | 
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------:| 
