@@ -166,8 +166,8 @@ var BASEOPTIONS = {
   /**
    * 以下内容为可配置信息，影响插件逻辑功能
    * */
-  imageUrl     : "http://data.isjs.cn/lib/image/ac.png",   //《建议》 图片上报地址（通过1*1px图片接收上报信息）
-  postUrl      : "http://data.isjs.cn/logStash/push",       // 数据上报接口
+  imageUrl     : "http://data.sisjs.com/lib/image/ac.png",   //《建议》 图片上报地址（通过1*1px图片接收上报信息）
+  postUrl      : "http://data.sisjs.com/logStash/push",       // 数据上报接口
 
   /**
    * 对上报频率的限制项 (2.0新增）

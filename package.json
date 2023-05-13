@@ -2,8 +2,8 @@
   "name": "vue-dataac",
   "version": "2.0.9",
   "description": "Vue 用户行为采集，异常数据采集，Vue组件性能监控，前端异常采集",
-  "homepage": "https://github.com/adminV/Vue-dataAc",
-  "author": "adminV",
+  "homepage": "https://github.com/Cc-Edit/Vue-dataAc",
+  "author": "Cc-Edit",
   "license": "MIT",
   "main": "dist/vue-dataAc.common.js",
   "module": "dist/vue-dataAc.esm.js",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adminV/Vue-dataAc.git"
+    "url": "git+https://github.com/Cc-Edit/Vue-dataAc.git"
   },
   "devDependencies": {
     "eslint": "^7.2.0",

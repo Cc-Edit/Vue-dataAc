@@ -10,7 +10,7 @@ const version = process.env.VERSION || require('../package.json').version
 const banner =
   `/*!
   * vue-dataAc v${version}
-  * (c) ${new Date().getFullYear()} adminV
+  * (c) ${new Date().getFullYear()} Cc-Edit
   * @license MIT
   */`
 

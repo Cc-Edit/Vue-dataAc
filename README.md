@@ -2,10 +2,10 @@
    
     
 ## 写在前面
-此插件基于 [dataAcquisition](https://github.com/adminV/dataAcquisition) 进行重构    
+此插件基于 [dataAcquisition](https://github.com/Cc-Edit/dataAcquisition) 进行重构    
 基于Vue进行插件开发，新增了很多配置，也对整体的采集监控做了优化，让这一切更优雅更灵活更简单。    
 项目初期，难免有一些不同场景下的问题，大家在使用过程中遇到任何问题，或者有不满意的点都可以提交issue上来。    
-另外： http://data.isjs.cn/logStash/push 作为测试接口使用，会不定期清空数据，请不要上报真实数据    
+另外： http://data.sisjs.com/logStash/push 作为测试接口使用，会不定期清空数据，请不要上报真实数据    
 
 |                                     学习讨论小组🍻                                      |                                                 打赏（赠送学习资料：[webNote](https://github.com/Cc-Edit/webNote)） :confetti_ball:                                                 | 
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------:| 
@@ -25,10 +25,10 @@
    import VueDataAc from 'vue-dataac'
 
    Vue.use(VueDataAc, {
-       // imageUrl: 'http://data.isjs.cn/lib/image/ac.png'
+       // imageUrl: 'http://data.sisjs.com/lib/image/ac.png'
        // or
        useImgSend: false,
-       postUrl: 'http://data.isjs.cn/logStash/push'
+       postUrl: 'http://data.sisjs.com/logStash/push'
     });
 ```
 
@@ -51,14 +51,14 @@
 ## demo:
 | 功能 | demo地址  | 数据分析展示 | 
 | :------------ |:---------------| :---------------|
-| 文档 | 'http://data.isjs.cn/index.html' | '' |
-| 行为监控Demo | 'http://data.isjs.cn/basic/index.html' | 'http://data.isjs.cn/log/index.html' |
-| 异常监控Demo | 'http://data.isjs.cn/error/index.html' | 'http://data.isjs.cn/log/index.html' |
-| 性能监控Demo | 'http://data.isjs.cn/performance/index.html' | 'http://data.isjs.cn/log/index.html' |
-| 主动埋点Demo | 'http://data.isjs.cn/appoint/index.html' | 'http://data.isjs.cn/log/index.html' |
-| 图片数据上报Demo | 'http://data.isjs.cn/imgreport/index.html' | 'http://data.isjs.cn/log/index.html' |
-| 上报节流Demo(sizeLimit) | 'http://data.isjs.cn/reportsize/index.html' | 'http://data.isjs.cn/log/index.html' |
-| 关联登录信息Demo | 'http://data.isjs.cn/token/index.html' | 'http://data.isjs.cn/log/index.html' |
+| 文档 | 'http://data.sisjs.com/index.html' | '' |
+| 行为监控Demo | 'http://data.sisjs.com/basic/index.html' | 'http://data.sisjs.com/log/index.html' |
+| 异常监控Demo | 'http://data.sisjs.com/error/index.html' | 'http://data.sisjs.com/log/index.html' |
+| 性能监控Demo | 'http://data.sisjs.com/performance/index.html' | 'http://data.sisjs.com/log/index.html' |
+| 主动埋点Demo | 'http://data.sisjs.com/appoint/index.html' | 'http://data.sisjs.com/log/index.html' |
+| 图片数据上报Demo | 'http://data.sisjs.com/imgreport/index.html' | 'http://data.sisjs.com/log/index.html' |
+| 上报节流Demo(sizeLimit) | 'http://data.sisjs.com/reportsize/index.html' | 'http://data.sisjs.com/log/index.html' |
+| 关联登录信息Demo | 'http://data.sisjs.com/token/index.html' | 'http://data.sisjs.com/log/index.html' |
 
 
 ## 文档：
@@ -120,8 +120,8 @@
 ### 4. 数据上报配置
 | 配置项 | 类型  | 默认值 | 是否可配置 | 说明 | 生效版本 |
 | :------------ |:---------------| :---------------| :---------------|:---------------|:---------------|
-| imageUrl | String | 'http://data.isjs.cn/lib/image/ac.png' | :smile: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
-| postUrl | String | 'http://data.isjs.cn/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
+| imageUrl | String | 'http://data.sisjs.com/lib/image/ac.png' | :smile: | 《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开| 1.0.0 |
+| postUrl | String | 'http://data.sisjs.com/logStash/push' | :smile: | 接口上报地址 | 1.0.0 |
 | openReducer | Boolean | false | :smile: | 是否开启节流,用于限制上报频率，开启后sizeLimit，manualReport生效 | 2.0.0 |
 | sizeLimit | Number | 20 | :smile: | 采集数据超过指定条目时自动上报，依赖 openReducer == true, 优先级：2 | 2.0.0 |
 | cacheEventStorage | String | 'ac_cache_data' | :smile: | 开启节流后数据本地存储key | 2.0.0 |
@@ -191,7 +191,7 @@
              "path"        : "www.domain.com/w/w/w/",       //事件发生页面地址
              "sTme"        : "1591760073422",	              //事件上报时间
              "fileName"    : "test.js",                     //文件名
-             "resourceUri" : "http://isjs.cn/js/test.js",   //资源地址
+             "resourceUri" : "http://sisjs.com/js/test.js",   //资源地址
              "tagName"     : "script",  		                //标签类型
              "outerHTML"   : "script ...",                  //标签内容
           }
