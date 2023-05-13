@@ -1,7 +1,7 @@
-# Vue-dataAc - Vue 数据采集上报插件（求小星星，求star）
-   
-    
-## 写在前面
+# Vue-dataAc - Vue 数据采集上报插件
+
+##写在前面
+后端项目参考： [Vue-dataAc-server](https://github.com/Cc-Edit/Vue-dataAc-server)
 此插件基于 [dataAcquisition](https://github.com/Cc-Edit/dataAcquisition) 进行重构    
 基于Vue进行插件开发，新增了很多配置，也对整体的采集监控做了优化，让这一切更优雅更灵活更简单。    
 项目初期，难免有一些不同场景下的问题，大家在使用过程中遇到任何问题，或者有不满意的点都可以提交issue上来。    
