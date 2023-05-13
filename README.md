@@ -1,6 +1,6 @@
 # Vue-dataAc - Vue 数据采集上报插件
 
-##写在前面
+## 写在前面
 
 - 后端项目参考： [Vue-dataAc-server](https://github.com/Cc-Edit/Vue-dataAc-server)   
 - 此插件基于 [dataAcquisition](https://github.com/Cc-Edit/dataAcquisition) 进行重构      
