@@ -36,7 +36,7 @@ var app = new Vue({
     },
     getAllLog: function(uuid, type){
       var _this = this;
-      var url = 'http://data.sisjs.com/logStash/getLog?uuid=' + uuid + '&type=' + (type || '');
+      var url = 'https://data.sisjs.com/logStash/getLog?uuid=' + uuid + '&type=' + (type || '');
       axios.get(url)
         .then(function (response) {
           if(response.data && response.data.isOk){
