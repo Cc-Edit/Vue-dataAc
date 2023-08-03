@@ -3,7 +3,7 @@
  * VueDataAc 配置
  * */
 var OPTIONS = {
-  imageUrl: 'https://data.sisjs.com/lib/image/ac.png',
+  imageUrl: 'https://data.ccedit.com/lib/image/ac.png',
   openClick: false
 }
 Vue.use(VueDataAc, OPTIONS)

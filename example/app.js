@@ -373,7 +373,7 @@ var app = new Vue({
       {
         a: 'imageUrl',
         b: 'String',
-        c: '\'https://data.sisjs.com/lib/image/ac.png\'',
+        c: '\'https://data.ccedit.com/lib/image/ac.png\'',
         d: '可以',
         e: '《建议》 图片上报地址（通过1*1px图片接收上报信息）依赖 useImgSend 配置打开',
         f: '1.0.0'
@@ -381,7 +381,7 @@ var app = new Vue({
       {
         a: 'postUrl',
         b: 'String',
-        c: '\'https://data.sisjs.com/logStash/push\'',
+        c: '\'https://data.ccedit.com/logStash/push\'',
         d: '可以',
         e: '接口上报地址',
         f: '1.0.0'
